@@ -1,40 +1,210 @@
 <!doctype html>
 <html lang="en">
 <head>
+
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login | Dealership Performance</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <title>
+    Dealership Performance Intelligence Platform
+  </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="./styles.css" />
+
 </head>
 
-<body data-page="login">
+<body>
 
-  <main class="login-shell">
-    <section class="login-card">
-      <p class="eyebrow">Dealership Performance</p>
-      <h1>Sign in</h1>
-      <p class="muted">Commission intelligence and AI coaching for your sales team.</p>
+  <div class="background-orb orb-1"></div>
+  <div class="background-orb orb-2"></div>
 
-      <form id="loginForm" class="form-stack">
-        <label>
-          Email
-          <input id="email" type="email" placeholder="name@dealership.com.au" required />
-        </label>
+  <!-- ========================================== -->
+  <!-- HERO -->
+  <!-- ========================================== -->
 
-        <label>
-          Password
-          <input id="password" type="password" required />
-        </label>
+  <main class="landing-shell">
 
-        <button class="btn btn-primary" type="submit">
-          Continue
-        </button>
-      </form>
+    <section class="landing-card">
 
-      <p id="loginMessage" class="status-text"></p>
+      <!-- LEFT -->
+
+      <div class="landing-content">
+
+        <p class="eyebrow">
+          Dealership Performance Platform
+        </p>
+
+        <h1>
+          Commission intelligence meets AI coaching.
+        </h1>
+
+        <p class="landing-copy">
+          Transform raw dealership BI exports into live commission tracking,
+          KPI visibility, operational analytics and AI-powered salesperson coaching.
+        </p>
+
+        <!-- FEATURE PILLS -->
+
+        <div class="pill-row">
+
+          <div class="pill">
+            Live Commission Tracking
+          </div>
+
+          <div class="pill">
+            AI PSP Coaching
+          </div>
+
+          <div class="pill">
+            Finance + Aftercare Analytics
+          </div>
+
+          <div class="pill">
+            Lead & Test Drive Intelligence
+          </div>
+
+        </div>
+
+        <!-- CTA -->
+
+        <div class="landing-actions">
+
+          <a
+            href="./manager.html"
+            class="btn btn-primary btn-large"
+          >
+            Open Manager Dashboard
+          </a>
+
+          <a
+            href="./salesperson.html"
+            class="btn btn-secondary btn-large"
+          >
+            Open Salesperson Dashboard
+          </a>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+
+      <div class="landing-preview">
+
+        <div class="preview-card preview-glow">
+
+          <div class="preview-header">
+
+            <div>
+
+              <p class="preview-label">
+                Team Snapshot
+              </p>
+
+              <h3>
+                April 2026
+              </h3>
+
+            </div>
+
+            <div class="status-pill">
+              Live
+            </div>
+
+          </div>
+
+          <!-- MINI KPI GRID -->
+
+          <div class="preview-grid">
+
+            <div class="mini-stat">
+              <span class="mini-label">
+                Units
+              </span>
+
+              <strong>
+                147
+              </strong>
+            </div>
+
+            <div class="mini-stat">
+              <span class="mini-label">
+                Finance %
+              </span>
+
+              <strong>
+                63%
+              </strong>
+            </div>
+
+            <div class="mini-stat">
+              <span class="mini-label">
+                Avg PPV
+              </span>
+
+              <strong>
+                $1,421
+              </strong>
+            </div>
+
+            <div class="mini-stat">
+              <span class="mini-label">
+                Team Comm
+              </span>
+
+              <strong>
+                $86k
+              </strong>
+            </div>
+
+          </div>
+
+          <!-- AI PREVIEW -->
+
+          <div class="ai-preview">
+
+            <div class="ai-dot"></div>
+
+            <div>
+
+              <p class="preview-label">
+                AI Coaching Insight
+              </p>
+
+              <p class="preview-copy">
+                Finance penetration improved 8% month-on-month,
+                however accessory attachment remains the largest
+                missed profit opportunity across the team.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </section>
+
   </main>
 
-  <script type="module" src="./app.js"></script>
 </body>
 </html>

@@ -3,162 +3,496 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Manager Dashboard</title>
+
+  <title>Manager Dashboard | Dealership Performance</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
 <body data-page="manager">
 
+  <div class="background-orb orb-1"></div>
+  <div class="background-orb orb-2"></div>
+
+  <!-- ========================================== -->
+  <!-- TOPBAR -->
+  <!-- ========================================== -->
+
   <header class="topbar">
+
     <div>
       <p class="eyebrow">Manager View</p>
-      <h1>Team Performance</h1>
-      <p class="muted">Import, normalize, review commissions and prepare PSP coaching.</p>
+
+      <h1>Dealership Performance Intelligence</h1>
+
+      <p class="muted topbar-copy">
+        Monthly commission normalization, operational visibility and AI-powered PSP coaching.
+      </p>
     </div>
 
     <div class="topbar-actions">
+
       <select id="periodSelect" class="control"></select>
-      <button id="refreshDashboardBtn" class="btn btn-secondary">Refresh</button>
+
+      <button
+        id="refreshDashboardBtn"
+        class="btn btn-secondary"
+      >
+        Refresh
+      </button>
+
     </div>
+
   </header>
+
+  <!-- ========================================== -->
+  <!-- MAIN -->
+  <!-- ========================================== -->
 
   <main class="dashboard-shell">
 
+    <!-- ========================================== -->
+    <!-- TABS -->
+    <!-- ========================================== -->
+
     <nav class="tab-bar">
-      <button class="tab-btn active" data-tab="importsTab">Imports</button>
-      <button class="tab-btn" data-tab="dashboardTab">Team Dashboard</button>
-      <button class="tab-btn" data-tab="pspTab">PSP / AI Review</button>
+
+      <button
+        class="tab-btn active"
+        data-tab="importsTab"
+      >
+        Imports
+      </button>
+
+      <button
+        class="tab-btn"
+        data-tab="dashboardTab"
+      >
+        Team Dashboard
+      </button>
+
+      <button
+        class="tab-btn"
+        data-tab="pspTab"
+      >
+        PSP / AI Coaching
+      </button>
+
     </nav>
 
-    <section id="importsTab" class="tab-panel active">
+    <!-- ========================================== -->
+    <!-- IMPORTS TAB -->
+    <!-- ========================================== -->
+
+    <section
+      id="importsTab"
+      class="tab-panel active"
+    >
+
+      <!-- HERO -->
 
       <section class="panel hero-panel">
+
         <div>
-          <p class="eyebrow">Step 1</p>
-          <h2>Monthly Import Hub</h2>
-          <p class="muted">Paste each BI report, process it, then run normalization. Deal Log is the anchor dataset.</p>
+
+          <p class="eyebrow">Commission Import Hub</p>
+
+          <h2>Monthly BI Imports</h2>
+
+          <p class="muted">
+            Paste dealership BI exports below, process each report,
+            then run normalization to generate master deals,
+            commissions and AI coaching insights.
+          </p>
+
         </div>
 
-        <div class="normalize-bar compact">
-          <button id="normalizeBtn" class="btn btn-success">Run Normalization</button>
-          <p id="normalizeStatus" class="muted">Waiting for imports...</p>
+        <div class="normalize-box">
+
+          <button
+            id="normalizeBtn"
+            class="btn btn-success btn-large"
+          >
+            Run Normalization
+          </button>
+
+          <p
+            id="normalizeStatus"
+            class="muted"
+          >
+            Waiting for imports...
+          </p>
+
         </div>
+
       </section>
+
+      <!-- IMPORT CARDS -->
 
       <section class="imports-grid">
 
-        <article class="import-card">
+        <!-- DEAL LOG -->
+
+        <article class="import-card accent-border-blue">
+
           <div class="import-head">
-            <h3>Deal Log</h3>
-            <button class="btn btn-primary import-btn" data-type="deal_log">Process</button>
+
+            <div>
+              <h3>Deal Log</h3>
+
+              <p class="muted small">
+                Anchor dataset used for normalization.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="deal_log"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Anchor report. Uses Processed Gross minus AM - Gross.</p>
-          <textarea id="deal_log" class="import-input" placeholder="Paste Deal Log export here..."></textarea>
+
+          <textarea
+            id="deal_log"
+            class="import-input"
+            placeholder="Paste Deal Log export here..."
+          ></textarea>
+
         </article>
 
-        <article class="import-card">
+        <!-- SIGN UPS -->
+
+        <article class="import-card accent-border-purple">
+
           <div class="import-head">
-            <h3>Accessories</h3>
-            <button class="btn btn-primary import-btn" data-type="accessories">Process</button>
+
+            <div>
+              <h3>Sign Ups</h3>
+
+              <p class="muted small">
+                Tracks salesperson sign-up activity.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="signups"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Calculates accessory GP from Sale Amount minus Cost Amount.</p>
-          <textarea id="accessories" class="import-input" placeholder="Paste Accessories export here..."></textarea>
+
+          <textarea
+            id="signups"
+            class="import-input"
+            placeholder="Paste Sign Ups export here..."
+          ></textarea>
+
         </article>
 
-        <article class="import-card">
+        <!-- ACCESSORIES -->
+
+        <article class="import-card accent-border-gold">
+
           <div class="import-head">
-            <h3>Finance</h3>
-            <button class="btn btn-primary import-btn" data-type="finance">Process</button>
+
+            <div>
+              <h3>Accessories</h3>
+
+              <p class="muted small">
+                Calculates GP from Sale Amount minus Cost Amount.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="accessories"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Uses Dealer Finance for penetration and Total Income for IPUR.</p>
-          <textarea id="finance" class="import-input" placeholder="Paste Finance export here..."></textarea>
+
+          <textarea
+            id="accessories"
+            class="import-input"
+            placeholder="Paste Accessories export here..."
+          ></textarea>
+
         </article>
 
-        <article class="import-card">
+        <!-- FINANCE -->
+
+        <article class="import-card accent-border-green">
+
           <div class="import-head">
-            <h3>Aftercare</h3>
-            <button class="btn btn-primary import-btn" data-type="aftercare">Process</button>
+
+            <div>
+              <h3>Finance</h3>
+
+              <p class="muted small">
+                Dealer Finance + Finance Income analysis.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="finance"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Uses Total Aftermarket for Aftercare PPV.</p>
-          <textarea id="aftercare" class="import-input" placeholder="Paste Aftercare export here..."></textarea>
+
+          <textarea
+            id="finance"
+            class="import-input"
+            placeholder="Paste Finance export here..."
+          ></textarea>
+
         </article>
 
-        <article class="import-card">
+        <!-- AFTERCARE -->
+
+        <article class="import-card accent-border-orange">
+
           <div class="import-head">
-            <h3>Sign Ups</h3>
-            <button class="btn btn-primary import-btn" data-type="signups">Process</button>
+
+            <div>
+              <h3>Aftercare</h3>
+
+              <p class="muted small">
+                Tracks aftermarket and ownership products.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="aftercare"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Counts sign ups by salesperson.</p>
-          <textarea id="signups" class="import-input" placeholder="Paste Sign Ups export here..."></textarea>
+
+          <textarea
+            id="aftercare"
+            class="import-input"
+            placeholder="Paste Aftercare export here..."
+          ></textarea>
+
         </article>
 
-        <article class="import-card">
+        <!-- REVIEWS -->
+
+        <article class="import-card accent-border-pink">
+
           <div class="import-head">
-            <h3>NPS / DAH / Google Reviews</h3>
-            <button class="btn btn-primary import-btn" data-type="reviews">Process</button>
+
+            <div>
+              <h3>NPS / DAH / Google Reviews</h3>
+
+              <p class="muted small">
+                Manual customer experience metrics.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="reviews"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Manual monthly customer experience inputs.</p>
-          <textarea id="reviews" class="import-input" placeholder="Paste columns like Salesperson, NPS, DAH, Google Reviews..."></textarea>
+
+          <textarea
+            id="reviews"
+            class="import-input"
+            placeholder="Paste NPS / DAH / Google Reviews..."
+          ></textarea>
+
         </article>
 
-        <article class="import-card import-card-wide">
+        <!-- LEADS -->
+
+        <article class="import-card import-card-wide accent-border-cyan">
+
           <div class="import-head">
-            <h3>Lead Data</h3>
-            <button class="btn btn-primary import-btn" data-type="leads">Process</button>
+
+            <div>
+              <h3>Lead Data</h3>
+
+              <p class="muted small">
+                Tracks leads, test drives and valuations for coaching analysis.
+              </p>
+            </div>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="leads"
+            >
+              Process
+            </button>
+
           </div>
-          <p class="muted">Tracks leads, test drives and valuations by salesperson for AI coaching.</p>
-          <textarea id="leads" class="import-input" placeholder="Paste Lead Data export here..."></textarea>
+
+          <textarea
+            id="leads"
+            class="import-input import-input-large"
+            placeholder="Paste Lead Data export here..."
+          ></textarea>
+
         </article>
 
       </section>
 
+      <!-- IMPORT RESULTS -->
+
       <section class="panel">
-        <p class="eyebrow">Import Log</p>
-        <h2>Processing Results</h2>
-        <div id="importResults" class="result-stack">
-          <div class="empty-state">No imports processed yet.</div>
+
+        <div class="section-head">
+
+          <div>
+
+            <p class="eyebrow">Import Results</p>
+
+            <h2>Processing Log</h2>
+
+          </div>
+
         </div>
+
+        <div
+          id="importResults"
+          class="result-stack"
+        >
+
+          <div class="empty-state">
+            No imports processed yet.
+          </div>
+
+        </div>
+
       </section>
 
     </section>
 
-    <section id="dashboardTab" class="tab-panel">
+    <!-- ========================================== -->
+    <!-- DASHBOARD TAB -->
+    <!-- ========================================== -->
+
+    <section
+      id="dashboardTab"
+      class="tab-panel"
+    >
+
+      <!-- KPI CARDS -->
 
       <section class="card-grid">
+
         <article class="metric-card accent-blue">
-          <div class="metric-label">Team Commission</div>
-          <div class="metric-value" id="teamCommission">$0</div>
+
+          <div class="metric-label">
+            Team Commission
+          </div>
+
+          <div
+            class="metric-value"
+            id="teamCommission"
+          >
+            $0
+          </div>
+
         </article>
 
         <article class="metric-card accent-green">
-          <div class="metric-label">Units Sold</div>
-          <div class="metric-value" id="unitsSold">0</div>
+
+          <div class="metric-label">
+            Units Sold
+          </div>
+
+          <div
+            class="metric-value"
+            id="unitsSold"
+          >
+            0
+          </div>
+
         </article>
 
         <article class="metric-card accent-purple">
-          <div class="metric-label">Finance Pen.</div>
-          <div class="metric-value" id="financePen">0%</div>
+
+          <div class="metric-label">
+            Avg Finance %
+          </div>
+
+          <div
+            class="metric-value"
+            id="financePen"
+          >
+            0%
+          </div>
+
         </article>
 
         <article class="metric-card accent-gold">
-          <div class="metric-label">Top Performer</div>
-          <div class="metric-value" id="topPerformer">—</div>
-        </article>
-      </section>
 
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Team Results</p>
-            <h2>Sales Consultant Overview</h2>
+          <div class="metric-label">
+            Top Performer
           </div>
 
-          <button id="mailFcBtn" class="btn btn-secondary">Email FC Summary</button>
+          <div
+            class="metric-value"
+            id="topPerformer"
+          >
+            —
+          </div>
+
+        </article>
+
+      </section>
+
+      <!-- TEAM TABLE -->
+
+      <section class="panel">
+
+        <div class="section-head">
+
+          <div>
+
+            <p class="eyebrow">Team Overview</p>
+
+            <h2>Sales Consultant Performance</h2>
+
+          </div>
+
+          <button
+            id="mailFcBtn"
+            class="btn btn-secondary"
+          >
+            Email FC Summary
+          </button>
+
         </div>
 
         <div class="table-wrap">
+
           <table>
+
             <thead>
+
               <tr>
                 <th>Salesperson</th>
                 <th>Units</th>
@@ -166,47 +500,98 @@
                 <th>Finance IPUR</th>
                 <th>Aftercare PPV</th>
                 <th>Accessory GP</th>
-                <th>Total Comm</th>
+                <th>Final Comm</th>
                 <th></th>
               </tr>
+
             </thead>
+
             <tbody id="teamRows">
-              <tr><td colspan="8">No team metrics yet. Import data and run normalization.</td></tr>
+
+              <tr>
+                <td colspan="8">
+                  No metrics available yet.
+                </td>
+              </tr>
+
             </tbody>
+
           </table>
+
         </div>
+
       </section>
 
+      <!-- CONSULTANT DETAIL -->
+
       <section class="panel">
+
         <div class="section-head">
+
           <div>
-            <p class="eyebrow">Consultant Focus</p>
-            <h2>Selected Sales Consultant</h2>
+
+            <p class="eyebrow">Consultant Detail</p>
+
+            <h2>Performance Drilldown</h2>
+
           </div>
+
         </div>
 
-        <div id="consultantDetail" class="detail-panel">
-          <div class="empty-state">Select a salesperson to view high level stats, commission breakdown and deal-level detail.</div>
+        <div
+          id="consultantDetail"
+          class="detail-panel"
+        >
+
+          <div class="empty-state">
+            Select a salesperson from the table above to view detailed commission breakdown and deal-level insight.
+          </div>
+
         </div>
+
       </section>
 
     </section>
 
-    <section id="pspTab" class="tab-panel">
+    <!-- ========================================== -->
+    <!-- PSP TAB -->
+    <!-- ========================================== -->
+
+    <section
+      id="pspTab"
+      class="tab-panel"
+    >
 
       <section class="panel">
+
         <div class="section-head">
+
           <div>
-            <p class="eyebrow">AI PSP Mode</p>
-            <h2>Performance Review Assistant</h2>
+
+            <p class="eyebrow">AI Coaching Mode</p>
+
+            <h2>Performance Success Plan</h2>
+
           </div>
 
-          <button id="mailtoPspBtn" class="btn btn-secondary" disabled>Email PSP</button>
+          <button
+            id="mailtoPspBtn"
+            class="btn btn-secondary"
+            disabled
+          >
+            Email PSP
+          </button>
+
         </div>
 
         <div id="pspPanel">
-          <div class="empty-state">Select a salesperson from the dashboard to generate PSP coaching.</div>
+
+          <div class="empty-state">
+            Select a salesperson from the dashboard to generate AI coaching insights.
+          </div>
+
         </div>
+
       </section>
 
     </section>
@@ -214,5 +599,6 @@
   </main>
 
   <script type="module" src="./app.js"></script>
+
 </body>
 </html>

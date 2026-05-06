@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
 
   <meta charset="utf-8" />
@@ -10,7 +9,15 @@
     content="width=device-width, initial-scale=1"
   />
 
-  <title>My Performance</title>
+  <title>My Performance | Dealership Intelligence</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  />
 
   <link rel="stylesheet" href="./styles.css" />
 
@@ -18,15 +25,29 @@
 
 <body data-page="salesperson">
 
-  <!-- ========================================= -->
+  <div class="background-orb orb-1"></div>
+  <div class="background-orb orb-2"></div>
+
+  <!-- ========================================== -->
   <!-- TOPBAR -->
-  <!-- ========================================= -->
+  <!-- ========================================== -->
 
   <header class="topbar">
 
     <div>
-      <p class="eyebrow">Salesperson View</p>
-      <h1>My Performance</h1>
+
+      <p class="eyebrow">
+        Salesperson View
+      </p>
+
+      <h1>
+        My Performance
+      </h1>
+
+      <p class="muted topbar-copy">
+        Personal commission tracking, KPI visibility and AI coaching insights.
+      </p>
+
     </div>
 
     <div class="topbar-actions">
@@ -47,96 +68,133 @@
 
   </header>
 
-  <!-- ========================================= -->
+  <!-- ========================================== -->
   <!-- MAIN -->
-  <!-- ========================================= -->
+  <!-- ========================================== -->
 
   <main class="dashboard-shell">
 
-    <!-- ========================================= -->
-    <!-- PERSONAL KPI CARDS -->
-    <!-- ========================================= -->
+    <!-- ========================================== -->
+    <!-- KPI CARDS -->
+    <!-- ========================================== -->
 
     <section class="card-grid">
 
-      <article class="metric-card">
-        <div class="metric-label">Commission</div>
+      <article class="metric-card accent-blue">
+
+        <div class="metric-label">
+          Final Commission
+        </div>
+
         <div
           class="metric-value"
           id="myCommission"
         >
           $0
         </div>
+
       </article>
 
-      <article class="metric-card">
-        <div class="metric-label">Units</div>
+      <article class="metric-card accent-green">
+
+        <div class="metric-label">
+          Units Sold
+        </div>
+
         <div
           class="metric-value"
           id="myUnits"
         >
           0
         </div>
+
       </article>
 
-      <article class="metric-card">
-        <div class="metric-label">Finance %</div>
+      <article class="metric-card accent-purple">
+
+        <div class="metric-label">
+          Finance Penetration
+        </div>
+
         <div
           class="metric-value"
           id="myFinancePen"
         >
           0%
         </div>
+
       </article>
 
-      <article class="metric-card">
-        <div class="metric-label">Aftercare PPV</div>
+      <article class="metric-card accent-gold">
+
+        <div class="metric-label">
+          Aftercare PPV
+        </div>
+
         <div
           class="metric-value"
           id="myAftercare"
         >
           $0
         </div>
+
       </article>
 
     </section>
 
-    <!-- ========================================= -->
-    <!-- AI PERFORMANCE SUMMARY -->
-    <!-- ========================================= -->
+    <!-- ========================================== -->
+    <!-- AI SUMMARY -->
+    <!-- ========================================== -->
 
     <section class="panel">
 
       <div class="section-head">
 
         <div>
-          <p class="eyebrow">AI Insights</p>
-          <h2>Performance Summary</h2>
+
+          <p class="eyebrow">
+            AI Summary
+          </p>
+
+          <h2>
+            Monthly Coaching Snapshot
+          </h2>
+
         </div>
 
       </div>
 
-      <div id="aiSummary">
+      <div
+        id="aiSummary"
+        class="ai-summary-box"
+      >
 
         <div class="empty-state">
-          AI coaching insights will appear here after normalization.
+          AI coaching insights will appear after monthly normalization.
         </div>
 
       </div>
 
     </section>
 
-    <!-- ========================================= -->
-    <!-- TOP 3 FOCUS AREAS -->
-    <!-- ========================================= -->
+    <!-- ========================================== -->
+    <!-- FOCUS AREAS -->
+    <!-- ========================================== -->
 
     <section class="panel">
 
       <div class="section-head">
 
         <div>
-          <p class="eyebrow">Focus Areas</p>
-          <h2>Top 3 Things To Improve</h2>
+
+          <p class="eyebrow">
+            Top Focus Areas
+          </p>
+
+          <h2>
+            What To Improve Next Month
+          </h2>
+
         </div>
 
       </div>
@@ -146,23 +204,32 @@
         class="focus-list"
       >
 
-        <li>No coaching insights generated yet.</li>
+        <li>
+          No coaching insights generated yet.
+        </li>
 
       </ol>
 
     </section>
 
-    <!-- ========================================= -->
+    <!-- ========================================== -->
     <!-- PERFORMANCE BREAKDOWN -->
-    <!-- ========================================= -->
+    <!-- ========================================== -->
 
     <section class="panel">
 
       <div class="section-head">
 
         <div>
-          <p class="eyebrow">Performance</p>
-          <h2>Monthly Breakdown</h2>
+
+          <p class="eyebrow">
+            Monthly Breakdown
+          </p>
+
+          <h2>
+            KPI Performance
+          </h2>
+
         </div>
 
       </div>
@@ -222,6 +289,21 @@
               <td>0</td>
             </tr>
 
+            <tr>
+              <td>Leads</td>
+              <td>0</td>
+            </tr>
+
+            <tr>
+              <td>Test Drives</td>
+              <td>0</td>
+            </tr>
+
+            <tr>
+              <td>Valuations</td>
+              <td>0</td>
+            </tr>
+
           </tbody>
 
         </table>
@@ -230,34 +312,69 @@
 
     </section>
 
-    <!-- ========================================= -->
+    <!-- ========================================== -->
     <!-- COMMISSION EXPLANATION -->
-    <!-- ========================================= -->
+    <!-- ========================================== -->
 
     <section class="panel panel-note">
 
       <div class="section-head">
 
         <div>
-          <p class="eyebrow">Commission Logic</p>
-          <h2>How Your Commission Works</h2>
+
+          <p class="eyebrow">
+            Commission Logic
+          </p>
+
+          <h2>
+            How Your Commission Works
+          </h2>
+
         </div>
 
       </div>
 
       <div class="note-box">
 
-        <p>
-          Your commission is generated during monthly normalization.
-        </p>
+        <div class="note-grid">
 
-        <p>
-          This dashboard does not calculate commissions live.
-        </p>
+          <div class="note-item">
 
-        <p>
-          Final commission values are securely stored and displayed from the database.
-        </p>
+            <h3>
+              Base Commission
+            </h3>
+
+            <p class="muted">
+              Units sold × base unit rate.
+            </p>
+
+          </div>
+
+          <div class="note-item">
+
+            <h3>
+              KPI Bonus Pool
+            </h3>
+
+            <p class="muted">
+              Finance, aftercare, accessories and customer experience contribute to bonus pools.
+            </p>
+
+          </div>
+
+          <div class="note-item">
+
+            <h3>
+              Volume Accelerator
+            </h3>
+
+            <p class="muted">
+              Higher unit brackets unlock larger portions of KPI bonus pools.
+            </p>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -268,5 +385,4 @@
   <script type="module" src="./app.js"></script>
 
 </body>
-
 </html>
