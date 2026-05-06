@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <title>My Performance</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+
+</head>
+
+<body data-page="salesperson">
+
+  <!-- ========================================= -->
+  <!-- TOPBAR -->
+  <!-- ========================================= -->
+
+  <header class="topbar">
+
+    <div>
+      <p class="eyebrow">Salesperson View</p>
+      <h1>My Performance</h1>
+    </div>
+
+    <div class="topbar-actions">
+
+      <select
+        id="periodSelect"
+        class="control"
+      ></select>
+
+      <button
+        id="refreshMyDashboardBtn"
+        class="btn btn-secondary"
+      >
+        Refresh
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ========================================= -->
+  <!-- MAIN -->
+  <!-- ========================================= -->
+
+  <main class="dashboard-shell">
+
+    <!-- ========================================= -->
+    <!-- PERSONAL KPI CARDS -->
+    <!-- ========================================= -->
+
+    <section class="card-grid">
+
+      <article class="metric-card">
+        <div class="metric-label">Commission</div>
+        <div
+          class="metric-value"
+          id="myCommission"
+        >
+          $0
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-label">Units</div>
+        <div
+          class="metric-value"
+          id="myUnits"
+        >
+          0
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-label">Finance %</div>
+        <div
+          class="metric-value"
+          id="myFinancePen"
+        >
+          0%
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-label">Aftercare PPV</div>
+        <div
+          class="metric-value"
+          id="myAftercare"
+        >
+          $0
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- AI PERFORMANCE SUMMARY -->
+    <!-- ========================================= -->
+
+    <section class="panel">
+
+      <div class="section-head">
+
+        <div>
+          <p class="eyebrow">AI Insights</p>
+          <h2>Performance Summary</h2>
+        </div>
+
+      </div>
+
+      <div id="aiSummary">
+
+        <div class="empty-state">
+          AI coaching insights will appear here after normalization.
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- TOP 3 FOCUS AREAS -->
+    <!-- ========================================= -->
+
+    <section class="panel">
+
+      <div class="section-head">
+
+        <div>
+          <p class="eyebrow">Focus Areas</p>
+          <h2>Top 3 Things To Improve</h2>
+        </div>
+
+      </div>
+
+      <ol
+        id="focusAreas"
+        class="focus-list"
+      >
+
+        <li>No coaching insights generated yet.</li>
+
+      </ol>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- PERFORMANCE BREAKDOWN -->
+    <!-- ========================================= -->
+
+    <section class="panel">
+
+      <div class="section-head">
+
+        <div>
+          <p class="eyebrow">Performance</p>
+          <h2>Monthly Breakdown</h2>
+        </div>
+
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Metric</th>
+              <th>Result</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="performanceBreakdown">
+
+            <tr>
+              <td>Units</td>
+              <td>0</td>
+            </tr>
+
+            <tr>
+              <td>Finance Penetration</td>
+              <td>0%</td>
+            </tr>
+
+            <tr>
+              <td>Finance IPUR</td>
+              <td>$0</td>
+            </tr>
+
+            <tr>
+              <td>Aftercare PPV</td>
+              <td>$0</td>
+            </tr>
+
+            <tr>
+              <td>Accessory GP</td>
+              <td>$0</td>
+            </tr>
+
+            <tr>
+              <td>Google Reviews</td>
+              <td>0</td>
+            </tr>
+
+            <tr>
+              <td>NPS</td>
+              <td>0</td>
+            </tr>
+
+            <tr>
+              <td>DAH</td>
+              <td>0</td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- COMMISSION EXPLANATION -->
+    <!-- ========================================= -->
+
+    <section class="panel panel-note">
+
+      <div class="section-head">
+
+        <div>
+          <p class="eyebrow">Commission Logic</p>
+          <h2>How Your Commission Works</h2>
+        </div>
+
+      </div>
+
+      <div class="note-box">
+
+        <p>
+          Your commission is generated during monthly normalization.
+        </p>
+
+        <p>
+          This dashboard does not calculate commissions live.
+        </p>
+
+        <p>
+          Final commission values are securely stored and displayed from the database.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script type="module" src="./app.js"></script>
+
+</body>
+
+</html>

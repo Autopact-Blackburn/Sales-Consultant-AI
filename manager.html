@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <title>Manager Dashboard</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+
+</head>
+
+<body data-page="manager">
+
+  <!-- ========================================= -->
+  <!-- TOPBAR -->
+  <!-- ========================================= -->
+
+  <header class="topbar">
+
+    <div>
+      <p class="eyebrow">Manager View</p>
+      <h1>Team Commissions</h1>
+    </div>
+
+    <div class="topbar-actions">
+
+      <select
+        id="periodSelect"
+        class="control"
+      ></select>
+
+      <button
+        id="refreshDashboardBtn"
+        class="btn btn-secondary"
+      >
+        Refresh
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ========================================= -->
+  <!-- MAIN -->
+  <!-- ========================================= -->
+
+  <main class="dashboard-shell">
+
+    <!-- ========================================= -->
+    <!-- KPI CARDS -->
+    <!-- ========================================= -->
+
+    <section
+      id="summaryCards"
+      class="card-grid"
+    >
+
+      <article class="metric-card">
+        <div class="metric-label">Team Commission</div>
+        <div
+          class="metric-value"
+          id="teamCommission"
+        >
+          $0
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-label">Units Sold</div>
+        <div
+          class="metric-value"
+          id="unitsSold"
+        >
+          0
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-label">Finance Pen.</div>
+        <div
+          class="metric-value"
+          id="financePen"
+        >
+          0%
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-label">Top Performer</div>
+        <div
+          class="metric-value"
+          id="topPerformer"
+        >
+          —
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- IMPORTS -->
+    <!-- ========================================= -->
+
+    <section class="panel">
+
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Imports</p>
+          <h2>Monthly Data Imports</h2>
+        </div>
+      </div>
+
+      <div class="imports-grid">
+
+        <!-- DEAL LOG -->
+
+        <article class="import-card">
+
+          <div class="import-head">
+            <h3>Deal Log</h3>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="deal_log"
+            >
+              Process
+            </button>
+          </div>
+
+          <p class="muted">
+            Uses Processed Gross minus AM - Gross.
+          </p>
+
+          <textarea
+            id="deal_log"
+            class="import-input"
+            placeholder="Paste Deal Log export here..."
+          ></textarea>
+
+        </article>
+
+        <!-- ACCESSORIES -->
+
+        <article class="import-card">
+
+          <div class="import-head">
+            <h3>Accessories</h3>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="accessories"
+            >
+              Process
+            </button>
+
+          </div>
+
+          <p class="muted">
+            Sale Amount minus Cost Amount.
+          </p>
+
+          <textarea
+            id="accessories"
+            class="import-input"
+            placeholder="Paste Accessories export here..."
+          ></textarea>
+
+        </article>
+
+        <!-- FINANCE -->
+
+        <article class="import-card">
+
+          <div class="import-head">
+
+            <h3>Finance</h3>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="finance"
+            >
+              Process
+            </button>
+
+          </div>
+
+          <p class="muted">
+            Dealer Finance + Total Income.
+          </p>
+
+          <textarea
+            id="finance"
+            class="import-input"
+            placeholder="Paste Finance export here..."
+          ></textarea>
+
+        </article>
+
+        <!-- AFTERCARE -->
+
+        <article class="import-card">
+
+          <div class="import-head">
+
+            <h3>Aftercare</h3>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="aftercare"
+            >
+              Process
+            </button>
+
+          </div>
+
+          <p class="muted">
+            Uses Total Aftermarket.
+          </p>
+
+          <textarea
+            id="aftercare"
+            class="import-input"
+            placeholder="Paste Aftercare export here..."
+          ></textarea>
+
+        </article>
+
+        <!-- SIGNUPS -->
+
+        <article class="import-card">
+
+          <div class="import-head">
+
+            <h3>Sign Ups</h3>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="signups"
+            >
+              Process
+            </button>
+
+          </div>
+
+          <p class="muted">
+            Counts by salesperson.
+          </p>
+
+          <textarea
+            id="signups"
+            class="import-input"
+            placeholder="Paste Signups export here..."
+          ></textarea>
+
+        </article>
+
+        <!-- REVIEWS -->
+
+        <article class="import-card">
+
+          <div class="import-head">
+
+            <h3>Reviews</h3>
+
+            <button
+              class="btn btn-primary import-btn"
+              data-type="reviews"
+            >
+              Process
+            </button>
+
+          </div>
+
+          <p class="muted">
+            NPS / DAH / Google Reviews.
+          </p>
+
+          <textarea
+            id="reviews"
+            class="import-input"
+            placeholder="Paste Reviews export here..."
+          ></textarea>
+
+        </article>
+
+      </div>
+
+      <!-- ========================================= -->
+      <!-- NORMALIZATION -->
+      <!-- ========================================= -->
+
+      <div class="normalize-bar">
+
+        <button
+          id="normalizeBtn"
+          class="btn btn-success"
+        >
+          Run Normalization
+        </button>
+
+        <p
+          id="normalizeStatus"
+          class="muted"
+        >
+          Waiting for imports...
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- TEAM TABLE -->
+    <!-- ========================================= -->
+
+    <section class="panel">
+
+      <div class="section-head">
+
+        <div>
+          <p class="eyebrow">Performance</p>
+          <h2>Team Overview</h2>
+        </div>
+
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Salesperson</th>
+              <th>Units</th>
+              <th>Finance %</th>
+              <th>Aftercare PPV</th>
+              <th>Accessory GP</th>
+              <th>Total Comm</th>
+              <th></th>
+            </tr>
+
+          </thead>
+
+          <tbody id="teamRows">
+
+            <tr>
+              <td colspan="7">
+                No rows yet.
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================= -->
+    <!-- PSP / REVIEW PANEL -->
+    <!-- ========================================= -->
+
+    <section class="panel">
+
+      <div class="section-head">
+
+        <div>
+          <p class="eyebrow">PSP Mode</p>
+          <h2>Performance Review Assistant</h2>
+        </div>
+
+      </div>
+
+      <div id="pspPanel">
+
+        <div class="empty-state">
+          Select a salesperson to generate AI insights.
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script type="module" src="./app.js"></script>
+
+</body>
+
+</html>

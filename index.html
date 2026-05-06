@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login | Dealership Performance</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body data-page="login">
+
+  <main class="login-shell">
+    <section class="login-card">
+      <p class="eyebrow">Dealership Performance</p>
+      <h1>Sign in</h1>
+      <p class="muted">Commission intelligence and AI coaching for your sales team.</p>
+
+      <form id="loginForm" class="form-stack">
+        <label>
+          Email
+          <input id="email" type="email" placeholder="name@dealership.com.au" required />
+        </label>
+
+        <label>
+          Password
+          <input id="password" type="password" required />
+        </label>
+
+        <button class="btn btn-primary" type="submit">
+          Continue
+        </button>
+      </form>
+
+      <p id="loginMessage" class="status-text"></p>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
