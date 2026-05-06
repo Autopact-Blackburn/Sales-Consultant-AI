@@ -17,25 +17,19 @@ const state = {
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (state.page === 'login') {
-    // If already logged in, redirect to correct dashboard
     const { data: sessionData } = await supabase.auth.getSession()
+
     if (sessionData?.session) {
-      const { data: auth } = await supabase.auth.getUser()
-      const { data: staffRows } = await supabase
-        .from('staff')
-        .select('role')
-        .eq('email', auth?.user?.email)
-        .limit(1)
-      const role = staffRows?.[0]?.role
-      window.location.href = role === 'salesperson' ? './salesperson.html' : './manager.html'
+      await redirectByRole()
       return
     }
+
     bindLogin()
     return
   }
 
-  // Auth guard for protected pages
   const { data: sessionData } = await supabase.auth.getSession()
+
   if (!sessionData?.session) {
     window.location.href = './index.html'
     return
@@ -64,6 +58,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 })
 
+async function redirectByRole() {
+  const { data: auth } = await supabase.auth.getUser()
+
+  const { data: staffRows } = await supabase
+    .from('staff')
+    .select('role')
+    .eq('email', auth?.user?.email)
+    .limit(1)
+
+  const role = staffRows?.[0]?.role
+
+  window.location.href = role === 'salesperson'
+    ? './salesperson.html'
+    : './manager.html'
+}
+
 function bindLogin() {
   const form = document.getElementById('loginForm')
   const message = document.getElementById('loginMessage')
@@ -86,15 +96,7 @@ function bindLogin() {
       return
     }
 
-    // Check role to decide redirect
-    const { data: staffRows } = await supabase
-      .from('staff')
-      .select('role')
-      .eq('email', email)
-      .limit(1)
-
-    const role = staffRows?.[0]?.role
-    window.location.href = role === 'salesperson' ? './salesperson.html' : './manager.html'
+    await redirectByRole()
   })
 }
 
@@ -107,7 +109,6 @@ function bindTabs() {
       btn.classList.add('active')
 
       const target = document.getElementById(btn.dataset.tab)
-
       if (target) target.classList.add('active')
     })
   })
@@ -116,31 +117,38 @@ function bindTabs() {
 function bindImportButtons() {
   document.querySelectorAll('.import-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
-      const type = btn.dataset.type
-      const textarea = document.getElementById(type)
+      try {
+        const type = btn.dataset.type
+        const textarea = document.getElementById(type)
 
-      if (!state.selectedPeriodId) {
-        alert('Select a commission period first')
-        return
+        if (!state.selectedPeriodId) {
+          alert('Select a commission period first')
+          return
+        }
+
+        if (!textarea?.value?.trim()) {
+          alert(`Paste ${type} data first`)
+          return
+        }
+
+        const rows = parseFlexibleTable(textarea.value)
+
+        console.log(`${type} parsed rows`, rows.slice(0, 3))
+
+        if (!rows.length) {
+          appendImportResult(`${label(type)} failed: no valid rows detected.`)
+          return
+        }
+
+        state.imports[type] = rows
+
+        await persistRawImport(type, rows)
+
+        appendImportResult(`${label(type)} processed and saved (${rows.length} rows).`)
+      } catch (error) {
+        console.error(error)
+        alert(error.message || 'Import failed')
       }
-
-      if (!textarea?.value?.trim()) {
-        alert(`Paste ${type} data first`)
-        return
-      }
-
-      const rows = parseFlexibleTable(textarea.value)
-
-      if (!rows.length) {
-        appendImportResult(`${label(type)} failed: no valid rows detected.`)
-        return
-      }
-
-      state.imports[type] = rows
-
-      await persistRawImport(type, rows)
-
-      appendImportResult(`${label(type)} processed and saved (${rows.length} rows).`)
     })
   })
 }
@@ -149,27 +157,36 @@ function bindNormalizeButton() {
   const btn = document.getElementById('normalizeBtn')
 
   btn?.addEventListener('click', async () => {
-    if (!state.selectedPeriodId) {
-      alert('Select a commission period first')
-      return
+    try {
+      if (!state.selectedPeriodId) {
+        alert('Select a commission period first')
+        return
+      }
+
+      await loadImportsFromDatabase()
+
+      if (!state.imports.deal_log?.length) {
+        alert('Deal Log import required')
+        return
+      }
+
+      const normalizedDeals = buildDeals()
+      const metrics = buildMetrics(normalizedDeals)
+
+      console.log('normalized deals', normalizedDeals.slice(0, 5))
+      console.log('metrics payload', metrics)
+
+      await persistDeals(normalizedDeals)
+      await persistMetrics(metrics)
+
+      appendImportResult(`Normalization completed (${normalizedDeals.length} deals, ${metrics.length} salespeople).`)
+
+      await refreshManagerDashboard()
+      document.querySelector('[data-tab="dashboardTab"]')?.click()
+    } catch (error) {
+      console.error(error)
+      alert(error.message || 'Normalization failed')
     }
-
-    await loadImportsFromDatabase()
-
-    if (!state.imports.deal_log?.length) {
-      alert('Deal Log import required')
-      return
-    }
-
-    const normalizedDeals = buildDeals()
-    const metrics = buildMetrics(normalizedDeals)
-
-    await persistDeals(normalizedDeals)
-    await persistMetrics(metrics)
-
-    appendImportResult(`Normalization completed (${normalizedDeals.length} deals, ${metrics.length} salespeople).`)
-
-    await refreshManagerDashboard()
   })
 }
 
@@ -413,10 +430,10 @@ function renderConsultantDetail(row) {
       <div class="detail-card">
         <h3>Commission Breakdown</h3>
         <p>Base Unit Commission: ${money(row.base_unit_commission)}</p>
-        <p>Fixed / Earned Payouts: ${money(row.fixed_payout_total)}</p>
+        <p>Volume Bonus: ${money(row.volume_bonus)}</p>
+        <p>Sign Ups Bonus: ${money(row.signups_bonus)}</p>
+        <p>Gross Bonus: ${money(row.gross_bonus)}</p>
         <p>KPI Bonus Pool: ${money(row.kpi_bonus_pool)}</p>
-        <p>Volume Unlock: ${Math.round(num(row.volume_unlock_percentage) * 100)}%</p>
-        <p>Unlocked KPI Bonus: ${money(row.unlocked_kpi_bonus)}</p>
         <p>Manual Bonus: ${money(row.manual_bonus_total)}</p>
         <p>Direct Purchase Bonus: ${money(row.direct_purchase_bonus)}</p>
         <hr>
@@ -513,6 +530,9 @@ function renderSalespersonDashboard(row) {
       <tr><td>Google Reviews</td><td>${num(row.google_reviews)}</td></tr>
       <tr><td>NPS</td><td>${num(row.nps)}</td></tr>
       <tr><td>DAH</td><td>${num(row.dah)}</td></tr>
+      <tr><td>Leads</td><td>${num(row.new_leads)}</td></tr>
+      <tr><td>Test Drives</td><td>${num(row.test_drives)}</td></tr>
+      <tr><td>Valuations</td><td>${num(row.valuations)}</td></tr>
     `
   }
 }
@@ -522,29 +542,96 @@ function buildDeals() {
 
   return dealRows
     .map((row) => {
-      const dealNumber = get(row, ['deal', 'deal number', 'deal no', 'stock deal no', 'stock no', 'deal ref'])
-      const salesperson = get(row, ['salesperson', 'sales person', 'consultant', 'sales consultant'])
+      const dealNumber = get(row, [
+        'deal',
+        'deal number',
+        'deal no',
+        'deal no.',
+        'deal #',
+        'deal#',
+        'stock deal no',
+        'stock no',
+        'stock number',
+        'deal ref',
+        'reference'
+      ])
+
+      const salesperson = get(row, [
+        'salesperson',
+        'sales person',
+        'sales consultant',
+        'consultant',
+        'salesperson name',
+        'sales person name'
+      ])
 
       if (!dealNumber || !salesperson) return null
 
-      const processedGross = moneyNumber(get(row, ['processed gross', 'posted gross', 'gross', 'total gross', 'est gross']))
-      const amGross = moneyNumber(get(row, ['am gross', 'am  gross', 'am cost amount', 'aftermarket gross']))
+      const processedGross = moneyNumber(get(row, [
+        'processed gross',
+        'posted gross',
+        'gross',
+        'total gross',
+        'est gross',
+        'estimated gross'
+      ]))
+
+      const amGross = moneyNumber(get(row, [
+        'am gross',
+        'am - gross',
+        'aftermarket gross',
+        'am cost amount'
+      ]))
 
       const accessoryGp = sumByDeal('accessories', dealNumber, (r) => {
-        return moneyNumber(get(r, ['sale amount', 'sales amount', 'accessory sale'])) -
-          moneyNumber(get(r, ['cost amount', 'cost', 'accessory cost']))
+        const sale = moneyNumber(get(r, [
+          'sale amount',
+          'sales amount',
+          'accessory sale',
+          'sell amount',
+          'selling amount'
+        ]))
+
+        const cost = moneyNumber(get(r, [
+          'cost amount',
+          'cost',
+          'accessory cost'
+        ]))
+
+        return sale - cost
       })
 
       const financeRows = rowsByDeal('finance', dealNumber)
-      const financeIncome = financeRows.reduce((sum, r) => sum + moneyNumber(get(r, ['adj total inc', 'total income', 'tot fin income', 'income', 'finance income'])), 0)
+
+      const financeIncome = financeRows.reduce((sum, r) => {
+        return sum + moneyNumber(get(r, [
+          'adj total inc',
+          'total income',
+          'tot fin income',
+          'income',
+          'finance income',
+          'finance commission'
+        ]))
+      }, 0)
+
       const dealerFinance = financeRows.some((r) => {
-        const pm = String(get(r, ['payment method']) || '').toLowerCase()
-        const ft = String(get(r, ['finance product type', 'deal type', 'loan type']) || '').toLowerCase()
-        return pm.includes('dealer finance') || ft.includes('dealer finance')
+        const combined = Object.values(r).join(' ').toLowerCase()
+
+        return combined.includes('dealer finance') ||
+          combined.includes('financed') ||
+          combined.includes('consumer loan') ||
+          combined.includes('business loan')
       })
 
       const aftercareTotal = sumByDeal('aftercare', dealNumber, (r) => {
-        return moneyNumber(get(r, ['total aftermarket', 'aftermarket total', 'aftercare total', 'aftermarket income']))
+        return moneyNumber(get(r, [
+          'total aftermarket',
+          'aftermarket total',
+          'aftercare total',
+          'aftermarket income',
+          'aftercare income',
+          'total income'
+        ]))
       })
 
       return {
@@ -552,7 +639,7 @@ function buildDeals() {
         deal_number: String(dealNumber),
         salesperson_name: cleanName(salesperson),
         customer_name: get(row, ['customer', 'customer name', 'name']) || '',
-        vehicle: get(row, ['vehicle', 'vehicle description', 'model']) || '',
+        vehicle: get(row, ['vehicle', 'vehicle description', 'model', 'description']) || '',
         processed_gross: processedGross,
         am_gross: amGross,
         real_gp: processedGross - amGross,
@@ -577,9 +664,11 @@ function buildMetrics(deals) {
     grouped[key].finance_income_total += num(deal.finance_income)
     grouped[key].accessory_gp += num(deal.accessory_gp)
     grouped[key].aftercare_total += num(deal.aftercare_total)
-    grouped[key].new_gross_total = (grouped[key].new_gross_total || 0) + num(deal.real_gp)
+    grouped[key].new_gross_total += num(deal.real_gp)
 
-    if (deal.dealer_finance) grouped[key].finance_deals += 1
+    if (deal.dealer_finance) {
+      grouped[key].finance_deals += 1
+    }
   })
 
   addSignups(grouped)
@@ -591,23 +680,13 @@ function buildMetrics(deals) {
     row.finance_ipur = row.units ? row.finance_income_total / row.units : 0
     row.aftercare_ppv = row.units ? row.aftercare_total / row.units : 0
 
-    // $100 per delivered unit
     row.base_unit_commission = row.units * 100
-
-    // Volume bonus: $750 if >= 18 deliveries
     row.volume_bonus = row.units >= 18 ? 750 : 0
-
-    // Sign ups bonus: $250 if >= 23 sign ups
     row.signups_bonus = row.signups >= 23 ? 250 : 0
-
-    // 5% of new gross (can be negative)
-    row.gross_bonus = (row.new_gross_total || 0) * 0.05
-
-    // KPI bonuses via scale lookups
+    row.gross_bonus = row.new_gross_total * 0.05
     row.kpi_bonus_pool = calculateKpiPool(row)
     row.volume_unlock_percentage = 1
     row.unlocked_kpi_bonus = row.kpi_bonus_pool
-
     row.manual_bonus_total = 0
     row.direct_purchase_bonus = 0
     row.fixed_payout_total = row.volume_bonus + row.signups_bonus
@@ -660,16 +739,33 @@ function blankMetric(name) {
 
 function addSignups(grouped) {
   const seenDeals = new Set()
+
   ;(state.imports.signups || []).forEach((row) => {
-    const name = cleanName(get(row, ['sales person', 'salesperson', 'consultant', 'sales consultant']))
+    const name = cleanName(get(row, [
+      'sales person',
+      'salesperson',
+      'consultant',
+      'sales consultant',
+      'salesperson name'
+    ]))
+
     if (!name) return
-    // Deduplicate by deal number to avoid double-counting duplicate rows
-    const dealKey = normalizeDealNumber(get(row, ['deal', 'deal number', 'deal no']))
-    const dedupKey = dealKey ? name + '|' + dealKey : null
+
+    const dealKey = normalizeDealNumber(get(row, [
+      'deal',
+      'deal number',
+      'deal no',
+      'deal #',
+      'deal#'
+    ]))
+
+    const dedupKey = dealKey ? `${name}|${dealKey}` : null
+
     if (dedupKey) {
       if (seenDeals.has(dedupKey)) return
       seenDeals.add(dedupKey)
     }
+
     if (!grouped[name]) grouped[name] = blankMetric(name)
     grouped[name].signups += 1
   })
@@ -677,29 +773,41 @@ function addSignups(grouped) {
 
 function addReviews(grouped) {
   ;(state.imports.reviews || []).forEach((row) => {
-    // Support both structured (name column present) and shifted exports
-    // where salesperson name appears in nps/dah column and metrics in google reviews column
-    let name = cleanName(get(row, ['salesperson', 'sales person', 'consultant', 'sales consultant', 'name']))
+    let name = cleanName(get(row, [
+      'salesperson',
+      'sales person',
+      'consultant',
+      'sales consultant',
+      'name'
+    ]))
 
-    // Detect shifted format: if name is empty but 'nps' looks like a name (not a number)
     if (!name) {
-      const npsVal = String(get(row, ['nps', 'nps score']) || '').trim()
-      if (npsVal && isNaN(Number(npsVal.replace('%', '')))) {
-        name = cleanName(npsVal)
+      const maybeName = String(get(row, ['nps', 'nps score']) || '').trim()
+      if (maybeName && isNaN(Number(maybeName.replace('%', '')))) {
+        name = cleanName(maybeName)
       }
     }
 
     if (!name) return
+
     if (!grouped[name]) grouped[name] = blankMetric(name)
 
-    const googleVal = get(row, ['google reviews', 'google review', 'reviews'])
-    const npsVal = get(row, ['nps score', 'nps'])
-    const dahVal = get(row, ['dah', 'drive away happy', 'driveaway happy'])
+    const googleNum = moneyNumber(get(row, [
+      'google reviews',
+      'google review',
+      'reviews'
+    ]))
 
-    // In the shifted format, google reviews column holds the numeric % value
-    const googleNum = moneyNumber(googleVal)
-    const npsNum = moneyNumber(npsVal)
-    const dahNum = moneyNumber(dahVal)
+    const npsNum = moneyNumber(get(row, [
+      'nps score',
+      'nps'
+    ]))
+
+    const dahNum = moneyNumber(get(row, [
+      'dah',
+      'drive away happy',
+      'driveaway happy'
+    ]))
 
     if (googleNum > 0) grouped[name].google_reviews += googleNum
     if (npsNum > 0) grouped[name].nps = npsNum
@@ -709,19 +817,40 @@ function addReviews(grouped) {
 
 function addLeads(grouped) {
   ;(state.imports.leads || []).forEach((row) => {
-    const name = cleanName(get(row, ['sales person', 'salesperson', 'owner', 'consultant', 'sales consultant']))
+    const name = cleanName(get(row, [
+      'sales person',
+      'salesperson',
+      'owner',
+      'consultant',
+      'sales consultant',
+      'salesperson name'
+    ]))
+
     if (!name) return
 
     if (!grouped[name]) grouped[name] = blankMetric(name)
 
-    grouped[name].new_leads += 1
-    grouped[name].test_drives += moneyNumber(get(row, ['test drive', 'test drives', 'test drive count']))
-    grouped[name].valuations += moneyNumber(get(row, ['valuation', 'valuations', 'valuation count']))
+    grouped[name].new_leads += moneyNumber(get(row, [
+      'new leads',
+      'leads',
+      'lead count'
+    ])) || 1
+
+    grouped[name].test_drives += moneyNumber(get(row, [
+      'test drive',
+      'test drives',
+      'test drive count'
+    ]))
+
+    grouped[name].valuations += moneyNumber(get(row, [
+      'valuation',
+      'valuations',
+      'valuation count',
+      'appraisals'
+    ]))
   })
 }
 
-// ── Commission rules matching Excel calculator ──────────────────────────────
-// Aftercare PPV scale → payout
 function aftercarePayout(ppv) {
   if (ppv >= 800) return 1100
   if (ppv >= 600) return 1000
@@ -730,7 +859,6 @@ function aftercarePayout(ppv) {
   return 0
 }
 
-// Finance penetration % (0-100) → payout
 function financePenPayout(pen) {
   if (pen >= 75) return 1000
   if (pen >= 40) return 500
@@ -738,38 +866,29 @@ function financePenPayout(pen) {
   return 0
 }
 
-// Finance IPUR → payout
 function financeIpurPayout(ipur) {
   if (ipur >= 1500) return 1000
   if (ipur >= 1100) return 500
-  if (ipur >= 800)  return 250
+  if (ipur >= 800) return 250
   return 0
 }
 
-// Accessory PVR → payout
 function accessoryPayout(pvr) {
   if (pvr >= 500) return 450
   if (pvr >= 100) return 150
   return 0
 }
 
-// Google reviews: $25 per review
 function googleReviewPayout(count) {
   return Math.round(count) * 25
 }
 
-// NPS (0-100): $250 if >= 80
 function npsPayout(nps) {
   return nps >= 80 ? 250 : 0
 }
 
-// DAH (0-100): $250 if >= 80
 function dahPayout(dah) {
   return dah >= 80 ? 250 : 0
-}
-
-function calculateUnlock(units) {
-  return units > 0 ? 1 : 0
 }
 
 function calculateKpiPool(row) {
@@ -824,21 +943,37 @@ function parseFlexibleTable(text) {
 
   const delimiter = detectDelimiter(lines)
 
-  let headerIndex = lines.findIndex((line) => {
-    const lowered = line.toLowerCase()
-    return lowered.includes('deal') ||
-      lowered.includes('salesperson') ||
-      lowered.includes('sales person') ||
-      lowered.includes('consultant')
+  let bestIndex = 0
+  let bestScore = -1
+
+  lines.slice(0, 30).forEach((line, index) => {
+    const headers = splitLine(line, delimiter).map(normalizeHeader)
+
+    const score = headers.reduce((sum, header) => {
+      if (header.includes('deal')) sum += 3
+      if (header.includes('sales')) sum += 3
+      if (header.includes('consultant')) sum += 3
+      if (header.includes('gross')) sum += 2
+      if (header.includes('income')) sum += 2
+      if (header.includes('amount')) sum += 2
+      if (header.includes('customer')) sum += 1
+      if (header.includes('vehicle')) sum += 1
+      return sum
+    }, 0)
+
+    if (score > bestScore) {
+      bestScore = score
+      bestIndex = index
+    }
   })
 
-  if (headerIndex < 0) headerIndex = 0
+  const headers = splitLine(lines[bestIndex], delimiter).map(normalizeHeader)
 
-  const headers = splitLine(lines[headerIndex], delimiter).map(normalizeHeader)
+  console.log('Detected headers:', headers)
 
-  return lines.slice(headerIndex + 1)
+  return lines.slice(bestIndex + 1)
     .map((line) => splitLine(line, delimiter))
-    .filter((cols) => cols.some(Boolean))
+    .filter((cols) => cols.some((col) => String(col || '').trim()))
     .map((cols) => {
       const obj = {}
 
@@ -866,8 +1001,9 @@ function splitLine(line, delimiter) {
   let quoted = false
 
   for (const char of line) {
-    if (char === '"') quoted = !quoted
-    else if (char === ',' && !quoted) {
+    if (char === '"') {
+      quoted = !quoted
+    } else if (char === ',' && !quoted) {
       result.push(current)
       current = ''
     } else {
@@ -890,8 +1026,22 @@ function normalizeDealNumber(value) {
 
 function rowsByDeal(type, dealNumber) {
   const normalized = normalizeDealNumber(dealNumber)
+
   return (state.imports[type] || []).filter((row) => {
-    const rowDeal = get(row, ['deal', 'deal number', 'deal no', 'stock deal no', 'stock no', 'deal ref'])
+    const rowDeal = get(row, [
+      'deal',
+      'deal number',
+      'deal no',
+      'deal no.',
+      'deal #',
+      'deal#',
+      'stock deal no',
+      'stock no',
+      'stock number',
+      'deal ref',
+      'reference'
+    ])
+
     return normalizeDealNumber(rowDeal) === normalized
   })
 }
@@ -901,10 +1051,27 @@ function sumByDeal(type, dealNumber, mapper) {
 }
 
 function get(row, names) {
+  const keys = Object.keys(row || {})
+
   for (const name of names) {
-    const key = normalizeHeader(name)
-    if (row[key] !== undefined && row[key] !== null && row[key] !== '') {
-      return row[key]
+    const target = normalizeHeader(name)
+
+    let foundKey = keys.find((key) => normalizeHeader(key) === target)
+
+    if (!foundKey) {
+      foundKey = keys.find((key) => normalizeHeader(key).includes(target))
+    }
+
+    if (!foundKey) {
+      foundKey = keys.find((key) => target.includes(normalizeHeader(key)))
+    }
+
+    if (foundKey) {
+      const value = row[foundKey]
+
+      if (value !== undefined && value !== null && String(value).trim() !== '') {
+        return value
+      }
     }
   }
 
@@ -914,19 +1081,14 @@ function get(row, names) {
 function normalizeHeader(header) {
   return String(header || '')
     .toLowerCase()
-    .replace(/[$#.()\[\]]/g, '')
-    .replace(/-/g, ' ')
+    .replace(/[$#.()\[\]{}]/g, '')
+    .replace(/[-_/]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 }
 
 function cleanName(value) {
   return String(value || '').replace(/\s+/g, ' ').trim()
-}
-
-function truthy(value) {
-  const v = String(value || '').toLowerCase().trim()
-  return ['yes', 'y', 'true', '1', 'dealer finance', 'finance'].includes(v)
 }
 
 function moneyNumber(value) {
