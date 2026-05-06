@@ -30,14 +30,10 @@
 
 </head>
 
-<body>
+<body data-page="login">
 
   <div class="background-orb orb-1"></div>
   <div class="background-orb orb-2"></div>
-
-  <!-- ========================================== -->
-  <!-- HERO -->
-  <!-- ========================================== -->
 
   <main class="landing-shell">
 
@@ -60,8 +56,6 @@
           KPI visibility, operational analytics and AI-powered salesperson coaching.
         </p>
 
-        <!-- FEATURE PILLS -->
-
         <div class="pill-row">
 
           <div class="pill">
@@ -82,26 +76,6 @@
 
         </div>
 
-        <!-- CTA -->
-
-        <div class="landing-actions">
-
-          <a
-            href="./manager.html"
-            class="btn btn-primary btn-large"
-          >
-            Open Manager Dashboard
-          </a>
-
-          <a
-            href="./salesperson.html"
-            class="btn btn-secondary btn-large"
-          >
-            Open Salesperson Dashboard
-          </a>
-
-        </div>
-
       </div>
 
       <!-- RIGHT -->
@@ -115,70 +89,77 @@
             <div>
 
               <p class="preview-label">
-                Team Snapshot
+                Secure Login
               </p>
 
               <h3>
-                April 2026
+                Dealership Access
               </h3>
 
             </div>
 
             <div class="status-pill">
-              Live
+              Secure
             </div>
 
           </div>
 
-          <!-- MINI KPI GRID -->
+          <!-- LOGIN FORM -->
 
-          <div class="preview-grid">
+          <form id="loginForm" class="login-form">
 
-            <div class="mini-stat">
-              <span class="mini-label">
-                Units
-              </span>
+            <div class="form-group">
 
-              <strong>
-                147
-              </strong>
+              <label class="preview-label">
+                Email
+              </label>
+
+              <input
+                type="email"
+                id="email"
+                class="control"
+                placeholder="Enter your email"
+                required
+              />
+
             </div>
 
-            <div class="mini-stat">
-              <span class="mini-label">
-                Finance %
-              </span>
+            <div class="form-group">
 
-              <strong>
-                63%
-              </strong>
+              <label class="preview-label">
+                Password
+              </label>
+
+              <input
+                type="password"
+                id="password"
+                class="control"
+                placeholder="Enter your password"
+                required
+              />
+
             </div>
 
-            <div class="mini-stat">
-              <span class="mini-label">
-                Avg PPV
-              </span>
+            <button
+              type="submit"
+              class="btn btn-primary btn-large"
+              style="width:100%; margin-top:12px;"
+            >
+              Sign In
+            </button>
 
-              <strong>
-                $1,421
-              </strong>
-            </div>
+          </form>
 
-            <div class="mini-stat">
-              <span class="mini-label">
-                Team Comm
-              </span>
+          <div
+            id="loginMessage"
+            class="preview-copy"
+            style="margin-top:18px;"
+          ></div>
 
-              <strong>
-                $86k
-              </strong>
-            </div>
-
-          </div>
-
-          <!-- AI PREVIEW -->
-
-          <div class="ai-preview">
+          <div
+            class="ai-preview"
+            style="margin-top:24px;"
+          >
 
             <div class="ai-dot"></div>
 
@@ -205,6 +186,8 @@
     </section>
 
   </main>
+
+  <script type="module" src="./app.js"></script>
 
 </body>
 </html>
