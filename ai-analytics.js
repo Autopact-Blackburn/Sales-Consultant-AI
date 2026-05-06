@@ -1,245 +1,120 @@
-export function generateSalespersonInsights(metrics = {}) {
+export function generateSalespersonInsights(row = {}) {
+  const name = row.salesperson_name || 'Sales Consultant'
 
-  const insights = []
-
-  const focusAreas = []
+  const units = Number(row.units || 0)
+  const financePen = Number(row.finance_pen || 0)
+  const financeIpur = Number(row.finance_ipur || 0)
+  const aftercarePpv = Number(row.aftercare_ppv || 0)
+  const accessoryGp = Number(row.accessory_gp || 0)
+  const googleReviews = Number(row.google_reviews || 0)
+  const nps = Number(row.nps || 0)
+  const dah = Number(row.dah || 0)
+  const totalCommission = Number(row.total_commission || 0)
 
   const strengths = []
-
-  const {
-
-    salesperson_name = 'Salesperson',
-
-    units = 0,
-
-    finance_penetration = 0,
-
-    finance_ipur = 0,
-
-    aftercare_ppv = 0,
-
-    accessory_gp = 0,
-
-    google_reviews = 0,
-
-    nps = 0,
-
-    dah = 0,
-
-    final_commission = 0
-
-  } = metrics
-
-  // =========================================
-  // UNITS
-  // =========================================
+  const opportunities = []
+  const focusAreas = []
 
   if (units >= 18) {
-
-    strengths.push(
-      'Elite unit performance this month.'
-    )
-
+    strengths.push('Elite volume result with strong month-end impact.')
   } else if (units >= 15) {
-
-    strengths.push(
-      'Strong volume month with solid consistency.'
-    )
-
-  } else if (units < 10) {
-
-    focusAreas.push(
-      'Increase outbound activity and appointment generation.'
-    )
-
+    strengths.push('Strong sales volume with good consistency.')
+  } else if (units >= 12) {
+    strengths.push('Solid unit contribution with room to unlock higher accelerator value.')
+  } else {
+    opportunities.push('Unit volume needs attention to unlock stronger commission outcomes.')
+    focusAreas.push('Increase appointments, test drives and daily follow-up activity.')
   }
 
-  // =========================================
-  // FINANCE PENETRATION
-  // =========================================
-
-  if (finance_penetration >= 65) {
-
-    strengths.push(
-      'Excellent finance penetration performance.'
-    )
-
-  } else if (finance_penetration < 40) {
-
-    focusAreas.push(
-      'Focus on finance conversations earlier in the sales process.'
-    )
-
+  if (financePen >= 60) {
+    strengths.push('Finance penetration is above a strong dealership benchmark.')
+  } else {
+    opportunities.push('Finance penetration is below target opportunity level.')
+    focusAreas.push('Introduce finance earlier and more consistently in the sale.')
   }
 
-  // =========================================
-  // FINANCE IPUR
-  // =========================================
-
-  if (finance_ipur >= 1800) {
-
-    strengths.push(
-      'Strong finance income per unit result.'
-    )
-
-  } else if (finance_ipur < 1000) {
-
-    focusAreas.push(
-      'Work with the business manager to improve finance structure quality.'
-    )
-
+  if (financeIpur >= 1500) {
+    strengths.push('Finance income per unit is contributing well to overall performance.')
+  } else {
+    opportunities.push('Finance IPUR can improve through better finance structure quality.')
+    focusAreas.push('Work closer with the business manager on every finance opportunity.')
   }
 
-  // =========================================
-  // AFTERCARE
-  // =========================================
-
-  if (aftercare_ppv >= 1200) {
-
-    strengths.push(
-      'Excellent aftercare presentation and value building.'
-    )
-
-  } else if (aftercare_ppv < 600) {
-
-    focusAreas.push(
-      'Spend more time presenting protection products and ownership benefits.'
-    )
-
+  if (aftercarePpv >= 1200) {
+    strengths.push('Aftercare PPV shows strong ownership protection presentation.')
+  } else {
+    opportunities.push('Aftercare PPV is a key upside area.')
+    focusAreas.push('Build more value in aftercare before delivery pressure begins.')
   }
 
-  // =========================================
-  // ACCESSORY GP
-  // =========================================
-
-  if (accessory_gp >= 5000) {
-
-    strengths.push(
-      'Strong accessory attachment and gross generation.'
-    )
-
-  } else if (accessory_gp < 2000) {
-
-    focusAreas.push(
-      'Improve accessory presentation during vehicle handover.'
-    )
-
+  if (accessoryGp >= 4000) {
+    strengths.push('Accessory gross is adding meaningful value to the month.')
+  } else {
+    opportunities.push('Accessory attachment appears underdeveloped.')
+    focusAreas.push('Start accessory conversations earlier during vehicle selection.')
   }
 
-  // =========================================
-  // REVIEWS
-  // =========================================
-
-  if (google_reviews >= 5) {
-
-    strengths.push(
-      'Excellent customer advocacy through Google reviews.'
-    )
-
-  } else if (google_reviews < 2) {
-
-    focusAreas.push(
-      'Ask every happy customer for a Google review before delivery.'
-    )
-
+  if (googleReviews >= 5) {
+    strengths.push('Customer advocacy is strong through Google review activity.')
+  } else {
+    opportunities.push('Google review activity can be improved.')
+    focusAreas.push('Ask every happy customer for a review before they leave delivery.')
   }
 
-  // =========================================
-  // NPS
-  // =========================================
-
-  if (nps >= 85) {
-
-    strengths.push(
-      'Outstanding customer experience results.'
-    )
-
-  } else if (nps < 70) {
-
-    focusAreas.push(
-      'Focus on communication consistency throughout the ownership journey.'
-    )
-
+  if (nps >= 85 || dah >= 85) {
+    strengths.push('Customer experience indicators are tracking positively.')
+  } else if (nps > 0 || dah > 0) {
+    opportunities.push('Customer experience scores suggest room for process tightening.')
+    focusAreas.push('Improve communication rhythm from sale through delivery.')
   }
 
-  // =========================================
-  // DAH
-  // =========================================
+  const uniqueFocus = [...new Set(focusAreas)].slice(0, 3)
 
-  if (dah >= 85) {
-
-    strengths.push(
-      'Excellent Drive Away Happy performance.'
-    )
-
+  while (uniqueFocus.length < 3) {
+    uniqueFocus.push('Maintain daily discipline and protect follow-up consistency.')
   }
 
-  // =========================================
-  // FALLBACKS
-  // =========================================
+  const summary = `${name} finished the period with ${units} units and an estimated commission of ${formatMoney(totalCommission)}. The strongest indicators are ${strengths.slice(0, 2).join(' and ') || 'overall contribution and consistency'}. The main coaching focus for the next month should be ${uniqueFocus[0].toLowerCase()}`
 
-  if (!strengths.length) {
-
-    strengths.push(
-      'Solid contribution across multiple areas this month.'
-    )
-
-  }
-
-  if (!focusAreas.length) {
-
-    focusAreas.push(
-      'Maintain consistency and continue refining process discipline.'
-    )
-
-  }
-
-  // =========================================
-  // SUMMARY
-  // =========================================
-
-  let summary = `
-
-    ${salesperson_name} delivered ${units} units this month
-    with a final commission outcome of
-    $${Number(final_commission || 0).toLocaleString()}.
-
-  `
-
-  if (strengths.length) {
-
-    summary += `
-      Key strengths included ${strengths
-        .slice(0, 2)
-        .join(' and ')
-      }.
-    `
-
-  }
-
-  if (focusAreas.length) {
-
-    summary += `
-      The biggest opportunity next month is to focus on
-      ${focusAreas[0].toLowerCase()}.
-    `
-
-  }
-
-  // =========================================
-  // RETURN
-  // =========================================
+  const fullText = [
+    `Performance Success Plan - ${name}`,
+    '',
+    `Units: ${units}`,
+    `Total Commission: ${formatMoney(totalCommission)}`,
+    `Finance Penetration: ${financePen}%`,
+    `Finance IPUR: ${formatMoney(financeIpur)}`,
+    `Aftercare PPV: ${formatMoney(aftercarePpv)}`,
+    `Accessory GP: ${formatMoney(accessoryGp)}`,
+    `Google Reviews: ${googleReviews}`,
+    `NPS: ${nps}`,
+    `DAH: ${dah}`,
+    '',
+    'Summary:',
+    summary,
+    '',
+    'Strengths:',
+    ...strengths.map(x => `- ${x}`),
+    '',
+    'Opportunities:',
+    ...opportunities.map(x => `- ${x}`),
+    '',
+    'Top 3 Focus Areas:',
+    ...uniqueFocus.map((x, i) => `${i + 1}. ${x}`)
+  ].join('\n')
 
   return {
-
-    summary: summary.trim(),
-
+    summary,
     strengths,
-
-    focusAreas,
-
-    insights
-
+    opportunities,
+    focusAreas: uniqueFocus,
+    fullText
   }
+}
 
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency: 'AUD',
+    maximumFractionDigits: 0
+  }).format(Number(value || 0))
 }

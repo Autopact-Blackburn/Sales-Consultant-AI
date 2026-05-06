@@ -1,399 +1,218 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-
   <meta charset="utf-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Manager Dashboard</title>
-
   <link rel="stylesheet" href="./styles.css" />
-
 </head>
 
 <body data-page="manager">
 
-  <!-- ========================================= -->
-  <!-- TOPBAR -->
-  <!-- ========================================= -->
-
   <header class="topbar">
-
     <div>
       <p class="eyebrow">Manager View</p>
-      <h1>Team Commissions</h1>
+      <h1>Team Performance</h1>
+      <p class="muted">Import, normalize, review commissions and prepare PSP coaching.</p>
     </div>
 
     <div class="topbar-actions">
-
-      <select
-        id="periodSelect"
-        class="control"
-      ></select>
-
-      <button
-        id="refreshDashboardBtn"
-        class="btn btn-secondary"
-      >
-        Refresh
-      </button>
-
+      <select id="periodSelect" class="control"></select>
+      <button id="refreshDashboardBtn" class="btn btn-secondary">Refresh</button>
     </div>
-
   </header>
-
-  <!-- ========================================= -->
-  <!-- MAIN -->
-  <!-- ========================================= -->
 
   <main class="dashboard-shell">
 
-    <!-- ========================================= -->
-    <!-- KPI CARDS -->
-    <!-- ========================================= -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-tab="importsTab">Imports</button>
+      <button class="tab-btn" data-tab="dashboardTab">Team Dashboard</button>
+      <button class="tab-btn" data-tab="pspTab">PSP / AI Review</button>
+    </nav>
 
-    <section
-      id="summaryCards"
-      class="card-grid"
-    >
+    <section id="importsTab" class="tab-panel active">
 
-      <article class="metric-card">
-        <div class="metric-label">Team Commission</div>
-        <div
-          class="metric-value"
-          id="teamCommission"
-        >
-          $0
-        </div>
-      </article>
-
-      <article class="metric-card">
-        <div class="metric-label">Units Sold</div>
-        <div
-          class="metric-value"
-          id="unitsSold"
-        >
-          0
-        </div>
-      </article>
-
-      <article class="metric-card">
-        <div class="metric-label">Finance Pen.</div>
-        <div
-          class="metric-value"
-          id="financePen"
-        >
-          0%
-        </div>
-      </article>
-
-      <article class="metric-card">
-        <div class="metric-label">Top Performer</div>
-        <div
-          class="metric-value"
-          id="topPerformer"
-        >
-          —
-        </div>
-      </article>
-
-    </section>
-
-    <!-- ========================================= -->
-    <!-- IMPORTS -->
-    <!-- ========================================= -->
-
-    <section class="panel">
-
-      <div class="section-head">
+      <section class="panel hero-panel">
         <div>
-          <p class="eyebrow">Imports</p>
-          <h2>Monthly Data Imports</h2>
+          <p class="eyebrow">Step 1</p>
+          <h2>Monthly Import Hub</h2>
+          <p class="muted">Paste each BI report, process it, then run normalization. Deal Log is the anchor dataset.</p>
         </div>
-      </div>
 
-      <div class="imports-grid">
+        <div class="normalize-bar compact">
+          <button id="normalizeBtn" class="btn btn-success">Run Normalization</button>
+          <p id="normalizeStatus" class="muted">Waiting for imports...</p>
+        </div>
+      </section>
 
-        <!-- DEAL LOG -->
+      <section class="imports-grid">
 
         <article class="import-card">
-
           <div class="import-head">
             <h3>Deal Log</h3>
-
-            <button
-              class="btn btn-primary import-btn"
-              data-type="deal_log"
-            >
-              Process
-            </button>
+            <button class="btn btn-primary import-btn" data-type="deal_log">Process</button>
           </div>
-
-          <p class="muted">
-            Uses Processed Gross minus AM - Gross.
-          </p>
-
-          <textarea
-            id="deal_log"
-            class="import-input"
-            placeholder="Paste Deal Log export here..."
-          ></textarea>
-
+          <p class="muted">Anchor report. Uses Processed Gross minus AM - Gross.</p>
+          <textarea id="deal_log" class="import-input" placeholder="Paste Deal Log export here..."></textarea>
         </article>
 
-        <!-- ACCESSORIES -->
-
         <article class="import-card">
-
           <div class="import-head">
             <h3>Accessories</h3>
-
-            <button
-              class="btn btn-primary import-btn"
-              data-type="accessories"
-            >
-              Process
-            </button>
-
+            <button class="btn btn-primary import-btn" data-type="accessories">Process</button>
           </div>
-
-          <p class="muted">
-            Sale Amount minus Cost Amount.
-          </p>
-
-          <textarea
-            id="accessories"
-            class="import-input"
-            placeholder="Paste Accessories export here..."
-          ></textarea>
-
+          <p class="muted">Calculates accessory GP from Sale Amount minus Cost Amount.</p>
+          <textarea id="accessories" class="import-input" placeholder="Paste Accessories export here..."></textarea>
         </article>
 
-        <!-- FINANCE -->
-
         <article class="import-card">
-
           <div class="import-head">
-
             <h3>Finance</h3>
-
-            <button
-              class="btn btn-primary import-btn"
-              data-type="finance"
-            >
-              Process
-            </button>
-
+            <button class="btn btn-primary import-btn" data-type="finance">Process</button>
           </div>
-
-          <p class="muted">
-            Dealer Finance + Total Income.
-          </p>
-
-          <textarea
-            id="finance"
-            class="import-input"
-            placeholder="Paste Finance export here..."
-          ></textarea>
-
+          <p class="muted">Uses Dealer Finance for penetration and Total Income for IPUR.</p>
+          <textarea id="finance" class="import-input" placeholder="Paste Finance export here..."></textarea>
         </article>
 
-        <!-- AFTERCARE -->
-
         <article class="import-card">
-
           <div class="import-head">
-
             <h3>Aftercare</h3>
-
-            <button
-              class="btn btn-primary import-btn"
-              data-type="aftercare"
-            >
-              Process
-            </button>
-
+            <button class="btn btn-primary import-btn" data-type="aftercare">Process</button>
           </div>
-
-          <p class="muted">
-            Uses Total Aftermarket.
-          </p>
-
-          <textarea
-            id="aftercare"
-            class="import-input"
-            placeholder="Paste Aftercare export here..."
-          ></textarea>
-
+          <p class="muted">Uses Total Aftermarket for Aftercare PPV.</p>
+          <textarea id="aftercare" class="import-input" placeholder="Paste Aftercare export here..."></textarea>
         </article>
 
-        <!-- SIGNUPS -->
-
         <article class="import-card">
-
           <div class="import-head">
-
             <h3>Sign Ups</h3>
-
-            <button
-              class="btn btn-primary import-btn"
-              data-type="signups"
-            >
-              Process
-            </button>
-
+            <button class="btn btn-primary import-btn" data-type="signups">Process</button>
           </div>
-
-          <p class="muted">
-            Counts by salesperson.
-          </p>
-
-          <textarea
-            id="signups"
-            class="import-input"
-            placeholder="Paste Signups export here..."
-          ></textarea>
-
+          <p class="muted">Counts sign ups by salesperson.</p>
+          <textarea id="signups" class="import-input" placeholder="Paste Sign Ups export here..."></textarea>
         </article>
-
-        <!-- REVIEWS -->
 
         <article class="import-card">
-
           <div class="import-head">
-
-            <h3>Reviews</h3>
-
-            <button
-              class="btn btn-primary import-btn"
-              data-type="reviews"
-            >
-              Process
-            </button>
-
+            <h3>NPS / DAH / Google Reviews</h3>
+            <button class="btn btn-primary import-btn" data-type="reviews">Process</button>
           </div>
-
-          <p class="muted">
-            NPS / DAH / Google Reviews.
-          </p>
-
-          <textarea
-            id="reviews"
-            class="import-input"
-            placeholder="Paste Reviews export here..."
-          ></textarea>
-
+          <p class="muted">Manual monthly customer experience inputs.</p>
+          <textarea id="reviews" class="import-input" placeholder="Paste columns like Salesperson, NPS, DAH, Google Reviews..."></textarea>
         </article>
 
-      </div>
+        <article class="import-card import-card-wide">
+          <div class="import-head">
+            <h3>Lead Data</h3>
+            <button class="btn btn-primary import-btn" data-type="leads">Process</button>
+          </div>
+          <p class="muted">Tracks leads, test drives and valuations by salesperson for AI coaching.</p>
+          <textarea id="leads" class="import-input" placeholder="Paste Lead Data export here..."></textarea>
+        </article>
 
-      <!-- ========================================= -->
-      <!-- NORMALIZATION -->
-      <!-- ========================================= -->
+      </section>
 
-      <div class="normalize-bar">
-
-        <button
-          id="normalizeBtn"
-          class="btn btn-success"
-        >
-          Run Normalization
-        </button>
-
-        <p
-          id="normalizeStatus"
-          class="muted"
-        >
-          Waiting for imports...
-        </p>
-
-      </div>
+      <section class="panel">
+        <p class="eyebrow">Import Log</p>
+        <h2>Processing Results</h2>
+        <div id="importResults" class="result-stack">
+          <div class="empty-state">No imports processed yet.</div>
+        </div>
+      </section>
 
     </section>
 
-    <!-- ========================================= -->
-    <!-- TEAM TABLE -->
-    <!-- ========================================= -->
+    <section id="dashboardTab" class="tab-panel">
 
-    <section class="panel">
+      <section class="card-grid">
+        <article class="metric-card accent-blue">
+          <div class="metric-label">Team Commission</div>
+          <div class="metric-value" id="teamCommission">$0</div>
+        </article>
 
-      <div class="section-head">
+        <article class="metric-card accent-green">
+          <div class="metric-label">Units Sold</div>
+          <div class="metric-value" id="unitsSold">0</div>
+        </article>
 
-        <div>
-          <p class="eyebrow">Performance</p>
-          <h2>Team Overview</h2>
+        <article class="metric-card accent-purple">
+          <div class="metric-label">Finance Pen.</div>
+          <div class="metric-value" id="financePen">0%</div>
+        </article>
+
+        <article class="metric-card accent-gold">
+          <div class="metric-label">Top Performer</div>
+          <div class="metric-value" id="topPerformer">—</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Team Results</p>
+            <h2>Sales Consultant Overview</h2>
+          </div>
+
+          <button id="mailFcBtn" class="btn btn-secondary">Email FC Summary</button>
         </div>
 
-      </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Salesperson</th>
+                <th>Units</th>
+                <th>Finance %</th>
+                <th>Finance IPUR</th>
+                <th>Aftercare PPV</th>
+                <th>Accessory GP</th>
+                <th>Total Comm</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="teamRows">
+              <tr><td colspan="8">No team metrics yet. Import data and run normalization.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-      <div class="table-wrap">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Consultant Focus</p>
+            <h2>Selected Sales Consultant</h2>
+          </div>
+        </div>
 
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Salesperson</th>
-              <th>Units</th>
-              <th>Finance %</th>
-              <th>Aftercare PPV</th>
-              <th>Accessory GP</th>
-              <th>Total Comm</th>
-              <th></th>
-            </tr>
-
-          </thead>
-
-          <tbody id="teamRows">
-
-            <tr>
-              <td colspan="7">
-                No rows yet.
-              </td>
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
+        <div id="consultantDetail" class="detail-panel">
+          <div class="empty-state">Select a salesperson to view high level stats, commission breakdown and deal-level detail.</div>
+        </div>
+      </section>
 
     </section>
 
-    <!-- ========================================= -->
-    <!-- PSP / REVIEW PANEL -->
-    <!-- ========================================= -->
+    <section id="pspTab" class="tab-panel">
 
-    <section class="panel">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">AI PSP Mode</p>
+            <h2>Performance Review Assistant</h2>
+          </div>
 
-      <div class="section-head">
-
-        <div>
-          <p class="eyebrow">PSP Mode</p>
-          <h2>Performance Review Assistant</h2>
+          <button id="mailtoPspBtn" class="btn btn-secondary" disabled>Email PSP</button>
         </div>
 
-      </div>
-
-      <div id="pspPanel">
-
-        <div class="empty-state">
-          Select a salesperson to generate AI insights.
+        <div id="pspPanel">
+          <div class="empty-state">Select a salesperson from the dashboard to generate PSP coaching.</div>
         </div>
-
-      </div>
+      </section>
 
     </section>
 
   </main>
 
   <script type="module" src="./app.js"></script>
-
 </body>
-
 </html>
