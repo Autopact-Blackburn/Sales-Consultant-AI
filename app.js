@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   bindTabs()
   bindImportButtons()
+  bindFileUploads()
   bindNormalizeButton()
   bindRefreshButtons()
   bindMailButtons()
@@ -72,6 +73,38 @@ async function redirectByRole() {
   window.location.href = role === 'salesperson'
     ? './salesperson.html'
     : './manager.html'
+}
+function bindFileUploads() {
+  document.querySelectorAll('.file-input').forEach((input) => {
+    input.addEventListener('change', async (event) => {
+      try {
+        const file = event.target.files?.[0]
+
+        if (!file) return
+
+        const type = input.dataset.type
+
+        const text = await file.text()
+
+        const textarea = document.getElementById(type)
+
+        if (textarea) {
+          textarea.value = text
+        }
+
+        appendImportResult(
+          `${label(type)} upload loaded successfully (${file.name})`
+        )
+
+        console.log(`${type} file preview:`)
+        console.log(text.slice(0, 1000))
+
+      } catch (error) {
+        console.error(error)
+        alert('File upload failed')
+      }
+    })
+  })
 }
 
 function bindLogin() {
@@ -392,16 +425,41 @@ function renderTeamTable() {
       <td>${money(row.aftercare_ppv)}</td>
       <td>${money(row.accessory_gp)}</td>
       <td><strong>${money(row.final_commission)}</strong></td>
-      <td><button class="btn btn-secondary psp-btn">PSP</button></td>
+      <td>
+  <div class="table-actions">
+    <button class="btn btn-secondary psp-btn">
+      PSP
+    </button>
+
+    <button class="btn btn-primary workings-btn">
+      Workings
+    </button>
+  </div>
+</td>
     `
 
     tr.addEventListener('click', () => renderConsultantDetail(row))
 
     tr.querySelector('.psp-btn')?.addEventListener('click', (event) => {
-      event.stopPropagation()
-      renderPSP(row)
-      document.querySelector('[data-tab="pspTab"]')?.click()
+  event.stopPropagation()
+  renderPSP(row)
+  document.querySelector('[data-tab="pspTab"]')?.click()
+})
+
+tr.querySelector('.workings-btn')?.addEventListener('click', (event) => {
+  event.stopPropagation()
+
+  renderConsultantDetail(row)
+
+  const section = document.getElementById('consultantDetail')
+
+  if (section) {
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
     })
+  }
+})
 
     tbody.appendChild(tr)
   })
