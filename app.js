@@ -577,6 +577,7 @@ function buildMetrics(deals) {
     grouped[key].finance_income_total += num(deal.finance_income)
     grouped[key].accessory_gp += num(deal.accessory_gp)
     grouped[key].aftercare_total += num(deal.aftercare_total)
+    grouped[key].new_gross_total = (grouped[key].new_gross_total || 0) + num(deal.real_gp)
 
     if (deal.dealer_finance) grouped[key].finance_deals += 1
   })
@@ -590,19 +591,31 @@ function buildMetrics(deals) {
     row.finance_ipur = row.units ? row.finance_income_total / row.units : 0
     row.aftercare_ppv = row.units ? row.aftercare_total / row.units : 0
 
+    // $100 per delivered unit
     row.base_unit_commission = row.units * 100
-    row.fixed_payout_total = 0
 
+    // Volume bonus: $750 if >= 18 deliveries
+    row.volume_bonus = row.units >= 18 ? 750 : 0
+
+    // Sign ups bonus: $250 if >= 23 sign ups
+    row.signups_bonus = row.signups >= 23 ? 250 : 0
+
+    // 5% of new gross (can be negative)
+    row.gross_bonus = (row.new_gross_total || 0) * 0.05
+
+    // KPI bonuses via scale lookups
     row.kpi_bonus_pool = calculateKpiPool(row)
-    row.volume_unlock_percentage = calculateUnlock(row.units)
-    row.unlocked_kpi_bonus = row.kpi_bonus_pool * row.volume_unlock_percentage
+    row.volume_unlock_percentage = 1
+    row.unlocked_kpi_bonus = row.kpi_bonus_pool
 
     row.manual_bonus_total = 0
     row.direct_purchase_bonus = 0
+    row.fixed_payout_total = row.volume_bonus + row.signups_bonus
 
     row.final_commission =
       row.base_unit_commission +
       row.fixed_payout_total +
+      row.gross_bonus +
       row.unlocked_kpi_bonus +
       row.manual_bonus_total +
       row.direct_purchase_bonus
@@ -630,6 +643,10 @@ function blankMetric(name) {
     google_reviews: 0,
     nps: 0,
     dah: 0,
+    new_gross_total: 0,
+    volume_bonus: 0,
+    signups_bonus: 0,
+    gross_bonus: 0,
     base_unit_commission: 0,
     fixed_payout_total: 0,
     kpi_bonus_pool: 0,
@@ -703,26 +720,68 @@ function addLeads(grouped) {
   })
 }
 
-function calculateUnlock(units) {
-  if (units < 12) return 0
-  if (units >= 12 && units < 15) return 0.25
-  if (units >= 15 && units <= 17) return 0.75
-  if (units >= 18) return 1
+// ── Commission rules matching Excel calculator ──────────────────────────────
+// Aftercare PPV scale → payout
+function aftercarePayout(ppv) {
+  if (ppv >= 800) return 1100
+  if (ppv >= 600) return 1000
+  if (ppv >= 400) return 750
+  if (ppv >= 250) return 500
   return 0
 }
 
+// Finance penetration % (0-100) → payout
+function financePenPayout(pen) {
+  if (pen >= 75) return 1000
+  if (pen >= 40) return 500
+  if (pen >= 25) return 250
+  return 0
+}
+
+// Finance IPUR → payout
+function financeIpurPayout(ipur) {
+  if (ipur >= 1500) return 1000
+  if (ipur >= 1100) return 500
+  if (ipur >= 800)  return 250
+  return 0
+}
+
+// Accessory PVR → payout
+function accessoryPayout(pvr) {
+  if (pvr >= 500) return 450
+  if (pvr >= 100) return 150
+  return 0
+}
+
+// Google reviews: $25 per review
+function googleReviewPayout(count) {
+  return Math.round(count) * 25
+}
+
+// NPS (0-100): $250 if >= 80
+function npsPayout(nps) {
+  return nps >= 80 ? 250 : 0
+}
+
+// DAH (0-100): $250 if >= 80
+function dahPayout(dah) {
+  return dah >= 80 ? 250 : 0
+}
+
+function calculateUnlock(units) {
+  return units > 0 ? 1 : 0
+}
+
 function calculateKpiPool(row) {
-  let pool = 0
-
-  if (row.aftercare_ppv >= 1200) pool += 300
-  if (row.finance_penetration >= 60) pool += 300
-  if (row.finance_ipur >= 1500) pool += 300
-  if (row.accessory_gp >= 4000) pool += 300
-  if (row.google_reviews >= 5) pool += 200
-  if (row.nps >= 85) pool += 200
-  if (row.dah >= 85) pool += 200
-
-  return pool
+  return (
+    aftercarePayout(row.aftercare_ppv) +
+    financePenPayout(row.finance_penetration) +
+    financeIpurPayout(row.finance_ipur) +
+    accessoryPayout(row.accessory_gp) +
+    googleReviewPayout(row.google_reviews) +
+    npsPayout(row.nps) +
+    dahPayout(row.dah)
+  )
 }
 
 async function persistDeals(deals) {
