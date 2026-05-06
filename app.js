@@ -17,7 +17,27 @@ const state = {
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (state.page === 'login') {
+    // If already logged in, redirect to correct dashboard
+    const { data: sessionData } = await supabase.auth.getSession()
+    if (sessionData?.session) {
+      const { data: auth } = await supabase.auth.getUser()
+      const { data: staffRows } = await supabase
+        .from('staff')
+        .select('role')
+        .eq('email', auth?.user?.email)
+        .limit(1)
+      const role = staffRows?.[0]?.role
+      window.location.href = role === 'salesperson' ? './salesperson.html' : './manager.html'
+      return
+    }
     bindLogin()
+    return
+  }
+
+  // Auth guard for protected pages
+  const { data: sessionData } = await supabase.auth.getSession()
+  if (!sessionData?.session) {
+    window.location.href = './index.html'
     return
   }
 
@@ -29,22 +49,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadPeriods()
 
-const periodSelect = document.getElementById('periodSelect')
+  const periodSelect = document.getElementById('periodSelect')
 
-if (
-  !state.selectedPeriodId &&
-  periodSelect?.value
-) {
-  state.selectedPeriodId = periodSelect.value
-}
+  if (!state.selectedPeriodId && periodSelect?.value) {
+    state.selectedPeriodId = periodSelect.value
+  }
 
-if (state.page === 'manager') {
-  await refreshManagerDashboard()
-}
+  if (state.page === 'manager') {
+    await refreshManagerDashboard()
+  }
 
-if (state.page === 'salesperson') {
-  await refreshSalespersonDashboard()
-}
+  if (state.page === 'salesperson') {
+    await refreshSalespersonDashboard()
+  }
 })
 
 function bindLogin() {
@@ -69,7 +86,15 @@ function bindLogin() {
       return
     }
 
-    window.location.href = './manager.html'
+    // Check role to decide redirect
+    const { data: staffRows } = await supabase
+      .from('staff')
+      .select('role')
+      .eq('email', email)
+      .limit(1)
+
+    const role = staffRows?.[0]?.role
+    window.location.href = role === 'salesperson' ? './salesperson.html' : './manager.html'
   })
 }
 
@@ -497,13 +522,13 @@ function buildDeals() {
 
   return dealRows
     .map((row) => {
-      const dealNumber = get(row, ['deal number', 'deal no', 'deal', 'stock deal no'])
+      const dealNumber = get(row, ['deal', 'deal number', 'deal no', 'stock deal no', 'stock no', 'deal ref'])
       const salesperson = get(row, ['salesperson', 'sales person', 'consultant', 'sales consultant'])
 
       if (!dealNumber || !salesperson) return null
 
-      const processedGross = moneyNumber(get(row, ['processed gross', 'gross', 'total gross']))
-      const amGross = moneyNumber(get(row, ['am - gross', 'am gross', 'aftermarket gross']))
+      const processedGross = moneyNumber(get(row, ['processed gross', 'posted gross', 'gross', 'total gross', 'est gross']))
+      const amGross = moneyNumber(get(row, ['am gross', 'am  gross', 'am cost amount', 'aftermarket gross']))
 
       const accessoryGp = sumByDeal('accessories', dealNumber, (r) => {
         return moneyNumber(get(r, ['sale amount', 'sales amount', 'accessory sale'])) -
@@ -511,11 +536,15 @@ function buildDeals() {
       })
 
       const financeRows = rowsByDeal('finance', dealNumber)
-      const financeIncome = financeRows.reduce((sum, r) => sum + moneyNumber(get(r, ['total income', 'income', 'finance income'])), 0)
-      const dealerFinance = financeRows.some((r) => truthy(get(r, ['dealer finance', 'finance', 'financed'])))
+      const financeIncome = financeRows.reduce((sum, r) => sum + moneyNumber(get(r, ['adj total inc', 'total income', 'tot fin income', 'income', 'finance income'])), 0)
+      const dealerFinance = financeRows.some((r) => {
+        const pm = String(get(r, ['payment method']) || '').toLowerCase()
+        const ft = String(get(r, ['finance product type', 'deal type', 'loan type']) || '').toLowerCase()
+        return pm.includes('dealer finance') || ft.includes('dealer finance')
+      })
 
       const aftercareTotal = sumByDeal('aftercare', dealNumber, (r) => {
-        return moneyNumber(get(r, ['total aftermarket', 'aftermarket total', 'aftercare total']))
+        return moneyNumber(get(r, ['total aftermarket', 'aftermarket total', 'aftercare total', 'aftermarket income']))
       })
 
       return {
@@ -613,10 +642,17 @@ function blankMetric(name) {
 }
 
 function addSignups(grouped) {
+  const seenDeals = new Set()
   ;(state.imports.signups || []).forEach((row) => {
-    const name = cleanName(get(row, ['salesperson', 'sales person', 'consultant', 'sales consultant']))
+    const name = cleanName(get(row, ['sales person', 'salesperson', 'consultant', 'sales consultant']))
     if (!name) return
-
+    // Deduplicate by deal number to avoid double-counting duplicate rows
+    const dealKey = normalizeDealNumber(get(row, ['deal', 'deal number', 'deal no']))
+    const dedupKey = dealKey ? name + '|' + dealKey : null
+    if (dedupKey) {
+      if (seenDeals.has(dedupKey)) return
+      seenDeals.add(dedupKey)
+    }
     if (!grouped[name]) grouped[name] = blankMetric(name)
     grouped[name].signups += 1
   })
@@ -624,27 +660,46 @@ function addSignups(grouped) {
 
 function addReviews(grouped) {
   ;(state.imports.reviews || []).forEach((row) => {
-    const name = cleanName(get(row, ['salesperson', 'sales person', 'consultant', 'sales consultant']))
-    if (!name) return
+    // Support both structured (name column present) and shifted exports
+    // where salesperson name appears in nps/dah column and metrics in google reviews column
+    let name = cleanName(get(row, ['salesperson', 'sales person', 'consultant', 'sales consultant', 'name']))
 
+    // Detect shifted format: if name is empty but 'nps' looks like a name (not a number)
+    if (!name) {
+      const npsVal = String(get(row, ['nps', 'nps score']) || '').trim()
+      if (npsVal && isNaN(Number(npsVal.replace('%', '')))) {
+        name = cleanName(npsVal)
+      }
+    }
+
+    if (!name) return
     if (!grouped[name]) grouped[name] = blankMetric(name)
 
-    grouped[name].google_reviews += moneyNumber(get(row, ['google reviews', 'google review', 'reviews']))
-    grouped[name].nps = moneyNumber(get(row, ['nps', 'nps score'])) || grouped[name].nps
-    grouped[name].dah = moneyNumber(get(row, ['dah', 'drive away happy', 'driveaway happy'])) || grouped[name].dah
+    const googleVal = get(row, ['google reviews', 'google review', 'reviews'])
+    const npsVal = get(row, ['nps score', 'nps'])
+    const dahVal = get(row, ['dah', 'drive away happy', 'driveaway happy'])
+
+    // In the shifted format, google reviews column holds the numeric % value
+    const googleNum = moneyNumber(googleVal)
+    const npsNum = moneyNumber(npsVal)
+    const dahNum = moneyNumber(dahVal)
+
+    if (googleNum > 0) grouped[name].google_reviews += googleNum
+    if (npsNum > 0) grouped[name].nps = npsNum
+    if (dahNum > 0) grouped[name].dah = dahNum
   })
 }
 
 function addLeads(grouped) {
   ;(state.imports.leads || []).forEach((row) => {
-    const name = cleanName(get(row, ['salesperson', 'sales person', 'owner', 'consultant', 'sales consultant']))
+    const name = cleanName(get(row, ['sales person', 'salesperson', 'owner', 'consultant', 'sales consultant']))
     if (!name) return
 
     if (!grouped[name]) grouped[name] = blankMetric(name)
 
-    grouped[name].new_leads += moneyNumber(get(row, ['new leads', 'leads', 'lead count'])) || 1
-    grouped[name].test_drives += moneyNumber(get(row, ['test drives', 'test drive']))
-    grouped[name].valuations += moneyNumber(get(row, ['valuations', 'valuation', 'trade valuations']))
+    grouped[name].new_leads += 1
+    grouped[name].test_drives += moneyNumber(get(row, ['test drive', 'test drives', 'test drive count']))
+    grouped[name].valuations += moneyNumber(get(row, ['valuation', 'valuations', 'valuation count']))
   })
 }
 
@@ -766,9 +821,19 @@ function splitLine(line, delimiter) {
   return result
 }
 
+function normalizeDealNumber(value) {
+  return String(value || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .replace(/^0+/, '')
+    .toLowerCase()
+}
+
 function rowsByDeal(type, dealNumber) {
+  const normalized = normalizeDealNumber(dealNumber)
   return (state.imports[type] || []).filter((row) => {
-    return String(get(row, ['deal number', 'deal no', 'deal']) || '').trim() === String(dealNumber).trim()
+    const rowDeal = get(row, ['deal', 'deal number', 'deal no', 'stock deal no', 'stock no', 'deal ref'])
+    return normalizeDealNumber(rowDeal) === normalized
   })
 }
 
@@ -790,8 +855,9 @@ function get(row, names) {
 function normalizeHeader(header) {
   return String(header || '')
     .toLowerCase()
+    .replace(/[$#.()\[\]]/g, '')
+    .replace(/-/g, ' ')
     .replace(/\s+/g, ' ')
-    .replace(/[$]/g, '')
     .trim()
 }
 

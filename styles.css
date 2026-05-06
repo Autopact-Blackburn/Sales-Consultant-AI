@@ -4,59 +4,60 @@
 
   --bg:
     linear-gradient(
-      135deg,
-      #eef4ff 0%,
-      #f7f9ff 45%,
-      #fbf7ff 100%
+      145deg,
+      #e8f0fe 0%,
+      #f0f4ff 30%,
+      #f8f6ff 65%,
+      #fff8f0 100%
     );
 
   --panel:
-    rgba(255,255,255,0.76);
+    rgba(255,255,255,0.82);
 
   --panel-strong:
-    rgba(255,255,255,0.92);
+    rgba(255,255,255,0.96);
 
   --border:
-    rgba(203,213,225,0.6);
+    rgba(180,195,220,0.55);
 
   --text:
-    #162033;
+    #0f1829;
 
   --muted:
-    #66758b;
+    #526070;
 
   --blue:
-    #3b82f6;
+    #2563eb;
 
   --blue-dark:
-    #1d4ed8;
+    #1847c0;
 
   --purple:
-    #8b5cf6;
+    #7c3aed;
 
   --green:
-    #10b981;
+    #059669;
 
   --gold:
-    #f59e0b;
+    #d97706;
 
   --orange:
-    #fb923c;
+    #ea580c;
 
   --pink:
-    #ec4899;
+    #db2777;
 
   --cyan:
-    #06b6d4;
+    #0891b2;
 
   --shadow:
-    0 20px 60px rgba(15,23,42,0.08);
+    0 4px 24px rgba(10,20,50,0.07), 0 1px 3px rgba(10,20,50,0.04);
 
   --shadow-lg:
-    0 30px 90px rgba(15,23,42,0.12);
+    0 20px 60px rgba(10,20,50,0.11), 0 4px 12px rgba(10,20,50,0.05);
 
   --radius:
-    28px;
+    24px;
 }
 
 * {
@@ -103,10 +104,10 @@ body {
     999px;
 
   filter:
-    blur(90px);
+    blur(110px);
 
   opacity:
-    0.22;
+    0.32;
 
   pointer-events:
     none;
@@ -118,37 +119,37 @@ body {
 .orb-1 {
 
   width:
-    420px;
+    500px;
 
   height:
-    420px;
+    500px;
 
   background:
-    #60a5fa;
+    radial-gradient(circle, #4f8ef7, #3b5fe0);
 
   top:
-    -140px;
+    -180px;
 
   left:
-    -120px;
+    -150px;
 }
 
 .orb-2 {
 
   width:
-    360px;
+    420px;
 
   height:
-    360px;
+    420px;
 
   background:
-    #c084fc;
+    radial-gradient(circle, #a855f7, #7c3aed);
 
   right:
-    -100px;
+    -120px;
 
   bottom:
-    -100px;
+    -120px;
 }
 
 h1,
@@ -636,10 +637,10 @@ h3 {
     var(--panel);
 
   backdrop-filter:
-    blur(18px);
+    blur(24px) saturate(1.4);
 
   border:
-    1px solid rgba(255,255,255,0.55);
+    1px solid rgba(255,255,255,0.72);
 
   border-radius:
     var(--radius);
@@ -718,22 +719,22 @@ h3 {
     absolute;
 
   width:
-    180px;
+    200px;
 
   height:
-    180px;
+    200px;
 
   border-radius:
     999px;
 
   top:
-    -70px;
+    -80px;
 
   right:
-    -70px;
+    -80px;
 
   opacity:
-    0.12;
+    0.18;
 }
 
 .accent-blue::after {
@@ -850,7 +851,7 @@ h3 {
     white;
 
   box-shadow:
-    0 16px 34px rgba(59,130,246,0.22);
+    0 8px 24px rgba(37,99,235,0.3), 0 2px 6px rgba(37,99,235,0.15);
 }
 
 .tab-panel {
@@ -1051,24 +1052,30 @@ input {
   background:
     linear-gradient(
       135deg,
-      var(--blue),
-      var(--purple)
+      var(--blue) 0%,
+      var(--purple) 100%
     );
 
   color:
     white;
 
   box-shadow:
-    0 18px 36px rgba(59,130,246,0.24);
+    0 8px 24px rgba(37,99,235,0.32), 0 2px 6px rgba(37,99,235,0.2);
 }
 
 .btn-secondary {
 
   background:
-    rgba(255,255,255,0.9);
+    rgba(255,255,255,0.95);
 
   color:
     var(--text);
+
+  border:
+    1px solid rgba(180,195,220,0.55);
+
+  box-shadow:
+    0 2px 8px rgba(10,20,50,0.06);
 }
 
 .btn-success {
@@ -1146,7 +1153,10 @@ th {
     var(--muted);
 
   background:
-    rgba(248,250,252,0.95);
+    rgba(240,245,255,0.98);
+
+  font-weight:
+    800;
 }
 
 tbody tr {
