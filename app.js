@@ -29,13 +29,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadPeriods()
 
-  if (state.page === 'manager') {
-    await refreshManagerDashboard()
-  }
+const periodSelect = document.getElementById('periodSelect')
 
-  if (state.page === 'salesperson') {
-    await refreshSalespersonDashboard()
-  }
+if (
+  !state.selectedPeriodId &&
+  periodSelect?.value
+) {
+  state.selectedPeriodId = periodSelect.value
+}
+
+if (state.page === 'manager') {
+  await refreshManagerDashboard()
+}
+
+if (state.page === 'salesperson') {
+  await refreshSalespersonDashboard()
+}
 })
 
 function bindLogin() {
