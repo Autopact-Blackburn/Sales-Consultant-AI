@@ -42,22 +42,82 @@ document.addEventListener('DOMContentLoaded', async () => {
   bindRefreshButtons()
   bindMailButtons()
 
-  await loadPeriods()
+  async function loadPeriods() {
+  const select = document.getElementById('periodSelect')
 
-  const periodSelect = document.getElementById('periodSelect')
+  if (!select) return
 
-  if (!state.selectedPeriodId && periodSelect?.value) {
-    state.selectedPeriodId = periodSelect.value
+  try {
+
+    const { data, error } = await supabase
+      .from('commission_periods')
+      .select('*')
+      .order('period_year', { ascending: false })
+      .order('period_month', { ascending: false })
+
+    if (error) {
+      console.error('Period load error:', error)
+      alert('Failed to load commission periods')
+      return
+    }
+
+    console.log('Commission periods:', data)
+
+    select.innerHTML = ''
+
+    if (!data || !data.length) {
+
+      const option = document.createElement('option')
+      option.value = ''
+      option.textContent = 'No Commission Periods Found'
+      select.appendChild(option)
+
+      state.selectedPeriodId = null
+
+      return
+    }
+
+    data.forEach((period) => {
+
+      const option = document.createElement('option')
+
+      option.value = period.id
+
+      option.textContent =
+        period.label ||
+        `${period.period_month}/${period.period_year}`
+
+      select.appendChild(option)
+    })
+
+    state.selectedPeriodId = data[0].id
+
+    select.value = data[0].id
+
+    console.log('Selected period set:', state.selectedPeriodId)
+
+    select.addEventListener('change', async () => {
+
+      state.selectedPeriodId = select.value
+
+      console.log('Period changed:', state.selectedPeriodId)
+
+      if (state.page === 'manager') {
+        await refreshManagerDashboard()
+      }
+
+      if (state.page === 'salesperson') {
+        await refreshSalespersonDashboard()
+      }
+    })
+
+  } catch (err) {
+
+    console.error(err)
+
+    alert('Critical period loading failure')
   }
-
-  if (state.page === 'manager') {
-    await refreshManagerDashboard()
-  }
-
-  if (state.page === 'salesperson') {
-    await refreshSalespersonDashboard()
-  }
-})
+}
 
 async function redirectByRole() {
   const { data: auth } = await supabase.auth.getUser()
