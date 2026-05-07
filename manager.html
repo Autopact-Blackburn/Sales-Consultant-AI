@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manager Dashboard | Dealership Performance</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body data-page="manager">
+
+  <div class="background-orb orb-1"></div>
+  <div class="background-orb orb-2"></div>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Manager View</p>
+      <h1>Dealership Performance Intelligence</h1>
+      <p class="muted topbar-copy">
+        Monthly commission normalization, operational visibility and AI-powered PSP coaching.
+      </p>
+    </div>
+
+    <div class="topbar-actions">
+      <select id="periodSelect" class="control"></select>
+      <button id="refreshDashboardBtn" class="btn btn-secondary">Refresh</button>
+    </div>
+  </header>
+
+  <main class="dashboard-shell">
+
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-tab="importsTab">Imports</button>
+      <button class="tab-btn" data-tab="dashboardTab">Team Dashboard</button>
+      <button class="tab-btn" data-tab="pspTab">PSP / AI Coaching</button>
+    </nav>
+
+    <!-- IMPORTS -->
+    <section id="importsTab" class="tab-panel active">
+
+      <section class="panel hero-panel">
+        <div>
+          <p class="eyebrow">Commission Import Hub</p>
+          <h2>Monthly BI Imports</h2>
+          <p class="muted">
+            Upload CSV/TSV exports for best accuracy. Paste remains available as a fallback.
+          </p>
+        </div>
+
+        <div class="normalize-box">
+          <button id="normalizeBtn" class="btn btn-success btn-large">
+            Run Normalization
+          </button>
+          <p id="normalizeStatus" class="muted">
+            Upload or paste imports, then normalize.
+          </p>
+        </div>
+      </section>
+
+      <section class="imports-grid">
+
+        <article class="import-card accent-border-blue">
+          <div class="import-head">
+            <div>
+              <h3>Deal Log</h3>
+              <p class="muted small">Anchor dataset. Required.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="deal_log">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="deal_log" accept=".csv,.tsv,.txt" />
+            <span>Upload Deal Log CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="deal_log" class="import-input" placeholder="Paste Deal Log export here..."></textarea>
+        </article>
+
+        <article class="import-card accent-border-purple">
+          <div class="import-head">
+            <div>
+              <h3>Sign Ups</h3>
+              <p class="muted small">Tracks salesperson sign-up activity.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="signups">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="signups" accept=".csv,.tsv,.txt" />
+            <span>Upload Sign Ups CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="signups" class="import-input" placeholder="Paste Sign Ups export here..."></textarea>
+        </article>
+
+        <article class="import-card accent-border-gold">
+          <div class="import-head">
+            <div>
+              <h3>Accessories</h3>
+              <p class="muted small">Accessory GP from sale minus cost.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="accessories">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="accessories" accept=".csv,.tsv,.txt" />
+            <span>Upload Accessories CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="accessories" class="import-input" placeholder="Paste Accessories export here..."></textarea>
+        </article>
+
+        <article class="import-card accent-border-green">
+          <div class="import-head">
+            <div>
+              <h3>Finance</h3>
+              <p class="muted small">Finance penetration and IPUR.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="finance">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="finance" accept=".csv,.tsv,.txt" />
+            <span>Upload Finance CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="finance" class="import-input" placeholder="Paste Finance export here..."></textarea>
+        </article>
+
+        <article class="import-card accent-border-orange">
+          <div class="import-head">
+            <div>
+              <h3>Aftercare</h3>
+              <p class="muted small">Aftermarket and ownership products.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="aftercare">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="aftercare" accept=".csv,.tsv,.txt" />
+            <span>Upload Aftercare CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="aftercare" class="import-input" placeholder="Paste Aftercare export here..."></textarea>
+        </article>
+
+        <article class="import-card accent-border-pink">
+          <div class="import-head">
+            <div>
+              <h3>NPS / DAH / Google Reviews</h3>
+              <p class="muted small">Manual customer experience metrics.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="reviews">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="reviews" accept=".csv,.tsv,.txt" />
+            <span>Upload Reviews CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="reviews" class="import-input" placeholder="Paste NPS / DAH / Google Reviews..."></textarea>
+        </article>
+
+        <article class="import-card import-card-wide accent-border-cyan">
+          <div class="import-head">
+            <div>
+              <h3>Lead Data</h3>
+              <p class="muted small">Leads, test drives and valuations for coaching.</p>
+            </div>
+            <button class="btn btn-primary import-btn" data-type="leads">Process</button>
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" class="file-input" data-type="leads" accept=".csv,.tsv,.txt" />
+            <span>Upload Lead Data CSV/TSV</span>
+            <small>or paste below</small>
+          </label>
+
+          <textarea id="leads" class="import-input import-input-large" placeholder="Paste Lead Data export here..."></textarea>
+        </article>
+
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Import Results</p>
+            <h2>Processing Log</h2>
+          </div>
+        </div>
+
+        <div id="importResults" class="result-stack">
+          <div class="empty-state">No imports processed yet.</div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboardTab" class="tab-panel">
+
+      <section class="card-grid">
+        <article class="metric-card accent-blue">
+          <div class="metric-label">Team Commission</div>
+          <div class="metric-value" id="teamCommission">$0</div>
+        </article>
+
+        <article class="metric-card accent-green">
+          <div class="metric-label">Units Sold</div>
+          <div class="metric-value" id="unitsSold">0</div>
+        </article>
+
+        <article class="metric-card accent-purple">
+          <div class="metric-label">Avg Finance %</div>
+          <div class="metric-value" id="financePen">0%</div>
+        </article>
+
+        <article class="metric-card accent-gold">
+          <div class="metric-label">Top Performer</div>
+          <div class="metric-value" id="topPerformer">—</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Team Overview</p>
+            <h2>Sales Consultant Performance</h2>
+          </div>
+
+          <button id="mailFcBtn" class="btn btn-secondary">
+            Email FC Summary
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Salesperson</th>
+                <th>Units</th>
+                <th>Finance %</th>
+                <th>Finance IPUR</th>
+                <th>Aftercare PPV</th>
+                <th>Accessory GP</th>
+                <th>Final Comm</th>
+                <th>Workings</th>
+              </tr>
+            </thead>
+            <tbody id="teamRows">
+              <tr>
+                <td colspan="8">No metrics available yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Commission Workings</p>
+            <h2>Selected Salesperson Breakdown</h2>
+          </div>
+        </div>
+
+        <div id="consultantDetail" class="detail-panel">
+          <div class="empty-state">
+            Select a salesperson row or Workings button to view how commission was calculated.
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- PSP -->
+    <section id="pspTab" class="tab-panel">
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">AI Coaching Mode</p>
+            <h2>Performance Success Plan</h2>
+          </div>
+
+          <button id="mailtoPspBtn" class="btn btn-secondary" disabled>
+            Email PSP
+          </button>
+        </div>
+
+        <div id="pspPanel">
+          <div class="empty-state">
+            Select a salesperson from the dashboard to generate AI coaching insights.
+          </div>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
