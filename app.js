@@ -38,6 +38,58 @@ function show(id) {
   })
 }
 
+function showRoleWarning(show, message) {
+  const bar = $('mgr-role-warning')
+  if (!bar) return
+  bar.hidden = !show
+  const textEl = bar.querySelector('.role-warning-text')
+  if (textEl && message) textEl.textContent = message
+}
+
+/** Keeps Import as the default visible tab after manager login (avoids landing on empty Dashboard). */
+function ensureManagerImportTabActive() {
+  document.querySelectorAll('#page-manager .tab-btn').forEach(b => b.classList.remove('active'))
+  document.querySelectorAll('#page-manager .tab-panel').forEach(p => p.classList.remove('active'))
+  document.querySelector('#page-manager .tab-btn[data-tab="mgr-import"]')?.classList.add('active')
+  $('mgr-import')?.classList.add('active')
+}
+
+function syncImportProgress() {
+  const stepUpload = $('import-step-upload')
+  const stepReady = $('import-step-ready')
+  const stepRun = $('import-step-run')
+  if (!stepUpload || !stepReady || !stepRun) return
+
+  const keys = Object.keys(S.files)
+  const n = keys.length
+  const hasDealLog = !!S.files.deal_log
+
+  ;[stepUpload, stepReady, stepRun].forEach(el => el.classList.remove('step-active', 'step-done'))
+
+  if (n === 0) {
+    stepUpload.classList.add('step-active')
+  } else {
+    stepUpload.classList.add('step-done')
+    if (hasDealLog) {
+      stepReady.classList.add('step-done')
+      stepRun.classList.add('step-active')
+    } else {
+      stepReady.classList.add('step-active')
+    }
+  }
+}
+
+function markImportFlowComplete() {
+  ;['import-step-upload', 'import-step-ready', 'import-step-run'].forEach(id => {
+    const el = $(id)
+    if (!el) return
+    el.classList.remove('step-active')
+    el.classList.add('step-done')
+  })
+}
+
+let managerEventsBound = false
+
 function $(id) {
   return document.getElementById(id)
 }
@@ -268,8 +320,32 @@ function bindLogin() {
 
 async function getRole(email) {
   const { data, error } = await db.from('staff').select('role').eq('email', email).limit(1)
-  if (error) console.warn('[auth] staff role lookup:', error.message || error)
-  return data?.[0]?.role || 'salesperson'
+  if (error) {
+    console.warn('[auth] staff role lookup:', error.message || error)
+    console.log('Role lookup failed')
+    showRoleWarning(
+      true,
+      'We could not load your role from the staff table. You have temporary manager access so you can still reach Import and verify data. Ask an admin to fix database access or your staff record.'
+    )
+    return 'manager'
+  }
+  const raw = data?.[0]?.role
+  if (raw == null || String(raw).trim() === '') {
+    console.log('Role lookup failed')
+    showRoleWarning(
+      true,
+      'No role is set in the staff table for your email. Temporary manager access is enabled. Ask an admin to set your role (manager, admin, or salesperson).'
+    )
+    return 'manager'
+  }
+  showRoleWarning(false)
+  const r = String(raw).toLowerCase()
+  if (r === 'manager' || r === 'admin') {
+    console.log('Role detected: manager')
+    return r === 'admin' ? 'admin' : 'manager'
+  }
+  console.log('Role detected: salesperson')
+  return 'salesperson'
 }
 
 async function getStaffName(email) {
@@ -281,11 +357,19 @@ async function getStaffName(email) {
 async function bootPage(role) {
   if (role === 'manager' || role === 'admin') {
     show('page-manager')
+    ensureManagerImportTabActive()
     await loadPeriods('mgr-period', 'manager')
     bindManagerEvents()
+    syncImportProgress()
     await refreshManager()
+    requestAnimationFrame(() => {
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        $('import-hub-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    })
   } else {
     show('page-salesperson')
+    showRoleWarning(false)
     const {
       data: { session }
     } = await db.auth.getSession()
@@ -400,6 +484,9 @@ async function loadPeriods(selectId, pageType) {
    MANAGER — EVENTS
 ============================================================================= */
 function bindManagerEvents() {
+  if (managerEventsBound) return
+  managerEventsBound = true
+
   bindLogout('mgr-logout')
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -517,7 +604,8 @@ async function handleFiles(files) {
 
   renderLoadedFiles()
   $('runImportBtn').disabled = Object.keys(S.files).length === 0
-  $('importStatus').textContent = `${Object.keys(S.files).length} file(s) ready`
+  $('importStatus').textContent = `${Object.keys(S.files).length} file(s) staged — tap Run Normalization when ready (Deal Log required).`
+  syncImportProgress()
 }
 
 function renderLoadedFiles() {
@@ -531,7 +619,8 @@ function renderLoadedFiles() {
       delete S.files[type]
       renderLoadedFiles()
       $('runImportBtn').disabled = Object.keys(S.files).length === 0
-      $('importStatus').textContent = `${Object.keys(S.files).length} file(s) ready`
+      $('importStatus').textContent = `${Object.keys(S.files).length} file(s) staged — tap Run Normalization when ready (Deal Log required).`
+      syncImportProgress()
     })
     el.appendChild(div)
   }
@@ -991,6 +1080,8 @@ async function runNormalization() {
   btn.innerHTML = '<span class="spinner"></span> Normalizing…'
   btn.disabled = true
 
+  let normalizedOk = false
+
   try {
     for (const [type, f] of Object.entries(S.files)) {
       await persistRaw(type, f.rows)
@@ -1008,15 +1099,19 @@ async function runNormalization() {
     console.log('Metrics persisted')
     addLog(`✅ Normalization complete — ${metrics.length} consultants updated`, 'ok')
 
+    markImportFlowComplete()
+    normalizedOk = true
+
     await refreshManager()
     document.querySelector('[data-tab="mgr-dashboard"]')?.click()
   } catch (err) {
     addLog(`❌ Error: ${err.message}`, 'err')
     console.error(err)
+  } finally {
+    btn.innerHTML = '⚡ Run Normalization'
+    btn.disabled = false
+    if (!normalizedOk) syncImportProgress()
   }
-
-  btn.innerHTML = '⚡ Run Normalization'
-  btn.disabled = false
 }
 
 /* =============================================================================
@@ -1235,7 +1330,7 @@ function renderPSP(row) {
           <p class="muted small">${numInt(row.units)} units · ${money(row.final_commission)} commission · ${Math.round(numInt(row.volume_unlock_percentage) * 100)}% KPI unlock</p>
         </div>
 
-        <div class="ai-box" style="margin-bottom:20px;">${safe(ins.summary)}</div>
+        <div class="ai-box ai-box--live" style="margin-bottom:20px;">${safe(ins.summary)}</div>
 
         <div class="detail-grid">
           <div class="detail-card">
@@ -1257,7 +1352,7 @@ function renderPSP(row) {
           <div class="detail-card">
             <h3>🎯 Top 3 Focus Areas</h3>
             <ol class="focus-list" style="padding:0;">
-              ${ins.focusAreas.map((x, i) => `<li><span class="focus-num">${i + 1}</span>${safe(x)}</li>`).join('')}
+              ${ins.focusAreas.map((x, i) => `<li class="focus-item-premium"><span class="focus-num">${i + 1}</span>${safe(x)}</li>`).join('')}
             </ol>
           </div>
           <div class="detail-card">
@@ -1293,19 +1388,40 @@ async function refreshSalesperson() {
 }
 
 function renderSalesperson(row) {
+  const flowHint = $('sp-flow-hint')
   if (!row) {
+    if (flowHint) flowHint.hidden = false
     setText('sp-comm', '$0')
     setText('sp-units', '0')
     setText('sp-fin', '0%')
     setText('sp-ac', '$0')
     setText('sp-acc', '$0')
     setText('sp-unlock', '0%')
-    $('sp-aiSummary').innerHTML =
-      '<div class="empty">No data found for this period. Check with your manager that the month has been normalized.</div>'
-    $('sp-focus').innerHTML = '<li><span class="focus-num">?</span>No insights yet.</li>'
-    $('sp-breakdown').innerHTML = '<tr><td colspan="2"><div class="empty">No data.</div></td></tr>'
+    $('sp-aiSummary').innerHTML = `
+      <div class="onboarding-card">
+        <h3>Your coaching snapshot is waiting on data</h3>
+        <p>No commission data has been loaded for this period yet. Once your manager uploads and normalizes the monthly reports (deal log, finance, aftercare, and supporting files), your <strong>AI summary</strong>, <strong>focus areas</strong>, and <strong>KPI breakdown</strong> will appear here automatically.</p>
+        <p>You do not need to upload anything yourself — stay on this page or check back after month-end processing.</p>
+        <ul>
+          <li>Confirm the correct <strong>month</strong> is selected above.</li>
+          <li>If a period is missing, ask your manager to add it in <strong>commission periods</strong>.</li>
+        </ul>
+      </div>`
+    $('sp-focus').innerHTML = `
+      <li class="focus-item-premium"><span class="focus-num">1</span><strong>What this section does:</strong> After normalization, you’ll see the top three behaviours that would most improve your commission next month.</li>
+      <li class="focus-item-premium"><span class="focus-num">2</span>For now, focus on consistent process: log every deal and keep finance &amp; aftercare conversations early in the journey.</li>
+      <li class="focus-item-premium"><span class="focus-num">3</span>Questions? Ask your manager when the monthly import is scheduled to run.</li>`
+    $('sp-breakdown').innerHTML = `<tr><td colspan="2">
+      <div class="onboarding-card" style="margin:8px 0;">
+        <h3>KPI detail table</h3>
+        <p>This grid lists every input to your commission — units, bonuses, finance penetration, aftercare PPV, accessories, leads, and more. Values populate from the same normalized dataset as your headline cards.</p>
+        <p><strong>Nothing is wrong with your account</strong> — we’re simply waiting on the first successful import for this period.</p>
+      </div>
+    </td></tr>`
     return
   }
+
+  if (flowHint) flowHint.hidden = true
 
   const ins = generateSalespersonInsights(row)
 
@@ -1316,10 +1432,17 @@ function renderSalesperson(row) {
   setText('sp-acc', money(row.accessory_gp))
   setText('sp-unlock', Math.round(numInt(row.volume_unlock_percentage) * 100) + '%')
 
-  $('sp-aiSummary').innerHTML = `<p>${safe(ins.summary)}</p>`
-  $('sp-focus').innerHTML = ins.focusAreas
-    .map((x, i) => `<li><span class="focus-num">${i + 1}</span>${safe(x)}</li>`)
+  $('sp-aiSummary').innerHTML = `<div class="ai-box ai-box--live"><p>${safe(ins.summary)}</p></div>`
+  const focusEl = $('sp-focus')
+  focusEl.classList.remove('focus-list--live')
+  focusEl.innerHTML = ins.focusAreas
+    .map(
+      (x, i) =>
+        `<li class="focus-item-premium"><span class="focus-num">${i + 1}</span>${safe(x)}</li>`
+    )
     .join('')
+  void focusEl.offsetWidth
+  focusEl.classList.add('focus-list--live')
 
   $('sp-breakdown').innerHTML = [
     ['Units', numInt(row.units)],

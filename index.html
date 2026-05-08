@@ -525,7 +525,314 @@
     .text-blue { color: var(--blue-bright); }
     .text-gold { color: var(--gold); }
 
-    .section-actions { display: flex; align-items: center; gap: 10px; }
+    .section-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    /* Flow hints — post-login orientation */
+    .flow-hint {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.28);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .flow-hint strong { color: var(--blue-bright); font-weight: 700; }
+    .flow-hint-icon { font-size: 22px; flex-shrink: 0; line-height: 1.2; }
+
+    .role-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.35);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .role-warning[hidden] { display: none !important; }
+    .role-warning-icon { font-size: 20px; flex-shrink: 0; }
+
+    /* Import hub — primary CTA */
+    .import-hero {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .import-hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      margin-bottom: 10px;
+    }
+    .import-hero h2 {
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .import-hero-lead {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 640px;
+      margin: 0 auto 8px;
+      line-height: 1.6;
+    }
+    .import-hero-note {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .import-layout {
+      display: grid;
+      grid-template-columns: 1fr minmax(220px, 280px);
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .import-layout { grid-template-columns: 1fr; }
+    }
+
+    .upload-order-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+    }
+    .upload-order-card h4 {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      margin-bottom: 14px;
+    }
+    .upload-order-list {
+      list-style: none;
+      counter-reset: ord;
+    }
+    .upload-order-list li {
+      counter-increment: ord;
+      position: relative;
+      padding: 8px 0 8px 36px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text);
+    }
+    .upload-order-list li:last-child { border-bottom: none; }
+    .upload-order-list li::before {
+      content: counter(ord);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .upload-order-footnote {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .import-progress {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      margin-bottom: 24px;
+      padding: 16px 18px;
+      background: rgba(0,0,0,0.2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .import-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .import-step .step-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid var(--border-bright);
+      flex-shrink: 0;
+    }
+    .import-step.step-active { color: var(--text); }
+    .import-step.step-active .step-dot {
+      background: var(--blue);
+      border-color: var(--blue-bright);
+      box-shadow: 0 0 12px rgba(59,130,246,0.5);
+    }
+    .import-step.step-done { color: var(--green); }
+    .import-step.step-done .step-dot {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .import-zone {
+      border-width: 3px;
+      padding: clamp(28px, 5vw, 48px) 24px;
+      margin-bottom: 24px;
+      box-shadow: inset 0 0 60px rgba(59,130,246,0.06), 0 8px 40px rgba(0,10,40,0.35);
+    }
+    .import-zone-icon { font-size: clamp(40px, 8vw, 52px); margin-bottom: 16px; }
+    .import-zone h3 { font-size: clamp(18px, 3.5vw, 22px); }
+    .import-zone .import-cta-pill {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .loaded-files {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .loaded-file {
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      min-height: 48px;
+    }
+    .loaded-file .lf-name {
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
+
+    .import-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+    .import-actions .btn-success {
+      min-height: 52px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .import-status {
+      font-size: 14px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .table-scroll-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* Onboarding / empty states */
+    .onboarding-card {
+      text-align: left;
+      padding: 24px 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .onboarding-card h3 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .onboarding-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .onboarding-card p:last-child { margin-bottom: 0; }
+    .onboarding-card ul {
+      margin: 12px 0 0 1.2em;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* AI — subtle entrance (no external libs) */
+    @keyframes aiReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes focusStagger {
+      from {
+        opacity: 0;
+        transform: translateX(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .ai-box--live {
+      animation: aiReveal 0.55s ease-out both;
+    }
+    .focus-list--live li {
+      animation: focusStagger 0.45s ease-out both;
+    }
+    .focus-list--live li:nth-child(1) { animation-delay: 0.05s; }
+    .focus-list--live li:nth-child(2) { animation-delay: 0.12s; }
+    .focus-list--live li:nth-child(3) { animation-delay: 0.19s; }
+
+    .focus-list li.focus-item-premium {
+      border-color: rgba(59,130,246,0.25);
+      background: linear-gradient(135deg, rgba(59,130,246,0.06), rgba(255,255,255,0.02));
+    }
+
+    .ai-box {
+      padding: clamp(20px, 4vw, 28px);
+      font-size: clamp(14px, 2.8vw, 16px);
+      line-height: 1.75;
+    }
+
+    .topbar-select {
+      min-width: 0;
+      max-width: 100%;
+      flex: 1 1 auto;
+    }
 
     #loginError {
       color: var(--red);
@@ -549,11 +856,129 @@
     /* =============================================
        RESPONSIVE
     ============================================= */
+    @media (max-width: 900px) {
+      .table-scroll-hint { display: block; }
+    }
+
     @media (max-width: 768px) {
-      .shell { padding: 20px 16px 60px; }
-      .topbar { padding: 0 16px; }
+      html, body {
+        overflow-x: hidden;
+      }
+      .shell {
+        padding: 18px 14px 72px;
+      }
+      .panel {
+        padding: 20px 18px;
+        margin-bottom: 18px;
+      }
+      .panel-head { margin-bottom: 18px; }
+      .topbar {
+        padding: 10px 14px;
+        height: auto;
+        min-height: 64px;
+        flex-wrap: wrap;
+        row-gap: 10px;
+      }
+      .topbar-brand {
+        flex: 1 1 calc(100% - 120px);
+        min-width: 0;
+      }
+      .topbar-title { font-size: 15px; }
+      .topbar-role { font-size: 11px; }
+      .topbar-right {
+        flex: 1 1 100%;
+        justify-content: stretch;
+        gap: 10px;
+      }
+      .topbar-right .topbar-select {
+        flex: 1 1 auto;
+        min-height: 48px;
+        padding: 12px 14px !important;
+        font-size: 15px !important;
+      }
+      .topbar-right .btn {
+        min-height: 48px;
+        padding: 12px 16px;
+        font-size: 14px;
+        flex: 0 0 auto;
+      }
       .login-card { padding: 36px 24px; }
-      .tabs { width: 100%; overflow-x: auto; }
+      .tabs {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        flex-wrap: nowrap;
+        padding: 6px;
+        gap: 6px;
+      }
+      .tab-btn {
+        flex: 0 0 auto;
+        padding: 12px 18px;
+        font-size: 14px;
+        min-height: 48px;
+      }
+      .metric-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .metric-card {
+        padding: 18px 20px;
+      }
+      .metric-value {
+        font-size: clamp(24px, 7vw, 30px);
+      }
+      .import-progress {
+        flex-direction: column;
+        gap: 14px;
+      }
+      .table-wrap {
+        margin: 0 -6px;
+        padding: 0 6px;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        touch-action: pan-x;
+      }
+      .table-wrap table {
+        min-width: 720px;
+      }
+      thead th, td {
+        padding: 14px 12px;
+        font-size: 13px;
+      }
+      .td-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .td-actions .btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 13px !important;
+      }
+      .section-actions {
+        width: 100%;
+      }
+      .section-actions .btn {
+        flex: 1 1 auto;
+        min-height: 44px;
+      }
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      .psp-insight {
+        font-size: 14px;
+        padding: 12px 14px;
+      }
+      .log-stack {
+        max-height: 220px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .shell { padding: 14px 12px 80px; }
+      .btn-lg { padding: 16px 22px; }
     }
   </style>
 </head>
@@ -605,12 +1030,22 @@
         </div>
       </div>
       <div class="topbar-right">
-        <select id="mgr-period" style="width:auto;padding:8px 14px;font-size:13px;"></select>
-        <button class="btn btn-secondary" id="mgr-logout">Sign Out</button>
+        <select id="mgr-period" class="topbar-select" style="width:auto;padding:8px 14px;font-size:13px;" aria-label="Commission period"></select>
+        <button class="btn btn-secondary" id="mgr-logout" type="button">Sign Out</button>
       </div>
     </header>
 
     <div class="shell">
+      <div class="role-warning" id="mgr-role-warning" hidden>
+        <span class="role-warning-icon" aria-hidden="true">⚠️</span>
+        <div><strong>Role could not be confirmed</strong><br /><span class="role-warning-text"></span></div>
+      </div>
+
+      <div class="flow-hint" id="mgr-flow-hint">
+        <span class="flow-hint-icon" aria-hidden="true">🧭</span>
+        <div><strong>After you sign in:</strong> open <strong>Import</strong>, drop your CSV exports, then tap <strong>Run Normalization</strong>. Your <strong>Dashboard</strong> and <strong>AI Coaching</strong> tabs fill in automatically.</div>
+      </div>
+
       <!-- TABS -->
       <div class="tabs">
         <button class="tab-btn active" data-tab="mgr-import">📥 Import</button>
@@ -620,38 +1055,60 @@
 
       <!-- ── IMPORT TAB ── -->
       <div class="tab-panel active" id="mgr-import">
-        <div class="panel">
-          <div class="panel-head">
-            <div>
-              <div class="eyebrow">Import Hub</div>
-              <h2>Upload All Reports</h2>
-              <p class="muted small" style="margin-top:6px;">Drop all your CSV exports at once — the platform auto-detects deal log, finance, aftercare, accessories, sign-ups and leads.</p>
-            </div>
+        <div class="panel" id="import-hub-panel" style="scroll-margin-top:88px;">
+          <div class="import-hero">
+            <div class="import-hero-badge">Step 1 · Primary action</div>
+            <h2>Upload this month’s report exports</h2>
+            <p class="import-hero-lead">This is the main entry point for the platform. Drag in every CSV (or tap the zone to browse). Files are auto-detected — you don’t need to rename them.</p>
+            <p class="import-hero-note">Deal Log is required. Add Finance, Aftercare, Accessories, Sign Ups, and Leads for full commission &amp; KPI accuracy.</p>
           </div>
 
-          <!-- Drop Zone -->
-          <label class="import-zone" id="dropZone">
-            <input type="file" id="fileInput" multiple accept=".csv,.tsv,.txt" />
-            <div class="import-zone-icon">📂</div>
-            <h3>Drop all files here</h3>
-            <p>Or click to browse — select as many CSV files as you like</p>
-            <div class="file-types">
-              <span class="file-tag">Deal Log</span>
-              <span class="file-tag">Finance &amp; Insurance</span>
-              <span class="file-tag">Aftercare PVR</span>
-              <span class="file-tag">Accessories</span>
-              <span class="file-tag">Sign Ups</span>
-              <span class="file-tag">Activity / Leads</span>
+          <div class="import-progress" id="importProgress" aria-label="Import steps">
+            <div class="import-step step-active" id="import-step-upload"><span class="step-dot" aria-hidden="true"></span><span>1 · Upload CSVs</span></div>
+            <div class="import-step" id="import-step-ready"><span class="step-dot" aria-hidden="true"></span><span>2 · Ready to normalize</span></div>
+            <div class="import-step" id="import-step-run"><span class="step-dot" aria-hidden="true"></span><span>3 · Run normalization</span></div>
+          </div>
+
+          <div class="import-layout">
+            <div class="import-main-col">
+              <label class="import-zone" id="dropZone">
+                <input type="file" id="fileInput" multiple accept=".csv,.tsv,.txt" />
+                <div class="import-zone-icon">📂</div>
+                <h3>Drop files here or tap to browse</h3>
+                <p>Use your phone or desktop — select one or many CSV / TSV files at once.</p>
+                <span class="import-cta-pill">Tap to choose files</span>
+                <div class="file-types">
+                  <span class="file-tag">Deal Log</span>
+                  <span class="file-tag">Finance &amp; Insurance</span>
+                  <span class="file-tag">Aftercare PVR</span>
+                  <span class="file-tag">Accessories</span>
+                  <span class="file-tag">Sign Ups</span>
+                  <span class="file-tag">Activity / Leads</span>
+                </div>
+              </label>
+
+              <div id="loadedFiles" class="loaded-files" aria-live="polite"></div>
+
+              <div class="import-actions">
+                <button type="button" class="btn btn-success" id="runImportBtn" disabled>
+                  ⚡ Run Normalization
+                </button>
+                <span class="import-status" id="importStatus">Upload files to get started — your progress appears above.</span>
+              </div>
             </div>
-          </label>
 
-          <div id="loadedFiles" class="loaded-files"></div>
-
-          <div class="import-actions">
-            <button class="btn btn-success" id="runImportBtn" disabled>
-              ⚡ Run Normalization
-            </button>
-            <span class="import-status" id="importStatus">Upload files to get started</span>
+            <aside class="upload-order-card">
+              <h4>Suggested upload order</h4>
+              <ol class="upload-order-list">
+                <li>Deal Log</li>
+                <li>Finance</li>
+                <li>Aftercare</li>
+                <li>Accessories</li>
+                <li>Sign Ups</li>
+                <li>Leads / Activity</li>
+              </ol>
+              <p class="upload-order-footnote">The platform auto-detects file types — upload order is optional.</p>
+            </aside>
           </div>
         </div>
 
@@ -712,6 +1169,7 @@
               </tbody>
             </table>
           </div>
+          <p class="table-scroll-hint">← Swipe sideways on mobile to see all columns →</p>
         </div>
 
         <!-- Workings -->
@@ -754,12 +1212,17 @@
         </div>
       </div>
       <div class="topbar-right">
-        <select id="sp-period" style="width:auto;padding:8px 14px;font-size:13px;"></select>
-        <button class="btn btn-secondary" id="sp-logout">Sign Out</button>
+        <select id="sp-period" class="topbar-select" style="width:auto;padding:8px 14px;font-size:13px;" aria-label="Commission period"></select>
+        <button class="btn btn-secondary" id="sp-logout" type="button">Sign Out</button>
       </div>
     </header>
 
     <div class="shell">
+      <div class="flow-hint" id="sp-flow-hint">
+        <span class="flow-hint-icon" aria-hidden="true">👋</span>
+        <div><strong>Welcome.</strong> Choose your month above. Your personal metrics and AI coaching appear after your manager uploads reports and runs normalization for that period.</div>
+      </div>
+
       <div class="metric-grid">
         <div class="metric-card mc-blue"><div class="metric-label">Final Commission</div><div class="metric-value" id="sp-comm">$0</div></div>
         <div class="metric-card mc-green"><div class="metric-label">Units Sold</div><div class="metric-value" id="sp-units">0</div></div>
@@ -772,7 +1235,7 @@
       <!-- AI Summary -->
       <div class="panel">
         <div class="panel-head"><div><div class="eyebrow">AI Summary</div><h2>Monthly Coaching Snapshot</h2></div></div>
-        <div id="sp-aiSummary" class="ai-box"><div class="empty">AI coaching will appear after data is loaded.</div></div>
+        <div id="sp-aiSummary"></div>
       </div>
 
       <!-- Focus Areas -->
@@ -794,6 +1257,7 @@
             </tbody>
           </table>
         </div>
+        <p class="table-scroll-hint">← Swipe sideways if the table is wide →</p>
       </div>
 
       <!-- Commission Explainer -->
