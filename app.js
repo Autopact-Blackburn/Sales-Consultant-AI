@@ -451,7 +451,7 @@ async function loadPeriods(selectId, pageType) {
     })
   }
 
-  const { data, error } = await db
+  let { data: periods, error } = await db
     .from('commission_periods')
     .select('*')
     .order('period_year', { ascending: false })
@@ -464,20 +464,62 @@ async function loadPeriods(selectId, pageType) {
   }
 
   sel.innerHTML = ''
-  if (!data?.length) {
+  if (!periods?.length) {
+    console.warn('[periods] No rows in commission_periods — attempting auto-create current period')
+
+    // Minimal fix: if the table is empty (or filtered by RLS to zero rows),
+    // create a current month/year period so the normalization pipeline can continue.
+    const now = new Date()
+    const period_year = now.getFullYear()
+    const period_month = now.getMonth() + 1
+    const label = `${period_month}/${period_year}`
+
+    try {
+      const { error: insertErr } = await db.from('commission_periods').insert({
+        period_year,
+        period_month,
+        label
+      })
+
+      if (insertErr) {
+        console.warn('[periods] auto-create failed:', insertErr.message || insertErr)
+        sel.innerHTML = '<option value="">No periods found</option>'
+        return
+      }
+
+      const retryRes = await db
+        .from('commission_periods')
+        .select('*')
+        .order('period_year', { ascending: false })
+        .order('period_month', { ascending: false })
+
+      if (retryRes.error) {
+        console.warn('[periods] retry failed:', retryRes.error.message || retryRes.error)
+        sel.innerHTML = '<option value="">No periods found</option>'
+        return
+      }
+
+      periods = retryRes.data
+    } catch (e) {
+      console.warn('[periods] auto-create exception:', e?.message || e)
+      sel.innerHTML = '<option value="">No periods found</option>'
+      return
+    }
+  }
+
+  if (!periods?.length) {
     sel.innerHTML = '<option value="">No periods found</option>'
-    console.warn('[periods] No rows in commission_periods')
     return
   }
 
-  data.forEach(p => {
+  periods.forEach(p => {
     const opt = document.createElement('option')
     opt.value = p.id
     opt.textContent = p.label || `${p.period_month}/${p.period_year}`
     sel.appendChild(opt)
   })
 
-  S.periodId = data[0].id
+  S.periodId = periods[0].id
 }
 
 /* =============================================================================
