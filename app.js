@@ -460,6 +460,10 @@ async function loadPeriods(selectId, pageType) {
   if (error) {
     console.warn('[periods] commission_periods:', error.message || error)
     sel.innerHTML = '<option value="">Could not load periods</option>'
+    if ($('importStatus')) {
+      $('importStatus').textContent =
+        'Could not load commission periods. Check Supabase RLS SELECT policy on commission_periods.'
+    }
     return
   }
 
@@ -484,6 +488,10 @@ async function loadPeriods(selectId, pageType) {
       if (insertErr) {
         console.warn('[periods] auto-create failed:', insertErr.message || insertErr)
         sel.innerHTML = '<option value="">No periods found</option>'
+        if ($('importStatus')) {
+          $('importStatus').textContent =
+            'Period bootstrap failed (likely RLS INSERT policy). Manager must be allowed to create commission periods.'
+        }
         return
       }
 
@@ -496,6 +504,10 @@ async function loadPeriods(selectId, pageType) {
       if (retryRes.error) {
         console.warn('[periods] retry failed:', retryRes.error.message || retryRes.error)
         sel.innerHTML = '<option value="">No periods found</option>'
+        if ($('importStatus')) {
+          $('importStatus').textContent =
+            'Period created but reload failed. Check Supabase RLS SELECT policy on commission_periods.'
+        }
         return
       }
 
@@ -503,12 +515,20 @@ async function loadPeriods(selectId, pageType) {
     } catch (e) {
       console.warn('[periods] auto-create exception:', e?.message || e)
       sel.innerHTML = '<option value="">No periods found</option>'
+      if ($('importStatus')) {
+        $('importStatus').textContent =
+          'Period bootstrap exception. Check Supabase RLS policies for commission_periods.'
+      }
       return
     }
   }
 
   if (!periods?.length) {
     sel.innerHTML = '<option value="">No periods found</option>'
+    if ($('importStatus')) {
+      $('importStatus').textContent =
+        'No commission periods available. Manager needs INSERT + SELECT access on commission_periods.'
+    }
     return
   }
 
@@ -520,6 +540,28 @@ async function loadPeriods(selectId, pageType) {
   })
 
   S.periodId = periods[0].id
+}
+
+async function ensureActivePeriodForNormalization() {
+  if (S.periodId) return true
+
+  // Re-run period bootstrap right before normalization, in case page loaded with no period.
+  await loadPeriods('mgr-period', 'manager')
+
+  const sel = $('mgr-period')
+  const selected = sel?.value || null
+  if (selected) S.periodId = selected
+
+  if (!S.periodId) {
+    const msg =
+      'Normalization stopped: no active commission period. Supabase RLS is blocking commission_periods SELECT/INSERT.'
+    addLog(`❌ ${msg}`, 'err')
+    if ($('importStatus')) $('importStatus').textContent = msg
+    console.error('[periods] normalization blocked:', msg)
+    return false
+  }
+
+  return true
 }
 
 /* =============================================================================
@@ -1104,10 +1146,8 @@ function calcKpi(r) {
 async function runNormalization() {
   const btn = $('runImportBtn')
 
-  if (!S.periodId) {
-    addLog('⚠ Select a commission period first', 'err')
-    return
-  }
+  const hasPeriod = await ensureActivePeriodForNormalization()
+  if (!hasPeriod) return
   if (!S.files.deal_log) {
     addLog('⚠ Deal Log is required — could not detect it in uploaded files', 'err')
     return
