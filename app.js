@@ -451,7 +451,7 @@ async function loadPeriods(selectId, pageType) {
     })
   }
 
-  let { data: periods, error } = await db
+  const { data: periods, error } = await db
     .from('commission_periods')
     .select('*')
     .order('period_year', { ascending: false })
@@ -469,66 +469,13 @@ async function loadPeriods(selectId, pageType) {
 
   sel.innerHTML = ''
   if (!periods?.length) {
-    console.warn('[periods] No rows in commission_periods — attempting auto-create current period')
-
-    // Minimal fix: if the table is empty (or filtered by RLS to zero rows),
-    // create a current month/year period so the normalization pipeline can continue.
-    const now = new Date()
-    const period_year = now.getFullYear()
-    const period_month = now.getMonth() + 1
-    const label = `${period_month}/${period_year}`
-
-    try {
-      const { error: insertErr } = await db.from('commission_periods').insert({
-        period_year,
-        period_month,
-        label
-      })
-
-      if (insertErr) {
-        console.warn('[periods] auto-create failed:', insertErr.message || insertErr)
-        sel.innerHTML = '<option value="">No periods found</option>'
-        if ($('importStatus')) {
-          $('importStatus').textContent =
-            'Period bootstrap failed (likely RLS INSERT policy). Manager must be allowed to create commission periods.'
-        }
-        return
-      }
-
-      const retryRes = await db
-        .from('commission_periods')
-        .select('*')
-        .order('period_year', { ascending: false })
-        .order('period_month', { ascending: false })
-
-      if (retryRes.error) {
-        console.warn('[periods] retry failed:', retryRes.error.message || retryRes.error)
-        sel.innerHTML = '<option value="">No periods found</option>'
-        if ($('importStatus')) {
-          $('importStatus').textContent =
-            'Period created but reload failed. Check Supabase RLS SELECT policy on commission_periods.'
-        }
-        return
-      }
-
-      periods = retryRes.data
-    } catch (e) {
-      console.warn('[periods] auto-create exception:', e?.message || e)
-      sel.innerHTML = '<option value="">No periods found</option>'
-      if ($('importStatus')) {
-        $('importStatus').textContent =
-          'Period bootstrap exception. Check Supabase RLS policies for commission_periods.'
-      }
-      return
-    }
-  }
-
-  if (!periods?.length) {
     sel.innerHTML = '<option value="">No periods found</option>'
     if ($('importStatus')) {
       $('importStatus').textContent =
-        'No commission periods available. Manager needs INSERT + SELECT access on commission_periods.'
+        'No commission periods found. Run the period seed SQL.'
     }
+    S.periodId = null
+    console.error('[periods] No commission periods found. Run the period seed SQL.')
     return
   }
 
@@ -545,7 +492,7 @@ async function loadPeriods(selectId, pageType) {
 async function ensureActivePeriodForNormalization() {
   if (S.periodId) return true
 
-  // Re-run period bootstrap right before normalization, in case page loaded with no period.
+  // Re-check periods right before normalization.
   await loadPeriods('mgr-period', 'manager')
 
   const sel = $('mgr-period')
@@ -553,8 +500,7 @@ async function ensureActivePeriodForNormalization() {
   if (selected) S.periodId = selected
 
   if (!S.periodId) {
-    const msg =
-      'Normalization stopped: no active commission period. Supabase RLS is blocking commission_periods SELECT/INSERT.'
+    const msg = 'Normalization stopped: no active commission period. No commission periods found. Run the period seed SQL.'
     addLog(`❌ ${msg}`, 'err')
     if ($('importStatus')) $('importStatus').textContent = msg
     console.error('[periods] normalization blocked:', msg)
@@ -625,42 +571,54 @@ function bindManagerEvents() {
 /* =============================================================================
    FILE DETECTION & PARSING
 ============================================================================= */
-const FILE_SIGNATURES = {
-  deal_log: h =>
-    h.includes('posted gross') ||
-    h.includes('est gross') ||
-    (h.includes('deal') && h.includes('salesperson') && h.includes('carline')),
-  finance: h =>
-    (h.includes('fin pen') ||
-      h.includes('fin ipru') ||
-      h.includes('finance sales') ||
-      h.includes('total income')) &&
-    h.includes('sales person'),
-  aftercare: h =>
-    h.includes('pvr') ||
-    h.includes('ppv') ||
-    (h.includes('aftercare') && h.includes('gross')),
-  accessories: h =>
-    h.includes('sale amount') &&
-    h.includes('cost amount') &&
-    (h.includes('deal') || h.includes('stock')),
-  signups: h =>
-    h.includes('sign up') ||
-    h.includes('sign-up') ||
-    h.includes('count - sign up') ||
-    h.includes('estimatedgross'),
-  leads: h =>
-    h.includes('lead id') ||
-    h.includes('lead source') ||
-    h.includes('test drive completed') ||
-    h.includes('valuation completed')
-}
+function detectFileType(fileName, headers) {
+  const name = String(fileName || '').toLowerCase()
+  const h = headers.map(x => String(x || '').toLowerCase()).join(' ')
 
-function detectFileType(headers) {
-  const h = headers.map(x => x.toLowerCase()).join(' ')
-  for (const [type, fn] of Object.entries(FILE_SIGNATURES)) {
-    if (fn(h)) return type
-  }
+  // Filename-first hints (strong)
+  if (name.includes('activity report')) return 'leads'
+  if (name.includes('finance') || name.includes('insurance')) return 'finance'
+  if (name.includes('aftercare')) return 'aftercare'
+  if (name === 'acc.csv') return 'accessories'
+  if (name.includes('sign ups')) return 'signups'
+  if (name.includes('data -')) return 'deal_log'
+
+  // Header fallback
+  const isDeal =
+    (h.includes('dealership') && h.includes('type') && h.includes('deal') && h.includes('posted gross')) ||
+    (h.includes('est gross') && h.includes('salesperson') && h.includes('customer name'))
+  if (isDeal) return 'deal_log'
+
+  const isFinance =
+    h.includes('sales person') &&
+    h.includes('total sales') &&
+    h.includes('finance sales') &&
+    (h.includes('fin pen') || h.includes('fin ipru') || h.includes('fin ipur')) &&
+    (h.includes('fin income') || h.includes('total income'))
+  if (isFinance) return 'finance'
+
+  const isAftercare =
+    h.includes('salespersonname') ||
+    (h.includes('deals') && h.includes('gross') && (h.includes('pvr') || h.includes('ppv')))
+  if (isAftercare) return 'aftercare'
+
+  const isAccessories =
+    (h.includes('deal') || h.includes('deal #')) &&
+    h.includes('salesperson') &&
+    h.includes('sale amount') &&
+    h.includes('cost amount')
+  if (isAccessories) return 'accessories'
+
+  const isSignups =
+    h.includes('count - sign up') ||
+    (h.includes('sales person') && h.includes('estimatedgross') && (h.includes('sign up') || h.includes('sign-up')))
+  if (isSignups) return 'signups'
+
+  const isLeads =
+    h.includes('lead id') ||
+    (h.includes('date created') && h.includes('test drive completed') && h.includes('valuation completed'))
+  if (isLeads) return 'leads'
+
   return null
 }
 
@@ -673,12 +631,18 @@ async function handleFiles(files) {
       continue
     }
 
-    const type = detectFileType(Object.keys(rows[0]))
+    const type = detectFileType(file.name, Object.keys(rows[0]))
     if (!type) {
       addLog(`❓ ${file.name}: could not detect type — check headers`, 'err')
       continue
     }
 
+    if (S.files[type]) {
+      addLog(
+        `⚠ ${file.name}: replacing existing ${label(type)} file (${S.files[type].name}).`,
+        'err'
+      )
+    }
     S.files[type] = { name: file.name, rows }
     addLog(
       `✓ ${file.name} → detected as <strong>${label(type)}</strong> (${rows.length} rows)`,
@@ -1153,6 +1117,12 @@ async function runNormalization() {
     return
   }
 
+  const staged = Object.entries(S.files)
+    .map(([type, f]) => `${type}:${f.rows.length}`)
+    .join(', ')
+  console.log('[normalization] staged files:', staged || '(none)')
+  addLog(`ℹ Staged files → ${staged}`, 'ok')
+
   const financeRowCount = (S.files.finance?.rows || []).length
   const aftercareRowCount = (S.files.aftercare?.rows || []).length
   console.log(`Finance rows detected: ${financeRowCount}`)
@@ -1169,17 +1139,40 @@ async function runNormalization() {
       await persistRaw(type, f.rows)
       addLog(`💾 ${label(type)} saved to database (${f.rows.length} rows)`, 'ok')
     }
+    console.log('[normalization] raw rows persisted')
 
     const deals = buildDeals()
     const metrics = buildMetrics(deals)
 
+    console.log(`[normalization] deals built: ${deals.length}`)
+    console.log(`[normalization] metrics built: ${metrics.length}`)
     addLog(`🔄 Built ${deals.length} deals across ${metrics.length} consultants`, 'ok')
 
     await persistDeals(deals)
+    console.log('[normalization] master_deals persisted')
     await persistMetrics(metrics)
+    console.log('[normalization] salesperson_monthly_metrics persisted')
 
     console.log('Metrics persisted')
     addLog(`✅ Normalization complete — ${metrics.length} consultants updated`, 'ok')
+
+    const [dealsCountRes, metricsCountRes, rawCountRes] = await Promise.all([
+      db
+        .from('master_deals')
+        .select('id', { count: 'exact', head: true })
+        .eq('period_id', S.periodId),
+      db
+        .from('salesperson_monthly_metrics')
+        .select('id', { count: 'exact', head: true })
+        .eq('period_id', S.periodId),
+      db
+        .from('raw_import_rows')
+        .select('id', { count: 'exact', head: true })
+        .eq('period_id', S.periodId)
+    ])
+    console.log(
+      `[normalization] verify counts (period ${S.periodId}) -> master_deals=${dealsCountRes.count || 0}, metrics=${metricsCountRes.count || 0}, raw_rows=${rawCountRes.count || 0}`
+    )
 
     markImportFlowComplete()
     normalizedOk = true
@@ -1258,6 +1251,7 @@ async function refreshManager() {
 
   S.metrics = mRes.data || []
   S.deals = dRes.data || []
+  console.log(`[refreshManager] period=${S.periodId} metrics=${S.metrics.length} deals=${S.deals.length}`)
   renderManagerDashboard()
 }
 
