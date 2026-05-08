@@ -90,10 +90,70 @@ function renderImport(){ if(state.profile.role==='salesperson') return; const do
   <section class="grid cols4"><div class="metric"><div class="label">Files detected</div><div class="value">${done} / 6</div></div><div class="metric"><div class="label">Period</div><div class="value">${esc(state.period?.label||'')}</div></div><div class="metric"><div class="label">Rows staged</div><div class="value">${Object.values(state.parsed).reduce((a,b)=>a+b.rows.length,0)}</div></div><div class="metric"><div class="label">Status</div><div class="value">Draft</div></div></section>
   <section class="panel"><div class="section-head"><div><h2>Upload monthly CSV exports</h2><p class="muted">Drop the six files here. The Deal Log anchors the month. Other files attach by deal number and salesperson.</p></div><button class="btn primary" id="normalizeBtn">Run normalization</button></div><div id="dropzone" class="dropzone"><input id="fileInput" type="file" accept=".csv,.txt" multiple hidden><div class="eyebrow">CSV Import</div><div class="big">Drop files here or click to browse</div><p class="muted">Deal Log, Finance, Aftercare, Accessories, Sign Ups and Leads / Activity.</p></div><div id="fileList" class="file-list"></div></section>`;
   const dz=$('dropzone'), fi=$('fileInput'); dz.onclick=()=>fi.click(); dz.ondragover=e=>{e.preventDefault(); dz.classList.add('drag')}; dz.ondragleave=()=>dz.classList.remove('drag'); dz.ondrop=e=>{e.preventDefault(); dz.classList.remove('drag'); handleFiles(e.dataTransfer.files)}; fi.onchange=e=>handleFiles(e.target.files); $('normalizeBtn').onclick=normalizeAndSave; renderFileList(); }
-function renderFileList(){ const box=$('fileList'); if(!box) return; box.innerHTML=REQUIRED_TYPES.map(t=>{ const p=state.parsed[t]; return `<div class="file-row"><div><strong>${TYPE_LABEL[t]}</strong><div class="small muted">${p?esc(p.name):'Waiting for file'}</div></div><span class="pill ${p?'good':'warn'}">${p?p.rows.length+' rows':'Missing'}</span></div>`; }).join(''); }
-async function handleFiles(fileList){ for(const file of Array.from(fileList)){ const text=await file.text(); const rows=parseCSV(text); const type=detectType(file.name, rows[0]||{}); if(!type){ toast(`Could not detect ${file.name}`); continue; } state.parsed[type]={name:file.name,rows}; } renderFileList(); }
+function renderFileList(){ const box=$('fileList'); if(!box) return; box.innerHTML=REQUIRED_TYPES.map(t=>{ const p=state.parsed[t]; const detail=p?`${esc(p.name)} · ${Math.round(p.confidence||0)}% confidence${p.reason?' · '+esc(p.reason):''}`:'Waiting for file'; return `<div class="file-row"><div><strong>${TYPE_LABEL[t]}</strong><div class="small muted">${detail}</div></div><span class="pill ${p?'good':'warn'}">${p?p.rows.length+' rows':'Missing'}</span></div>`; }).join(''); }
+async function handleFiles(fileList){ for(const file of Array.from(fileList)){ const text=await file.text(); const rows=parseCSV(text); const detected=detectType(file.name, rows); if(!detected.type){ toast(`Could not confidently detect ${file.name}. Rename it with Deal Log, Finance, Aftercare, Accessories/ACC, Sign Ups, or Leads.`); continue; } state.parsed[detected.type]={name:file.name,rows,confidence:detected.confidence,reason:detected.reason,scores:detected.scores}; toast(`${file.name} detected as ${TYPE_LABEL[detected.type]} (${Math.round(detected.confidence)}%).`); } renderFileList(); }
 function parseCSV(text){ const rows=[]; let cur='',row=[],q=false; for(let i=0;i<text.length;i++){ const c=text[i],n=text[i+1]; if(c==='"'&&q&&n==='"'){cur+='"';i++;continue} if(c==='"'){q=!q;continue} if(c===','&&!q){row.push(cur);cur='';continue} if((c==='\n'||c==='\r')&&!q){ if(c==='\r'&&n==='\n') i++; row.push(cur); if(row.some(x=>String(x).trim())) rows.push(row); row=[]; cur=''; continue} cur+=c; } row.push(cur); if(row.some(x=>String(x).trim())) rows.push(row); if(!rows.length) return []; const headers=rows.shift().map(h=>h.trim()); return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,(r[i]??'').trim()]))); }
-function detectType(name,row){ const n=key(name); const hs=Object.keys(row).map(key).join('|'); if(n.includes('lead')||hs.includes('enquiry')||hs.includes('test drive')) return 'leads'; if(n.includes('finance')||hs.includes('dealer finance')||hs.includes('total income')) return 'finance'; if(n.includes('after')||n.includes('am')||hs.includes('total aftermarket')) return 'aftercare'; if(n.includes('accessor')||hs.includes('sale amount')||hs.includes('cost amount')) return 'accessories'; if(n.includes('sign')||hs.includes('signup')) return 'signups'; if(n.includes('deal')||hs.includes('processed gross')||hs.includes('deal no')) return 'deal_log'; return null; }
+function detectType(name,rows){
+  const filename=key(name).replace(/[_\-]+/g,' ');
+  const sampleRows=Array.isArray(rows)?rows.slice(0,12):[];
+  const headers=[...new Set(sampleRows.flatMap(r=>Object.keys(r||{}).map(h=>key(h))))];
+  const headerText=headers.join(' | ');
+  const valuesText=sampleRows.map(r=>Object.values(r||{}).slice(0,18).join(' ')).join(' ').toLowerCase();
+  const scores={deal_log:0,finance:0,aftercare:0,accessories:0,signups:0,leads:0};
+  const reasons={deal_log:[],finance:[],aftercare:[],accessories:[],signups:[],leads:[]};
+  const add=(type,points,reason)=>{scores[type]+=points; reasons[type].push(reason);};
+  const hasAny=(terms)=>terms.some(t=>headerText.includes(key(t))||filename.includes(key(t)));
+  const hasHeader=(terms)=>terms.some(t=>headers.includes(key(t))||headerText.includes(key(t)));
+
+  // Filename fingerprints are deliberate because DealerCell/BI exports often reuse similar money columns.
+  if(/\bdeal\s*log\b/.test(filename)||filename==='deal log csv') add('deal_log',120,'filename says Deal Log');
+  if(/\b(acc|accessory|accessories)\b/.test(filename)) add('accessories',95,'filename says ACC / Accessories');
+  if(/\bfinance\b|\bf[& ]?i\b|group finance/.test(filename)) add('finance',95,'filename says Finance');
+  if(/\baftercare\b|\baftermarket\b|\bpvr\b/.test(filename)) add('aftercare',95,'filename says Aftercare');
+  if(/\bsign\s*ups?\b|\bsignups?\b/.test(filename)) add('signups',95,'filename says Sign Ups');
+  if(/\bleads?\b|activity report|dealer cell|dealercell/.test(filename)) add('leads',95,'filename says Leads / Activity');
+
+  // Deal Log is the anchor file: it needs deal/customer/salesperson plus vehicle or gross structure.
+  if(hasHeader(['deal no','deal number','deal #'])) add('deal_log',18,'has deal number');
+  if(hasHeader(['salesperson','sales person','consultant','sold by'])) add('deal_log',18,'has salesperson');
+  if(hasHeader(['customer','customer name','client'])) add('deal_log',12,'has customer');
+  if(hasHeader(['processed gross','vehicle gross','gross profit','am - gross','am gross'])) add('deal_log',38,'has gross structure');
+  if(hasHeader(['vehicle description','vehicle','model','make','variant','stock no'])) add('deal_log',18,'has vehicle fields');
+  if(hasHeader(['sale price','selling price','payment method','status'])) add('deal_log',10,'has sale/status fields');
+
+  // Accessories: require accessory-specific commercial fields. Do NOT let generic deal/sale columns beat Deal Log.
+  if(hasHeader(['accessory','accessories','accessory description','item description'])) add('accessories',45,'has accessory description');
+  if(hasHeader(['sale amount','sell amount','retail amount'])) add('accessories',24,'has accessory sale amount');
+  if(hasHeader(['cost amount','cost','buy amount'])) add('accessories',24,'has accessory cost amount');
+  if(hasHeader(['accessory gp','accessories gp','gp','gross profit'])) add('accessories',16,'has accessory GP');
+
+  // Finance: total income alone is not enough, but finance-specific headers/filename make it safe.
+  if(hasHeader(['dealer finance','finance type','finance company','lender','contract no','total income','finance income','ipur'])) add('finance',40,'has finance fields');
+  if(hasHeader(['amount financed','finance amount','brokerage','commission'])) add('finance',18,'has finance money fields');
+
+  // Aftercare / aftermarket PVR.
+  if(hasHeader(['total aftermarket','aftermarket','aftercare','am pvr','pvr','paint protection','tint','warranty'])) add('aftercare',44,'has aftercare fields');
+  if(hasHeader(['aftermarket consultant','aftermarket income','aftercare income'])) add('aftercare',24,'has aftermarket income fields');
+
+  // Sign Ups.
+  if(hasHeader(['sign up','signup','signed up','appointment date','appointment type'])) add('signups',42,'has sign-up/appointment fields');
+  if(valuesText.includes('sign up')||valuesText.includes('signed up')) add('signups',16,'row text mentions sign-up');
+
+  // Leads / activity.
+  if(hasHeader(['lead','enquiry','enquiry date','source','activity','test drive','valuation','appointment','created date'])) add('leads',46,'has lead/activity fields');
+  if(hasHeader(['phone call','sms','email sent','web lead','dealer cell','dealercell'])) add('leads',18,'has DealerCell activity fields');
+
+  // Guardrails for known overlaps.
+  if(scores.deal_log>=70 && filename.includes('deal log')) scores.accessories=Math.max(0,scores.accessories-55);
+  if(scores.accessories>=80 && /\b(acc|accessory|accessories)\b/.test(filename)) scores.deal_log=Math.max(0,scores.deal_log-25);
+  if(scores.aftercare>=80 && /aftercare|aftermarket|pvr/.test(filename)) scores.finance=Math.max(0,scores.finance-20);
+
+  const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const [type,score]=ranked[0];
+  const second=ranked[1]?.[1]||0;
+  if(score<45 || (score-second<12 && score<100)) return {type:null,confidence:0,reason:'low confidence',scores};
+  return {type,confidence:Math.min(99,Math.max(55,score)),reason:(reasons[type]||[]).slice(0,2).join(', '),scores};
+}
 async function normalizeAndSave(){ if(!state.parsed.deal_log){ toast('Deal Log is required before normalization.'); return; } toast('Normalizing period...'); const periodId=state.period.id; for(const [type,p] of Object.entries(state.parsed)){ const {data:batch,error:bErr}=await sb.from('raw_import_batches').insert({period_id:periodId,import_type:type,file_name:p.name,row_count:p.rows.length,uploaded_by:state.user.id}).select().single(); if(bErr){toast(bErr.message);return;} const rows=p.rows.map((r,i)=>({period_id:periodId,batch_id:batch.id,import_type:type,row_number:i+1,deal_no:String(first(r,['Deal No','Deal Number','Deal #','Stock No'])),salesperson:String(first(r,['Salesperson','Sales Person','Consultant','Sold By'])),customer_name:String(first(r,['Customer','Customer Name','Client'])),raw:r})); for(let i=0;i<rows.length;i+=500){ const {error}=await sb.from('raw_import_rows').insert(rows.slice(i,i+500)); if(error){toast(error.message);return;} } }
   const deals=buildMasterDeals(); await sb.from('master_deals').delete().eq('period_id',periodId); for(let i=0;i<deals.length;i+=500){ const {error}=await sb.from('master_deals').insert(deals.slice(i,i+500)); if(error){toast(error.message);return;} }
   const metrics=buildMetrics(deals); await sb.from('salesperson_monthly_metrics').delete().eq('period_id',periodId); const {data:staff}=await sb.from('staff').select('*').eq('active',true); const staffMap=Object.fromEntries((staff||[]).map(s=>[key(s.full_name),s])); const payload=metrics.map(m=>({...m,period_id:periodId,staff_id:staffMap[key(m.salesperson)]?.id||null,role_email:staffMap[key(m.salesperson)]?.email||null})); const {error:mErr}=await sb.from('salesperson_monthly_metrics').insert(payload); if(mErr){toast(mErr.message);return;} toast('Normalization complete. Dashboard updated.'); await refreshData(); state.active='dashboard'; showTab(); }
