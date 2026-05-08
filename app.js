@@ -490,23 +490,17 @@ async function loadPeriods(selectId, pageType) {
 }
 
 async function ensureActivePeriodForNormalization() {
-  if (S.periodId) return true
-
-  // Re-check periods right before normalization.
-  await loadPeriods('mgr-period', 'manager')
-
   const sel = $('mgr-period')
   const selected = sel?.value || null
   if (selected) S.periodId = selected
 
   if (!S.periodId) {
-    const msg = 'Normalization stopped: no active commission period. No commission periods found. Run the period seed SQL.'
+    const msg = 'No active commission period selected.'
     addLog(`❌ ${msg}`, 'err')
     if ($('importStatus')) $('importStatus').textContent = msg
     console.error('[periods] normalization blocked:', msg)
     return false
   }
-
   return true
 }
 
@@ -574,49 +568,47 @@ function bindManagerEvents() {
 function detectFileType(fileName, headers) {
   const name = String(fileName || '').toLowerCase()
   const h = headers.map(x => String(x || '').toLowerCase()).join(' ')
+  const has = token => h.includes(token)
 
   // Filename-first hints (strong)
   if (name.includes('activity report')) return 'leads'
   if (name.includes('finance') || name.includes('insurance')) return 'finance'
   if (name.includes('aftercare')) return 'aftercare'
   if (name === 'acc.csv') return 'accessories'
-  if (name.includes('sign ups')) return 'signups'
+  if (name.includes('sign up') || name.includes('sign ups')) return 'signups'
   if (name.includes('data -')) return 'deal_log'
 
-  // Header fallback
+  // Header fallback (stabilized, exact requested fields)
   const isDeal =
-    (h.includes('dealership') && h.includes('type') && h.includes('deal') && h.includes('posted gross')) ||
-    (h.includes('est gross') && h.includes('salesperson') && h.includes('customer name'))
+    (has('deal #') || has('deal#') || has('deal number')) &&
+    has('posted gross') &&
+    has('est gross') &&
+    has('salesperson')
   if (isDeal) return 'deal_log'
 
   const isFinance =
-    h.includes('sales person') &&
-    h.includes('total sales') &&
-    h.includes('finance sales') &&
-    (h.includes('fin pen') || h.includes('fin ipru') || h.includes('fin ipur')) &&
-    (h.includes('fin income') || h.includes('total income'))
+    has('fin pen') &&
+    (has('fin ipru') || has('fin ipur')) &&
+    has('finance sales')
   if (isFinance) return 'finance'
 
   const isAftercare =
-    h.includes('salespersonname') ||
-    (h.includes('deals') && h.includes('gross') && (h.includes('pvr') || h.includes('ppv')))
+    has('salespersonname') &&
+    has('pvr') &&
+    has('gross')
   if (isAftercare) return 'aftercare'
 
   const isAccessories =
-    (h.includes('deal') || h.includes('deal #')) &&
-    h.includes('salesperson') &&
-    h.includes('sale amount') &&
-    h.includes('cost amount')
+    has('sale amount') &&
+    has('cost amount') &&
+    has('accessory on sale')
   if (isAccessories) return 'accessories'
 
-  const isSignups =
-    h.includes('count - sign up') ||
-    (h.includes('sales person') && h.includes('estimatedgross') && (h.includes('sign up') || h.includes('sign-up')))
+  const isSignups = has('count - sign ups') || has('count - sign up')
   if (isSignups) return 'signups'
 
   const isLeads =
-    h.includes('lead id') ||
-    (h.includes('date created') && h.includes('test drive completed') && h.includes('valuation completed'))
+    has('lead id') && has('test drive completed') && has('valuation completed')
   if (isLeads) return 'leads'
 
   return null
@@ -638,8 +630,9 @@ async function handleFiles(files) {
     }
 
     if (S.files[type]) {
+      const pretty = label(type)
       addLog(
-        `⚠ ${file.name}: replacing existing ${label(type)} file (${S.files[type].name}).`,
+        `⚠ ${file.name}: Replacing previous ${pretty} file (${S.files[type].name}).`,
         'err'
       )
     }
@@ -1121,6 +1114,13 @@ async function runNormalization() {
     .map(([type, f]) => `${type}:${f.rows.length}`)
     .join(', ')
   console.log('[normalization] staged files:', staged || '(none)')
+  console.log('STAGED FILES:')
+  console.log(`- deal_log rows: ${(S.files.deal_log?.rows || []).length}`)
+  console.log(`- finance rows: ${(S.files.finance?.rows || []).length}`)
+  console.log(`- aftercare rows: ${(S.files.aftercare?.rows || []).length}`)
+  console.log(`- accessories rows: ${(S.files.accessories?.rows || []).length}`)
+  console.log(`- signups rows: ${(S.files.signups?.rows || []).length}`)
+  console.log(`- leads rows: ${(S.files.leads?.rows || []).length}`)
   addLog(`ℹ Staged files → ${staged}`, 'ok')
 
   const financeRowCount = (S.files.finance?.rows || []).length
