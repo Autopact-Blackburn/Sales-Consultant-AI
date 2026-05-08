@@ -1,0 +1,1763 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dealership Performance Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    /* =============================================
+       DESIGN TOKENS — DARK BLUE THEME
+    ============================================= */
+    :root {
+      --bg: #06090f;
+      --bg2: #0b1120;
+      --panel: rgba(14,22,40,0.92);
+      --panel-strong: rgba(18,28,50,0.98);
+      --border: rgba(60,100,180,0.18);
+      --border-bright: rgba(80,130,255,0.32);
+      --text: #e8eeff;
+      --muted: #7a90b8;
+      --blue: #3b82f6;
+      --blue-bright: #60a5fa;
+      --blue-dark: #1d4ed8;
+      --purple: #8b5cf6;
+      --green: #10b981;
+      --gold: #f59e0b;
+      --orange: #f97316;
+      --pink: #ec4899;
+      --cyan: #06b6d4;
+      --red: #ef4444;
+      --shadow: 0 4px 32px rgba(0,10,40,0.5), 0 1px 4px rgba(0,10,40,0.3);
+      --shadow-lg: 0 20px 80px rgba(0,10,40,0.7), 0 4px 16px rgba(0,10,40,0.4);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --glow: 0 0 40px rgba(59,130,246,0.15);
+    }
+
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Animated gradient background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(29,78,216,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(139,92,246,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(6,182,212,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =============================================
+       LAYOUT
+    ============================================= */
+    #page-login, #page-manager, #page-salesperson { display: none; }
+    #page-login.active, #page-manager.active, #page-salesperson.active { display: block; }
+
+    /* =============================================
+       LOGIN PAGE
+    ============================================= */
+    .login-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--panel-strong);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      box-shadow: var(--shadow-lg), var(--glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue-dark), var(--blue), var(--cyan), var(--purple));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .login-logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+    }
+
+    .login-logo-text { font-weight: 800; font-size: 17px; }
+    .login-logo-sub { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+    .login-card h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+    .login-card .login-tagline { color: var(--muted); margin-bottom: 32px; font-size: 14px; }
+
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.03em; text-transform: uppercase; }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+
+    input::placeholder, textarea::placeholder { color: rgba(122,144,184,0.5); }
+
+    select option { background: #0b1120; color: var(--text); }
+
+    /* =============================================
+       BUTTONS
+    ============================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(59,130,246,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(59,130,246,0.5); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--border-bright);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+    .btn-success {
+      background: linear-gradient(135deg, #065f46, var(--green));
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+    }
+    .btn-success:hover { transform: translateY(-1px); }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #991b1b, var(--red));
+      color: #fff;
+    }
+
+    .btn-lg { padding: 14px 28px; font-size: 16px; width: 100%; }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+    /* =============================================
+       TOPBAR
+    ============================================= */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6,9,15,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .topbar-brand { display: flex; align-items: center; gap: 14px; }
+    .topbar-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .topbar-title { font-weight: 800; font-size: 16px; }
+    .topbar-role { font-size: 12px; color: var(--muted); }
+
+    .topbar-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+    /* =============================================
+       MAIN SHELL
+    ============================================= */
+    .shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 28px 32px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =============================================
+       TAB NAV
+    ============================================= */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 28px;
+      width: fit-content;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(59,130,246,0.4);
+    }
+
+    .tab-btn:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.06); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* =============================================
+       PANELS & CARDS
+    ============================================= */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .panel-head h2 { font-size: 20px; font-weight: 800; }
+    .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-bright); margin-bottom: 4px; }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .mc-blue::before { background: linear-gradient(90deg, var(--blue-dark), var(--blue)); }
+    .mc-green::before { background: linear-gradient(90deg, #065f46, var(--green)); }
+    .mc-purple::before { background: linear-gradient(90deg, #4c1d95, var(--purple)); }
+    .mc-gold::before { background: linear-gradient(90deg, #92400e, var(--gold)); }
+    .mc-cyan::before { background: linear-gradient(90deg, #164e63, var(--cyan)); }
+    .mc-pink::before { background: linear-gradient(90deg, #831843, var(--pink)); }
+
+    .metric-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .metric-value { font-size: 28px; font-weight: 800; line-height: 1; }
+
+    /* =============================================
+       IMPORT SECTION
+    ============================================= */
+    .import-zone {
+      border: 2px dashed var(--border-bright);
+      border-radius: var(--radius-sm);
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(59,130,246,0.03);
+      margin-bottom: 20px;
+    }
+
+    .import-zone:hover { border-color: var(--blue); background: rgba(59,130,246,0.06); }
+    .import-zone.drag-over { border-color: var(--blue-bright); background: rgba(59,130,246,0.1); }
+
+    .import-zone input[type="file"] { display: none; }
+    .import-zone-icon { font-size: 36px; margin-bottom: 12px; }
+    .import-zone h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    .import-zone p { color: var(--muted); font-size: 14px; }
+    .import-zone .file-types { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+    .import-zone .file-tag { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 20px; padding: 3px 12px; font-size: 12px; font-weight: 600; color: var(--blue-bright); }
+
+    .loaded-files { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .loaded-file {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .loaded-file .lf-type { color: var(--green); }
+    .loaded-file .lf-name { color: var(--muted); font-weight: 400; }
+    .loaded-file .lf-remove { cursor: pointer; color: var(--muted); margin-left: 4px; }
+    .loaded-file .lf-remove:hover { color: var(--red); }
+
+    .import-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .import-status { font-size: 13px; color: var(--muted); }
+
+    .log-stack { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+    .log-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    .log-item .log-icon { flex-shrink: 0; margin-top: 2px; }
+    .log-ok { border-color: rgba(16,185,129,0.25); }
+    .log-err { border-color: rgba(239,68,68,0.25); }
+
+    /* =============================================
+       TABLE
+    ============================================= */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead th {
+      background: rgba(255,255,255,0.04);
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; cursor: pointer; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(59,130,246,0.06); }
+
+    td { padding: 12px 14px; vertical-align: middle; }
+    td strong { color: var(--text); font-weight: 700; }
+
+    .td-actions { display: flex; gap: 8px; }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue-bright); border: 1px solid rgba(59,130,246,0.25); }
+    .badge-gold { background: rgba(245,158,11,0.15); color: var(--gold); border: 1px solid rgba(245,158,11,0.25); }
+    .badge-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+
+    /* =============================================
+       DETAIL / PSP PANELS
+    ============================================= */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .detail-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+    }
+    .detail-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--blue-bright); }
+    .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row .dr-label { color: var(--muted); }
+    .detail-row .dr-value { font-weight: 700; text-align: right; }
+    .detail-row .dr-total { font-size: 22px; font-weight: 800; color: var(--green); }
+
+    .psp-insight { padding: 10px 14px; background: rgba(59,130,246,0.06); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; margin-bottom: 8px; font-size: 14px; }
+
+    /* =============================================
+       SALESPERSON VIEW — FOCUS LIST
+    ============================================= */
+    .focus-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .focus-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .focus-num {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; flex-shrink: 0;
+    }
+
+    .ai-box {
+      background: rgba(59,130,246,0.05);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    /* =============================================
+       EMPTY STATE
+    ============================================= */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* =============================================
+       MISC
+    ============================================= */
+    .separator { height: 1px; background: var(--border); margin: 24px 0; }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .text-right { text-align: right; }
+    .text-green { color: var(--green); }
+    .text-blue { color: var(--blue-bright); }
+    .text-gold { color: var(--gold); }
+
+    .section-actions { display: flex; align-items: center; gap: 10px; }
+
+    #loginError {
+      color: var(--red);
+      font-size: 14px;
+      margin-top: 12px;
+      min-height: 20px;
+      text-align: center;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 768px) {
+      .shell { padding: 20px 16px 60px; }
+      .topbar { padding: 0 16px; }
+      .login-card { padding: 36px 24px; }
+      .tabs { width: 100%; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================================================
+       LOGIN PAGE
+  ================================================ -->
+  <div id="page-login">
+    <div class="login-shell">
+      <div class="login-card">
+        <div class="login-logo">
+          <div class="login-logo-icon">📊</div>
+          <div>
+            <div class="login-logo-text">Dealership Intelligence</div>
+            <div class="login-logo-sub">Performance Platform</div>
+          </div>
+        </div>
+
+        <h2>Welcome back</h2>
+        <p class="login-tagline">Sign in to access your commission dashboard and AI coaching.</p>
+
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+
+        <button class="btn btn-primary btn-lg" id="loginBtn">Sign In</button>
+        <div id="loginError"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================
+       MANAGER PAGE
+  ================================================ -->
+  <div id="page-manager">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-icon">📊</div>
+        <div>
+          <div class="topbar-title">Dealership Intelligence</div>
+          <div class="topbar-role">Manager Dashboard</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <select id="mgr-period" style="width:auto;padding:8px 14px;font-size:13px;"></select>
+        <button class="btn btn-secondary" id="mgr-logout">Sign Out</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="mgr-import">📥 Import</button>
+        <button class="tab-btn" data-tab="mgr-dashboard">📈 Dashboard</button>
+        <button class="tab-btn" data-tab="mgr-psp">🤖 AI Coaching</button>
+      </div>
+
+      <!-- ── IMPORT TAB ── -->
+      <div class="tab-panel active" id="mgr-import">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Import Hub</div>
+              <h2>Upload All Reports</h2>
+              <p class="muted small" style="margin-top:6px;">Drop all your CSV exports at once — the platform auto-detects deal log, finance, aftercare, accessories, sign-ups and leads.</p>
+            </div>
+          </div>
+
+          <!-- Drop Zone -->
+          <label class="import-zone" id="dropZone">
+            <input type="file" id="fileInput" multiple accept=".csv,.tsv,.txt" />
+            <div class="import-zone-icon">📂</div>
+            <h3>Drop all files here</h3>
+            <p>Or click to browse — select as many CSV files as you like</p>
+            <div class="file-types">
+              <span class="file-tag">Deal Log</span>
+              <span class="file-tag">Finance &amp; Insurance</span>
+              <span class="file-tag">Aftercare PVR</span>
+              <span class="file-tag">Accessories</span>
+              <span class="file-tag">Sign Ups</span>
+              <span class="file-tag">Activity / Leads</span>
+            </div>
+          </label>
+
+          <div id="loadedFiles" class="loaded-files"></div>
+
+          <div class="import-actions">
+            <button class="btn btn-success" id="runImportBtn" disabled>
+              ⚡ Run Normalization
+            </button>
+            <span class="import-status" id="importStatus">Upload files to get started</span>
+          </div>
+        </div>
+
+        <!-- Log -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Processing Log</div>
+              <h2>Import Results</h2>
+            </div>
+            <button class="btn btn-secondary" id="clearLogBtn" style="font-size:12px;padding:6px 14px;">Clear</button>
+          </div>
+          <div id="importLog" class="log-stack">
+            <div class="empty"><div class="empty-icon">📋</div>No imports yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DASHBOARD TAB ── -->
+      <div class="tab-panel" id="mgr-dashboard">
+        <!-- Summary Cards -->
+        <div class="metric-grid" id="mgr-cards">
+          <div class="metric-card mc-blue"><div class="metric-label">Team Commission</div><div class="metric-value" id="mgr-totalComm">$0</div></div>
+          <div class="metric-card mc-green"><div class="metric-label">Units Sold</div><div class="metric-value" id="mgr-units">0</div></div>
+          <div class="metric-card mc-purple"><div class="metric-label">Avg Finance %</div><div class="metric-value" id="mgr-finPen">0%</div></div>
+          <div class="metric-card mc-gold"><div class="metric-label">Total Sign Ups</div><div class="metric-value" id="mgr-signups">0</div></div>
+          <div class="metric-card mc-cyan"><div class="metric-label">Top Performer</div><div class="metric-value" id="mgr-top" style="font-size:18px;">—</div></div>
+        </div>
+
+        <!-- Team Table -->
+        <div class="panel">
+          <div class="panel-head">
+            <div><div class="eyebrow">Team Overview</div><h2>Sales Consultant Performance</h2></div>
+            <div class="section-actions">
+              <button class="btn btn-secondary" id="emailSummaryBtn" style="font-size:13px;">✉ Email Summary</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="teamTable">
+              <thead>
+                <tr>
+                  <th>Consultant</th>
+                  <th>Units</th>
+                  <th>Sign Ups</th>
+                  <th>Finance %</th>
+                  <th>Finance IPUR</th>
+                  <th>Aftercare PPV</th>
+                  <th>Acc. GP</th>
+                  <th>Leads</th>
+                  <th>T/Drives</th>
+                  <th>Commission</th>
+                  <th>Unlock</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="teamRows">
+                <tr><td colspan="12"><div class="empty"><div class="empty-icon">📊</div>Run normalization to load data.</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Workings -->
+        <div class="panel" id="workingsPanel" style="display:none;">
+          <div class="panel-head">
+            <div><div class="eyebrow">Commission Workings</div><h2 id="workingsName">—</h2></div>
+            <button class="btn btn-secondary" id="closeWorkings" style="font-size:13px;">✕ Close</button>
+          </div>
+          <div id="workingsContent"></div>
+        </div>
+      </div>
+
+      <!-- ── PSP TAB ── -->
+      <div class="tab-panel" id="mgr-psp">
+        <div class="panel">
+          <div class="panel-head">
+            <div><div class="eyebrow">AI Coaching Mode</div><h2>Performance Success Plan</h2></div>
+            <div class="section-actions">
+              <button class="btn btn-secondary" id="emailPspBtn" disabled style="font-size:13px;">✉ Email PSP</button>
+            </div>
+          </div>
+          <div id="pspContent">
+            <div class="empty"><div class="empty-icon">🤖</div>Select a consultant from the Dashboard to generate their PSP.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================
+       SALESPERSON PAGE
+  ================================================ -->
+  <div id="page-salesperson">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-icon">📊</div>
+        <div>
+          <div class="topbar-title">My Performance</div>
+          <div class="topbar-role" id="sp-nameLabel">Sales Consultant</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <select id="sp-period" style="width:auto;padding:8px 14px;font-size:13px;"></select>
+        <button class="btn btn-secondary" id="sp-logout">Sign Out</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <div class="metric-grid">
+        <div class="metric-card mc-blue"><div class="metric-label">Final Commission</div><div class="metric-value" id="sp-comm">$0</div></div>
+        <div class="metric-card mc-green"><div class="metric-label">Units Sold</div><div class="metric-value" id="sp-units">0</div></div>
+        <div class="metric-card mc-purple"><div class="metric-label">Finance %</div><div class="metric-value" id="sp-fin">0%</div></div>
+        <div class="metric-card mc-gold"><div class="metric-label">Aftercare PPV</div><div class="metric-value" id="sp-ac">$0</div></div>
+        <div class="metric-card mc-cyan"><div class="metric-label">Acc. GP</div><div class="metric-value" id="sp-acc">$0</div></div>
+        <div class="metric-card mc-pink"><div class="metric-label">KPI Unlock</div><div class="metric-value" id="sp-unlock">0%</div></div>
+      </div>
+
+      <!-- AI Summary -->
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">AI Summary</div><h2>Monthly Coaching Snapshot</h2></div></div>
+        <div id="sp-aiSummary" class="ai-box"><div class="empty">AI coaching will appear after data is loaded.</div></div>
+      </div>
+
+      <!-- Focus Areas -->
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">Top Focus Areas</div><h2>What To Improve Next Month</h2></div></div>
+        <ol id="sp-focus" class="focus-list">
+          <li><span class="focus-num">?</span>No coaching insights yet.</li>
+        </ol>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">Monthly Breakdown</div><h2>Full KPI Details</h2></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Metric</th><th>Result</th></tr></thead>
+            <tbody id="sp-breakdown">
+              <tr><td colspan="2"><div class="empty">No data yet.</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Commission Explainer -->
+      <div class="panel">
+        <div class="panel-head"><div><div class="eyebrow">How It Works</div><h2>Commission Logic</h2></div></div>
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h3>Base Commission</h3>
+            <p class="muted small">Units sold × $100 base rate per unit.</p>
+          </div>
+          <div class="detail-card">
+            <h3>Volume Bonus</h3>
+            <p class="muted small">$750 bonus unlocked at 18+ units.</p>
+          </div>
+          <div class="detail-card">
+            <h3>Sign Ups Bonus</h3>
+            <p class="muted small">$250 bonus for 23+ sign-ups in the month.</p>
+          </div>
+          <div class="detail-card">
+            <h3>KPI Bonus Pool</h3>
+            <p class="muted small">Finance, aftercare, accessories, reviews and NPS all contribute. Unlocked progressively: 25% at 12 units, 75% at 15, 100% at 18.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+    import { generateSalespersonInsights } from './ai.js'
+
+    /* ================================================
+       SUPABASE
+    ================================================ */
+    const SB_URL  = 'https://snzjsuwqetomdkvphvzs.supabase.co'
+    const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInJlZiI6InNuempzdXdxZXRvbWRrdnBodnpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NDQ5MTksImV4cCI6MjA5MzUyMDkxOX0.mkJ1_nxP0emPvhSqgUz7Q4zKm63LtG0J7xiYhwT78QQ'
+    const db      = createClient(SB_URL, SB_KEY)
+
+    /* ================================================
+       STATE
+    ================================================ */
+    const S = {
+      role: null,
+      periodId: null,
+      metrics: [],
+      deals: [],
+      files: {},          // type -> { name, rows }
+      selectedConsultant: null
+    }
+
+    /* ================================================
+       BOOT
+    ================================================ */
+    const { data: { session } } = await db.auth.getSession()
+
+    if (!session) {
+      show('page-login')
+      bindLogin()
+    } else {
+      const role = await getRole(session.user.email)
+      S.role = role
+      await bootPage(role)
+    }
+
+    /* ================================================
+       AUTH
+    ================================================ */
+    function bindLogin() {
+      const btn = $('loginBtn')
+      const emailEl = $('loginEmail')
+      const passEl  = $('loginPassword')
+      const errEl   = $('loginError')
+
+      async function doLogin() {
+        const email    = emailEl.value.trim()
+        const password = passEl.value
+        if (!email || !password) { errEl.textContent = 'Enter your email and password.'; return }
+
+        btn.innerHTML = '<span class="spinner"></span> Signing in…'
+        btn.disabled  = true
+        errEl.textContent = ''
+
+        const { error } = await db.auth.signInWithPassword({ email, password })
+
+        if (error) {
+          errEl.textContent = error.message
+          btn.innerHTML = 'Sign In'
+          btn.disabled  = false
+          return
+        }
+
+        const { data: { session } } = await db.auth.getSession()
+        const role = await getRole(session.user.email)
+        S.role = role
+        await bootPage(role)
+      }
+
+      btn.addEventListener('click', doLogin)
+      passEl.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
+    }
+
+    async function getRole(email) {
+      const { data } = await db.from('staff').select('role').eq('email', email).limit(1)
+      return data?.[0]?.role || 'salesperson'
+    }
+
+    async function getStaffName(email) {
+      const { data } = await db.from('staff').select('full_name').eq('email', email).limit(1)
+      return data?.[0]?.full_name || null
+    }
+
+    async function bootPage(role) {
+      if (role === 'manager' || role === 'admin') {
+        show('page-manager')
+        await loadPeriods('mgr-period', 'manager')
+        bindManagerEvents()
+        await refreshManager()
+      } else {
+        show('page-salesperson')
+        const { data: { session } } = await db.auth.getSession()
+        const name = await getStaffName(session.user.email)
+        if (name) setText('sp-nameLabel', name)
+        await loadPeriods('sp-period', 'salesperson')
+        bindSalespersonEvents()
+        await refreshSalesperson()
+      }
+    }
+
+    function bindLogout(btnId) {
+      $(btnId)?.addEventListener('click', async () => {
+        await db.auth.signOut()
+        location.reload()
+      })
+    }
+
+    /* ================================================
+       PERIODS
+    ================================================ */
+    async function loadPeriods(selectId, pageType) {
+      const sel = $(selectId)
+      if (!sel) return
+
+      const { data } = await db.from('commission_periods')
+        .select('*').order('period_year', { ascending: false }).order('period_month', { ascending: false })
+
+      sel.innerHTML = ''
+      if (!data?.length) {
+        sel.innerHTML = '<option value="">No periods found</option>'
+        return
+      }
+
+      data.forEach(p => {
+        const opt = document.createElement('option')
+        opt.value = p.id
+        opt.textContent = p.label || `${p.period_month}/${p.period_year}`
+        sel.appendChild(opt)
+      })
+
+      S.periodId = data[0].id
+
+      sel.addEventListener('change', async () => {
+        S.periodId = sel.value
+        if (pageType === 'manager') await refreshManager()
+        else await refreshSalesperson()
+      })
+    }
+
+    /* ================================================
+       MANAGER — EVENTS
+    ================================================ */
+    function bindManagerEvents() {
+      bindLogout('mgr-logout')
+
+      // Tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
+          btn.classList.add('active')
+          $(btn.dataset.tab)?.classList.add('active')
+        })
+      })
+
+      // File drop zone
+      const zone   = $('dropZone')
+      const fileIn = $('fileInput')
+
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over') })
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'))
+      zone.addEventListener('drop', e => {
+        e.preventDefault()
+        zone.classList.remove('drag-over')
+        handleFiles([...e.dataTransfer.files])
+      })
+      fileIn.addEventListener('change', () => handleFiles([...fileIn.files]))
+
+      $('runImportBtn').addEventListener('click', runNormalization)
+      $('clearLogBtn').addEventListener('click', () => {
+        $('importLog').innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Log cleared.</div>'
+      })
+
+      $('closeWorkings').addEventListener('click', () => {
+        $('workingsPanel').style.display = 'none'
+      })
+
+      $('emailSummaryBtn').addEventListener('click', () => {
+        let body = 'Monthly Commission Summary\n\n'
+        S.metrics.forEach(r => { body += `${r.salesperson_name} — ${money(r.final_commission)}\n` })
+        location.href = `mailto:?subject=Monthly Commission Summary&body=${encodeURIComponent(body)}`
+      })
+
+      $('emailPspBtn').addEventListener('click', () => {
+        if (!S.selectedConsultant) return
+        const ins = generateSalespersonInsights(S.selectedConsultant)
+        location.href = `mailto:?subject=PSP - ${S.selectedConsultant.salesperson_name}&body=${encodeURIComponent(ins.fullText)}`
+      })
+    }
+
+    /* ================================================
+       FILE DETECTION
+    ================================================ */
+    const FILE_SIGNATURES = {
+      deal_log:   h => h.includes('posted gross') || h.includes('est gross') || (h.includes('deal') && h.includes('salesperson') && h.includes('carline')),
+      finance:    h => (h.includes('fin pen') || h.includes('fin ipru') || h.includes('finance sales') || h.includes('total income')) && h.includes('sales person'),
+      aftercare:  h => h.includes('pvr') || h.includes('ppv') || (h.includes('aftercare') && h.includes('gross')),
+      accessories:h => h.includes('sale amount') && h.includes('cost amount') && (h.includes('deal') || h.includes('stock')),
+      signups:    h => h.includes('sign up') || h.includes('sign-up') || h.includes('count - sign up') || h.includes('estimatedgross'),
+      leads:      h => h.includes('lead id') || h.includes('lead source') || h.includes('test drive completed') || h.includes('valuation completed')
+    }
+
+    function detectFileType(headers) {
+      const h = headers.map(x => x.toLowerCase()).join(' ')
+      for (const [type, fn] of Object.entries(FILE_SIGNATURES)) {
+        if (fn(h)) return type
+      }
+      return null
+    }
+
+    async function handleFiles(files) {
+      for (const file of files) {
+        const text    = await file.text()
+        const rows    = parseCSV(text)
+        if (!rows.length) { addLog(`⚠ ${file.name}: no rows detected`, 'err'); continue }
+
+        const type = detectFileType(Object.keys(rows[0]))
+        if (!type) { addLog(`❓ ${file.name}: could not detect type — check headers`, 'err'); continue }
+
+        S.files[type] = { name: file.name, rows }
+        addLog(`✓ ${file.name} → detected as <strong>${label(type)}</strong> (${rows.length} rows)`, 'ok')
+      }
+
+      renderLoadedFiles()
+      $('runImportBtn').disabled = Object.keys(S.files).length === 0
+      $('importStatus').textContent = `${Object.keys(S.files).length} file(s) ready`
+    }
+
+    function renderLoadedFiles() {
+      const el = $('loadedFiles')
+      el.innerHTML = ''
+      for (const [type, f] of Object.entries(S.files)) {
+        const div = document.createElement('div')
+        div.className = 'loaded-file'
+        div.innerHTML = `<span class="lf-type">${label(type)}</span><span class="lf-name">${f.name}</span><span class="lf-remove" data-type="${type}">✕</span>`
+        div.querySelector('.lf-remove').addEventListener('click', () => {
+          delete S.files[type]
+          renderLoadedFiles()
+          $('runImportBtn').disabled = Object.keys(S.files).length === 0
+          $('importStatus').textContent = `${Object.keys(S.files).length} file(s) ready`
+        })
+        el.appendChild(div)
+      }
+    }
+
+    /* ================================================
+       NORMALIZATION
+    ================================================ */
+    async function runNormalization() {
+      const btn = $('runImportBtn')
+
+      if (!S.periodId) { addLog('⚠ Select a commission period first', 'err'); return }
+      if (!S.files.deal_log) { addLog('⚠ Deal Log is required — could not detect it in uploaded files', 'err'); return }
+
+      btn.innerHTML = '<span class="spinner"></span> Normalizing…'
+      btn.disabled  = true
+
+      try {
+        // Persist raw rows
+        for (const [type, f] of Object.entries(S.files)) {
+          await persistRaw(type, f.rows)
+          addLog(`💾 ${label(type)} saved to database (${f.rows.length} rows)`, 'ok')
+        }
+
+        const deals   = buildDeals()
+        const metrics = buildMetrics(deals)
+
+        addLog(`🔄 Built ${deals.length} deals across ${metrics.length} consultants`, 'ok')
+
+        await persistDeals(deals)
+        await persistMetrics(metrics)
+
+        addLog(`✅ Normalization complete — ${metrics.length} consultants updated`, 'ok')
+
+        await refreshManager()
+        document.querySelector('[data-tab="mgr-dashboard"]')?.click()
+      } catch (err) {
+        addLog(`❌ Error: ${err.message}`, 'err')
+        console.error(err)
+      }
+
+      btn.innerHTML = '⚡ Run Normalization'
+      btn.disabled  = false
+    }
+
+    /* ================================================
+       CSV PARSER
+    ================================================ */
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean)
+      if (lines.length < 2) return []
+
+      const delim = detectDelimiter(lines)
+      let headerIdx = 0, bestScore = -1
+
+      lines.slice(0, 40).forEach((line, i) => {
+        const heads = splitLine(line, delim).map(normH)
+        const score = heads.reduce((s, h) => {
+          if (h.includes('deal')) s += 5
+          if (h.includes('sales')) s += 4
+          if (h.includes('consultant')) s += 3
+          if (h.includes('gross')) s += 3
+          if (h.includes('salesperson')) s += 4
+          if (h.includes('finance')) s += 2
+          if (h.includes('income')) s += 2
+          if (h.includes('aftercare') || h.includes('aftermarket')) s += 2
+          if (h.includes('lead')) s += 2
+          if (h.includes('sign')) s += 2
+          return s
+        }, 0)
+        if (score > bestScore) { bestScore = score; headerIdx = i }
+      })
+
+      const rawHeads = splitLine(lines[headerIdx], delim).map(normH)
+      const heads    = dedupeHeads(rawHeads)
+
+      return lines.slice(headerIdx + 1)
+        .map(l => splitLine(l, delim))
+        .filter(cols => cols.some(c => String(c || '').trim()))
+        .map(cols => {
+          const obj = {}
+          heads.forEach((h, i) => { if (h) obj[h] = (cols[i] || '').trim() })
+          return obj
+        })
+    }
+
+    function detectDelimiter(lines) {
+      const s     = lines.slice(0, 10).join('\n')
+      const tabs  = (s.match(/\t/g) || []).length
+      const commas= (s.match(/,/g) || []).length
+      const semis = (s.match(/;/g) || []).length
+      if (tabs >= commas && tabs >= semis) return '\t'
+      if (semis > commas) return ';'
+      return ','
+    }
+
+    function splitLine(line, delim) {
+      if (delim === '\t') return line.split('\t')
+      const res = []; let cur = '', q = false
+      for (const ch of line) {
+        if (ch === '"') { q = !q }
+        else if (ch === delim && !q) { res.push(cur); cur = '' }
+        else cur += ch
+      }
+      res.push(cur)
+      return res
+    }
+
+    function dedupeHeads(heads) {
+      const seen = {}
+      return heads.map(h => {
+        const k = h || 'blank'
+        seen[k] = (seen[k] || 0) + 1
+        return seen[k] === 1 ? k : `${k} ${seen[k]}`
+      })
+    }
+
+    function normH(h) {
+      return String(h || '').toLowerCase().replace(/[\uFEFF$#.()\[\]{}]/g, '').replace(/[-_/]/g, ' ').replace(/\s+/g, ' ').trim()
+    }
+
+    /* ================================================
+       FIELD GETTERS
+    ================================================ */
+    function get(row, names) {
+      const keys = Object.keys(row || {})
+      for (const name of names) {
+        const t   = normH(name)
+        let found = keys.find(k => normH(k) === t)
+                 || keys.find(k => normH(k).includes(t))
+                 || keys.find(k => t.includes(normH(k)))
+        if (found) {
+          const v = row[found]
+          if (v !== undefined && v !== null && String(v).trim() !== '') return v
+        }
+      }
+      return ''
+    }
+
+    function num$  (v) { return Number(String(v || '').replace(/[$,\s]/g, '').replace(/[^\d.-]/g, '') || 0) }
+    function numInt(v) { return Number(v || 0) }
+
+    function getDealNum(row) {
+      return get(row, ['deal','deal number','deal no','deal no.','deal #','deal#','stock deal no','deal ref','contract number','invoice number','contract no','invoice no','proposal number'])
+    }
+
+    function normDeal(v) {
+      const raw = String(v || '').toLowerCase().trim()
+      if (!raw) return ''
+      const ns = raw.match(/\d+/g)
+      if (ns?.length) return ns.join('').replace(/^0+/, '')
+      return raw.replace(/[^a-z0-9]/g, '').replace(/^0+/, '')
+    }
+
+    function rowsByDeal(type, dealNum) {
+      const n = normDeal(dealNum)
+      return ((S.files[type]?.rows) || []).filter(r => normDeal(getDealNum(r)) === n)
+    }
+
+    function sumByDeal(type, dealNum, fn) {
+      return rowsByDeal(type, dealNum).reduce((s, r) => s + fn(r), 0)
+    }
+
+    /* ================================================
+       BUILD DEALS
+    ================================================ */
+    function buildDeals() {
+      const dealRows = S.files.deal_log?.rows || []
+
+      return dealRows.map(row => {
+        const dealNum = getDealNum(row)
+        const spName  = cleanName(get(row, ['salesperson','sales person','sales consultant','consultant','salesperson name','sales person full name']))
+
+        if (!dealNum || !spName) return null
+
+        // Gross
+        const postedGross   = num$(get(row, ['posted gross','processed gross','real gross']))
+        const estGross      = num$(get(row, ['est gross','estimated gross','gross']))
+        const usedGross     = postedGross || estGross
+        const amGross       = num$(get(row, ['am gross','am - gross','aftermarket gross','am cost amount']))
+        const realGp        = usedGross - amGross
+
+        // Trade
+        const tradeAllowance = num$(get(row, ['trade allowance','trade in allowance','trade']))
+        const tradePayout    = num$(get(row, ['trade payout','payout']))
+
+        // Accessories
+        const accGp = sumByDeal('accessories', dealNum, r => {
+          const profit = num$(get(r, ['profit excl gst','profit incl gst','profit','gross']))
+          const sale   = num$(get(r, ['sale amount','sales amount','sell amount','sell price incl gst','sell price excl gst']))
+          const cost   = num$(get(r, ['cost amount','cost','cost incl gst','cost excl gst']))
+          return profit || (sale - cost)
+        })
+
+        // Finance
+        const finRows = rowsByDeal('finance', dealNum)
+        const finIncome = finRows.reduce((s, r) => {
+          return s + (num$(get(r, ['adj total inc','total income','tot fin income','finance income','fin income'])) || num$(get(r, ['commission','comm'])))
+        }, 0)
+        const dealerFin = finRows.some(r => {
+          const pen  = numInt(get(r, ['fin pen','finance pen','finance sales']))
+          const inc  = num$(get(r, ['adj total inc','total income','fin income','finance income']))
+          return pen > 0 || inc > 0
+        })
+
+        // Aftercare
+        const acTotal = sumByDeal('aftercare', dealNum, r => {
+          return num$(get(r, ['total aftermarket','aftermarket total','aftercare total','aftermarket income','gross'])) ||
+                 num$(get(r, ['commission','comm'])) ||
+                 num$(get(r, ['premium']))
+        })
+
+        return {
+          period_id:        S.periodId,
+          deal_number:      String(dealNum),
+          salesperson_name: spName,
+          customer_name:    get(row, ['customer','customer name','cust']) || '',
+          vehicle:          get(row, ['carline','vehicle','description','model']) || '',
+          posted_gross:     postedGross,
+          est_gross:        estGross,
+          real_gp:          realGp,
+          am_gross:         amGross,
+          trade_allowance:  tradeAllowance,
+          trade_payout:     tradePayout,
+          accessory_gp:     accGp,
+          finance_income:   finIncome,
+          dealer_finance:   dealerFin,
+          aftercare_total:  acTotal
+        }
+      }).filter(Boolean)
+    }
+
+    /* ================================================
+       BUILD METRICS
+    ================================================ */
+    function buildMetrics(deals) {
+      const grouped = {}
+
+      deals.forEach(d => {
+        const k = d.salesperson_name
+        if (!grouped[k]) grouped[k] = blank(k)
+        grouped[k].units++
+        grouped[k].finance_income_total += d.finance_income
+        grouped[k].accessory_gp         += d.accessory_gp
+        grouped[k].aftercare_total      += d.aftercare_total
+        grouped[k].new_gross_total      += d.real_gp
+        if (d.dealer_finance) grouped[k].finance_deals++
+      })
+
+      addSignups(grouped)
+      addFinanceSummary(grouped)
+      addAftercareSummary(grouped)
+      addLeads(grouped)
+
+      Object.values(grouped).forEach(r => {
+        r.finance_penetration = r.units ? (r.finance_deals / r.units) * 100 : 0
+        r.finance_ipur        = r.units ? r.finance_income_total / r.units : 0
+        if (!r.aftercare_ppv) r.aftercare_ppv = r.units ? r.aftercare_total / r.units : 0
+
+        r.base_unit_commission    = r.units * 100
+        r.volume_bonus            = r.units >= 18 ? 750 : 0
+        r.signups_bonus           = r.signups >= 23 ? 250 : 0
+        r.gross_bonus             = r.new_gross_total * 0.05
+        r.kpi_bonus_pool          = calcKpi(r)
+        r.volume_unlock_percentage= volumeUnlock(r.units)
+        r.unlocked_kpi_bonus      = r.kpi_bonus_pool * r.volume_unlock_percentage
+        r.fixed_payout_total      = r.volume_bonus + r.signups_bonus
+        r.manual_bonus_total      = numInt(r.manual_bonus_total)
+        r.direct_purchase_bonus   = numInt(r.direct_purchase_bonus)
+        r.final_commission        = r.base_unit_commission + r.fixed_payout_total + r.gross_bonus + r.unlocked_kpi_bonus + r.manual_bonus_total + r.direct_purchase_bonus
+      })
+
+      return Object.values(grouped)
+    }
+
+    function blank(name) {
+      return {
+        period_id: S.periodId, salesperson_name: cleanName(name),
+        units:0, signups:0, finance_deals:0, finance_penetration:0, finance_ipur:0, finance_income_total:0,
+        aftercare_total:0, aftercare_ppv:0, accessory_gp:0, new_leads:0, test_drives:0, valuations:0,
+        google_reviews:0, nps:0, dah:0, new_gross_total:0, volume_bonus:0, signups_bonus:0, gross_bonus:0,
+        base_unit_commission:0, fixed_payout_total:0, kpi_bonus_pool:0, volume_unlock_percentage:0,
+        unlocked_kpi_bonus:0, manual_bonus_total:0, direct_purchase_bonus:0, final_commission:0
+      }
+    }
+
+    // Sign-ups: one per unique deal per person
+    function addSignups(g) {
+      const seen = new Set()
+      ;(S.files.signups?.rows || []).forEach(r => {
+        const name = cleanName(get(r, ['sales person','salesperson','consultant','sales consultant','salesperson name']))
+        if (!name) return
+        const deal = normDeal(getDealNum(r))
+        const key  = deal ? `${name}|${deal}` : null
+        if (key) { if (seen.has(key)) return; seen.add(key) }
+        if (!g[name]) g[name] = blank(name)
+        g[name].signups++
+      })
+    }
+
+    // Finance summary fallback — if per-deal didn't capture enough, use the summary report
+    function addFinanceSummary(g) {
+      ;(S.files.finance?.rows || []).forEach(r => {
+        // Only summary rows (no deal number, has Sales Person)
+        const dealNum = getDealNum(r)
+        if (dealNum) return  // deal-level row — already handled
+        const name = cleanName(get(r, ['sales person','salesperson','consultant']))
+        if (!name || name.toLowerCase() === 'total') return
+        if (!g[name]) g[name] = blank(name)
+
+        const totalSales = numInt(get(r, ['total sales']))
+        const finSales   = numInt(get(r, ['finance sales']))
+        const finPen     = num$(get(r, ['fin pen','finance pen']))
+        const finInc     = num$(get(r, ['fin income','total income','finance income']))
+        const ipru       = num$(get(r, ['fin ipru','ipru','ipur']))
+
+        if (totalSales > 0 && !g[name].units) g[name].units = totalSales
+        if (finSales > 0) g[name].finance_deals = finSales
+        if (finPen > 0) g[name].finance_penetration = finPen * (finPen <= 1 ? 100 : 1)  // handle decimal vs percent
+        if (finInc > 0 && g[name].finance_income_total === 0) g[name].finance_income_total = finInc
+        if (ipru > 0 && g[name].finance_ipur === 0) g[name].finance_ipur = ipru
+      })
+    }
+
+    // Aftercare summary — if per-deal rows exist they're used, fallback to summary PVR
+    function addAftercareSummary(g) {
+      ;(S.files.aftercare?.rows || []).forEach(r => {
+        const dealNum = getDealNum(r)
+        if (dealNum) return  // deal-level — already handled in buildDeals
+        const name = cleanName(get(r, ['salespersonname','salesperson name','salesperson','sales person','consultant','name']))
+        if (!name || name.toLowerCase() === 'total') return
+        if (!g[name]) g[name] = blank(name)
+
+        const gross  = num$(get(r, ['gross','total aftermarket','aftermarket total','aftercare total']))
+        const pvr    = num$(get(r, ['pvr','ppv','aftercare ppv','aftercare pvr','ppr']))
+        const deals  = numInt(get(r, ['deals','units','vehicles']))
+
+        if (gross > 0 && g[name].aftercare_total === 0) g[name].aftercare_total = gross
+        if (pvr   > 0) g[name].aftercare_ppv = pvr
+        if (!g[name].units && deals > 0) g[name].units = deals
+      })
+    }
+
+    // Leads (DealerCell activity report)
+    function addLeads(g) {
+      ;(S.files.leads?.rows || []).forEach(r => {
+        const name = cleanName(get(r, ['sales person','salesperson','owner','consultant','sales consultant','salesperson name']))
+        if (!name) return
+        if (!g[name]) g[name] = blank(name)
+
+        // Count each row as 1 lead
+        g[name].new_leads++
+
+        // Test drive
+        const tdDone = String(get(r, ['test drive completed'])).toLowerCase()
+        if (tdDone === 'yes' || tdDone === '1' || tdDone === 'true') g[name].test_drives++
+
+        // Valuation
+        const valDone = String(get(r, ['valuation completed'])).toLowerCase()
+        if (valDone === 'yes' || valDone === '1' || valDone === 'true') g[name].valuations++
+      })
+    }
+
+    /* ================================================
+       KPI HELPERS
+    ================================================ */
+    function volumeUnlock(u) { return u >= 18 ? 1 : u >= 15 ? 0.75 : u >= 12 ? 0.25 : 0 }
+    function acPay(ppv)  { return ppv >= 800 ? 1100 : ppv >= 600 ? 1000 : ppv >= 400 ? 750 : ppv >= 250 ? 500 : 0 }
+    function finPenPay(p){ return p >= 75 ? 1000 : p >= 40 ? 500 : p >= 25 ? 250 : 0 }
+    function ipurPay(i)  { return i >= 1500 ? 1000 : i >= 1100 ? 500 : i >= 800 ? 250 : 0 }
+    function accPay(g)   { return g >= 500 ? 450 : g >= 100 ? 150 : 0 }
+    function rvwPay(c)   { return Math.round(c) * 25 }
+    function npsPay(n)   { return n >= 80 ? 250 : 0 }
+    function dahPay(d)   { return d >= 80 ? 250 : 0 }
+    function calcKpi(r)  { return acPay(r.aftercare_ppv) + finPenPay(r.finance_penetration) + ipurPay(r.finance_ipur) + accPay(r.accessory_gp) + rvwPay(r.google_reviews) + npsPay(r.nps) + dahPay(r.dah) }
+
+    /* ================================================
+       PERSIST
+    ================================================ */
+    async function persistRaw(type, rows) {
+      await db.from('raw_import_rows').delete().eq('period_id', S.periodId).eq('import_type', type)
+      await db.from('raw_import_batches').delete().eq('period_id', S.periodId).eq('import_type', type)
+
+      const { data: batch, error: bErr } = await db.from('raw_import_batches').insert({ period_id: S.periodId, import_type: type, row_count: rows.length }).select().single()
+      if (bErr) throw bErr
+
+      const payload = rows.map((r, i) => ({ batch_id: batch.id, period_id: S.periodId, import_type: type, row_number: i + 1, row_data: r }))
+      const { error } = await db.from('raw_import_rows').insert(payload)
+      if (error) throw error
+    }
+
+    async function persistDeals(deals) {
+      await db.from('master_deals').delete().eq('period_id', S.periodId)
+      if (!deals.length) return
+      const { error } = await db.from('master_deals').insert(deals)
+      if (error) throw error
+    }
+
+    async function persistMetrics(metrics) {
+      await db.from('salesperson_monthly_metrics').delete().eq('period_id', S.periodId)
+      if (!metrics.length) return
+      const { error } = await db.from('salesperson_monthly_metrics').insert(metrics)
+      if (error) throw error
+    }
+
+    /* ================================================
+       MANAGER DASHBOARD
+    ================================================ */
+    async function refreshManager() {
+      if (!S.periodId) return
+
+      const periodSel = $('mgr-period')
+      if (periodSel) S.periodId = periodSel.value || S.periodId
+
+      const [mRes, dRes] = await Promise.all([
+        db.from('salesperson_monthly_metrics').select('*').eq('period_id', S.periodId).order('final_commission', { ascending: false }),
+        db.from('master_deals').select('*').eq('period_id', S.periodId)
+      ])
+
+      S.metrics = mRes.data || []
+      S.deals   = dRes.data || []
+      renderManagerDashboard()
+    }
+
+    function renderManagerDashboard() {
+      const totComm  = S.metrics.reduce((s, r) => s + numInt(r.final_commission), 0)
+      const totUnits = S.metrics.reduce((s, r) => s + numInt(r.units), 0)
+      const totSU    = S.metrics.reduce((s, r) => s + numInt(r.signups), 0)
+      const finDeals = S.metrics.reduce((s, r) => s + numInt(r.finance_deals), 0)
+      const avgFin   = totUnits ? (finDeals / totUnits) * 100 : 0
+      const top      = S.metrics[0]
+
+      setText('mgr-totalComm', money(totComm))
+      setText('mgr-units', totUnits)
+      setText('mgr-finPen', `${Math.round(avgFin)}%`)
+      setText('mgr-signups', totSU)
+      setText('mgr-top', top?.salesperson_name || '—')
+
+      const tbody = $('teamRows')
+      if (!tbody) return
+      tbody.innerHTML = ''
+
+      if (!S.metrics.length) {
+        tbody.innerHTML = '<tr><td colspan="12"><div class="empty"><div class="empty-icon">📊</div>No data for this period.</div></td></tr>'
+        return
+      }
+
+      S.metrics.forEach(row => {
+        const unlock = Math.round(numInt(row.volume_unlock_percentage) * 100)
+        const tr     = document.createElement('tr')
+        tr.innerHTML = `
+          <td><strong>${safe(row.salesperson_name)}</strong></td>
+          <td>${numInt(row.units)}</td>
+          <td>${numInt(row.signups)}</td>
+          <td>${Math.round(numInt(row.finance_penetration))}%</td>
+          <td>${money(row.finance_ipur)}</td>
+          <td>${money(row.aftercare_ppv)}</td>
+          <td>${money(row.accessory_gp)}</td>
+          <td>${numInt(row.new_leads)}</td>
+          <td>${numInt(row.test_drives)}</td>
+          <td><strong class="text-green">${money(row.final_commission)}</strong></td>
+          <td><span class="badge ${unlock === 100 ? 'badge-green' : unlock >= 75 ? 'badge-blue' : unlock >= 25 ? 'badge-gold' : 'badge-red'}">${unlock}%</span></td>
+          <td>
+            <div class="td-actions">
+              <button class="btn btn-secondary" style="font-size:12px;padding:6px 12px;" data-action="psp">PSP</button>
+              <button class="btn btn-primary" style="font-size:12px;padding:6px 12px;" data-action="workings">Detail</button>
+            </div>
+          </td>
+        `
+
+        tr.querySelector('[data-action="psp"]').addEventListener('click', e => {
+          e.stopPropagation()
+          renderPSP(row)
+          document.querySelector('[data-tab="mgr-psp"]')?.click()
+        })
+
+        tr.querySelector('[data-action="workings"]').addEventListener('click', e => {
+          e.stopPropagation()
+          renderWorkings(row)
+        })
+
+        tbody.appendChild(tr)
+      })
+    }
+
+    function renderWorkings(row) {
+      S.selectedConsultant = row
+      $('workingsPanel').style.display = 'block'
+      setText('workingsName', row.salesperson_name)
+
+      const consultantDeals = S.deals.filter(d => d.salesperson_name === row.salesperson_name)
+
+      $('workingsContent').innerHTML = `
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h3>Commission Breakdown</h3>
+            ${dr('Base Unit Commission', money(row.base_unit_commission))}
+            ${dr('Volume Bonus', money(row.volume_bonus))}
+            ${dr('Sign Ups Bonus', money(row.signups_bonus))}
+            ${dr('Gross Bonus (5%)', money(row.gross_bonus))}
+            ${dr('KPI Bonus Pool', money(row.kpi_bonus_pool))}
+            ${dr('Volume Unlock', Math.round(numInt(row.volume_unlock_percentage) * 100) + '%')}
+            ${dr('Unlocked KPI Bonus', money(row.unlocked_kpi_bonus))}
+            ${dr('Manual Bonus', money(row.manual_bonus_total))}
+            <div class="detail-row"><span class="dr-label">FINAL</span><span class="dr-value dr-total">${money(row.final_commission)}</span></div>
+          </div>
+
+          <div class="detail-card">
+            <h3>KPI Pool Components</h3>
+            ${dr('Aftercare PPV Bonus', money(acPay(row.aftercare_ppv)))}
+            ${dr('Finance Pen Bonus', money(finPenPay(row.finance_penetration)))}
+            ${dr('Finance IPUR Bonus', money(ipurPay(row.finance_ipur)))}
+            ${dr('Accessory Bonus', money(accPay(row.accessory_gp)))}
+            ${dr('Google Review Bonus', money(rvwPay(row.google_reviews)))}
+            ${dr('NPS Bonus', money(npsPay(row.nps)))}
+            ${dr('DAH Bonus', money(dahPay(row.dah)))}
+            ${dr('TOTAL POOL', money(row.kpi_bonus_pool))}
+          </div>
+
+          <div class="detail-card">
+            <h3>Performance Summary</h3>
+            ${dr('Units', numInt(row.units))}
+            ${dr('Sign Ups', numInt(row.signups))}
+            ${dr('Finance Deals', numInt(row.finance_deals))}
+            ${dr('Finance %', Math.round(numInt(row.finance_penetration)) + '%')}
+            ${dr('Finance IPUR', money(row.finance_ipur))}
+            ${dr('Aftercare PPV', money(row.aftercare_ppv))}
+            ${dr('Accessory GP', money(row.accessory_gp))}
+            ${dr('Leads', numInt(row.new_leads))}
+            ${dr('Test Drives', numInt(row.test_drives))}
+            ${dr('Valuations', numInt(row.valuations))}
+          </div>
+
+          <div class="detail-card">
+            <h3>Deal Trace (${consultantDeals.length} deals)</h3>
+            ${consultantDeals.length
+              ? consultantDeals.map(d => `
+                  <div class="detail-row">
+                    <span class="dr-label" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;">
+                      <strong>${safe(d.deal_number)}</strong><br>
+                      <span style="font-size:12px;">${safe(d.vehicle || d.customer_name || '')}</span>
+                    </span>
+                    <span class="dr-value" style="font-size:12px;text-align:right;">
+                      GP ${money(d.real_gp)}<br>
+                      F&I ${money(d.finance_income)}<br>
+                      AC ${money(d.aftercare_total)}
+                    </span>
+                  </div>
+                `).join('')
+              : '<p class="muted small">No deal detail found.</p>'
+            }
+          </div>
+        </div>
+      `
+
+      $('workingsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+
+    function renderPSP(row) {
+      S.selectedConsultant = row
+      $('emailPspBtn').disabled = false
+      const ins = generateSalespersonInsights(row)
+
+      $('pspContent').innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h3 style="font-size:18px;font-weight:800;">${safe(row.salesperson_name)}</h3>
+          <p class="muted small">${numInt(row.units)} units · ${money(row.final_commission)} commission · ${Math.round(numInt(row.volume_unlock_percentage) * 100)}% KPI unlock</p>
+        </div>
+
+        <div class="ai-box" style="margin-bottom:20px;">${safe(ins.summary)}</div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h3>💪 Strengths</h3>
+            ${ins.strengths.length ? ins.strengths.map(x => `<div class="psp-insight">${safe(x)}</div>`).join('') : '<p class="muted small">Building this month.</p>'}
+          </div>
+          <div class="detail-card">
+            <h3>📈 Opportunities</h3>
+            ${ins.opportunities.length ? ins.opportunities.map(x => `<div class="psp-insight" style="border-color:var(--gold);">${safe(x)}</div>`).join('') : '<p class="muted small">No major gaps.</p>'}
+          </div>
+          <div class="detail-card">
+            <h3>🎯 Top 3 Focus Areas</h3>
+            <ol class="focus-list" style="padding:0;">
+              ${ins.focusAreas.map((x, i) => `<li><span class="focus-num">${i + 1}</span>${safe(x)}</li>`).join('')}
+            </ol>
+          </div>
+          <div class="detail-card">
+            <h3>🗣 Coaching Language</h3>
+            <p class="muted small" style="margin-bottom:12px;font-style:italic;">For the 1:1 conversation:</p>
+            <p style="font-size:14px;">${safe(ins.managerLanguage)}</p>
+          </div>
+        </div>
+      `
+    }
+
+    /* ================================================
+       SALESPERSON DASHBOARD
+    ================================================ */
+    function bindSalespersonEvents() {
+      bindLogout('sp-logout')
+      const sel = $('sp-period')
+      sel?.addEventListener('change', async () => {
+        S.periodId = sel.value
+        await refreshSalesperson()
+      })
+    }
+
+    async function refreshSalesperson() {
+      if (!S.periodId) return
+      const { data: { session } } = await db.auth.getSession()
+      const name = await getStaffName(session.user.email)
+      if (name) setText('sp-nameLabel', name)
+
+      let q = db.from('salesperson_monthly_metrics').select('*').eq('period_id', S.periodId)
+      if (name) q = q.eq('salesperson_name', name)
+      const { data } = await q.limit(1)
+      renderSalesperson(data?.[0] || null)
+    }
+
+    function renderSalesperson(row) {
+      if (!row) {
+        setText('sp-comm', '$0')
+        setText('sp-units', '0')
+        setText('sp-fin', '0%')
+        setText('sp-ac', '$0')
+        setText('sp-acc', '$0')
+        setText('sp-unlock', '0%')
+        $('sp-aiSummary').innerHTML = '<div class="empty">No data found for this period. Check with your manager that the month has been normalized.</div>'
+        $('sp-focus').innerHTML     = '<li><span class="focus-num">?</span>No insights yet.</li>'
+        $('sp-breakdown').innerHTML = '<tr><td colspan="2"><div class="empty">No data.</div></td></tr>'
+        return
+      }
+
+      const ins = generateSalespersonInsights(row)
+
+      setText('sp-comm',   money(row.final_commission))
+      setText('sp-units',  numInt(row.units))
+      setText('sp-fin',    Math.round(numInt(row.finance_penetration)) + '%')
+      setText('sp-ac',     money(row.aftercare_ppv))
+      setText('sp-acc',    money(row.accessory_gp))
+      setText('sp-unlock', Math.round(numInt(row.volume_unlock_percentage) * 100) + '%')
+
+      $('sp-aiSummary').innerHTML = `<p>${safe(ins.summary)}</p>`
+      $('sp-focus').innerHTML     = ins.focusAreas.map((x, i) => `<li><span class="focus-num">${i + 1}</span>${safe(x)}</li>`).join('')
+
+      $('sp-breakdown').innerHTML = [
+        ['Units',               numInt(row.units)],
+        ['Sign Ups',            numInt(row.signups)],
+        ['Base Commission',     money(row.base_unit_commission)],
+        ['Volume Bonus',        money(row.volume_bonus)],
+        ['Sign Ups Bonus',      money(row.signups_bonus)],
+        ['Gross Bonus',         money(row.gross_bonus)],
+        ['KPI Bonus Pool',      money(row.kpi_bonus_pool)],
+        ['Volume Unlock',       Math.round(numInt(row.volume_unlock_percentage) * 100) + '%'],
+        ['Unlocked KPI',        money(row.unlocked_kpi_bonus)],
+        ['Final Commission',    money(row.final_commission)],
+        ['Finance %',           Math.round(numInt(row.finance_penetration)) + '%'],
+        ['Finance IPUR',        money(row.finance_ipur)],
+        ['Aftercare PPV',       money(row.aftercare_ppv)],
+        ['Accessory GP',        money(row.accessory_gp)],
+        ['Google Reviews',      numInt(row.google_reviews)],
+        ['NPS',                 numInt(row.nps)],
+        ['DAH',                 numInt(row.dah)],
+        ['Leads',               numInt(row.new_leads)],
+        ['Test Drives',         numInt(row.test_drives)],
+        ['Valuations',          numInt(row.valuations)]
+      ].map(([l, v]) => `<tr><td>${l}</td><td><strong>${v}</strong></td></tr>`).join('')
+    }
+
+    /* ================================================
+       UTILITIES
+    ================================================ */
+    function show(id) {
+      ['page-login','page-manager','page-salesperson'].forEach(p => {
+        const el = document.getElementById(p)
+        if (el) el.classList.toggle('active', p === id)
+      })
+    }
+
+    function $(id)        { return document.getElementById(id) }
+    function setText(id, v) { const el = $(id); if (el) el.textContent = v }
+    function safe(v)      { return String(v||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;') }
+    function money(v)     { return new Intl.NumberFormat('en-AU', { style:'currency', currency:'AUD', maximumFractionDigits:0 }).format(Number(v||0)) }
+    function label(t)     { return String(t||'').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase()) }
+    function cleanName(v) { return String(v||'').replace(/\s+/g,' ').trim() }
+    function dr(l, v)     { return `<div class="detail-row"><span class="dr-label">${l}</span><span class="dr-value">${v}</span></div>` }
+    function addLog(msg, type = 'ok') {
+      const el = $('importLog')
+      if (!el) return
+      const empty = el.querySelector('.empty')
+      if (empty) empty.remove()
+      const div = document.createElement('div')
+      div.className = `log-item log-${type}`
+      div.innerHTML = `<span class="log-icon">${type === 'ok' ? '✓' : '⚠'}</span><span>${msg}</span>`
+      el.prepend(div)
+    }
+  </script>
+</body>
+</html>
