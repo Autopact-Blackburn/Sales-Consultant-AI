@@ -6,7 +6,7 @@
   <title>Dealership Performance Intelligence</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <style>
     /* =============================================
        DESIGN TOKENS — DARK BLUE THEME
@@ -46,7 +46,7 @@
       min-height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: 'DM Sans', system-ui, sans-serif;
+      font-family: 'Inter', 'DM Sans', system-ui, sans-serif;
       font-size: 15px;
       line-height: 1.6;
     }
@@ -829,7 +829,7 @@
        SUPABASE
     ================================================ */
     const SB_URL  = 'https://snzjsuwqetomdkvphvzs.supabase.co'
-    const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInJlZiI6InNuempzdXdxZXRvbWRrdnBodnpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NDQ5MTksImV4cCI6MjA5MzUyMDkxOX0.mkJ1_nxP0emPvhSqgUz7Q4zKm63LtG0J7xiYhwT78QQ'
+    const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuempzdXdxZXRvbWRrdnBodnpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NDQ5MTksImV4cCI6MjA5MzUyMDkxOX0.mkJ1_nxP0emPvhSqgUz7Q4zKm63LtG0J7xiYhwT78QQ'
     const db      = createClient(SB_URL, SB_KEY)
 
     /* ================================================
