@@ -151,8 +151,61 @@ async function uploadToSupabase(){ const periodId=$('periodSelect').value; if(!p
 }
 async function loadPeriods(){ const {data,error}=await sb.from('commission_periods').select('id,period_name,start_date,end_date,status').order('start_date',{ascending:false}); const sel=$('periodSelect'); if(error){ sel.innerHTML='<option value="">Could not load periods</option>'; setStatus('bad',`Could not load periods: ${error.message}`); return; } sel.innerHTML=(data||[]).map(p=>`<option value="${p.id}">${p.period_name} (${p.start_date} to ${p.end_date})</option>`).join('')||'<option value="">No periods found</option>'; }
 function download(filename,mime,content){ const blob=new Blob([content],{type:mime}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
-$('fileInput').addEventListener('change', async e=>{ const file=e.target.files[0]; if(!file) return; state.fileName=file.name; const data=await file.arrayBuffer(); state.workbook=XLSX.read(data,{type:'array',cellDates:true}); $('processBtn').disabled=false; $('uploadBtn').disabled=true; $('downloadJsonBtn').disabled=true; setStatus('warn',`Workbook loaded: ${file.name}. Ready to process.`); $('log').textContent=`Workbook loaded. Sheets detected:\n- ${state.workbook.SheetNames.join('\n- ')}`; });
-$('processBtn').addEventListener('click',processWorkbook); $('uploadBtn').addEventListener('click',uploadToSupabase); $('reloadPeriodsBtn').addEventListener('click',loadPeriods); $('downloadJsonBtn').addEventListener('click',()=>download('commission_raw_import_v2.json','application/json',JSON.stringify({fileName:state.fileName,contract:state.contract,raw:state.raw,metrics:state.metrics,team:state.team,issues:state.issues},null,2)));
+$('fileInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  state.fileName = file.name;
+
+  const data = await file.arrayBuffer();
+
+  state.workbook = XLSX.read(data, {
+    type: 'array',
+    cellDates: true
+  });
+
+  $('processBtn').disabled = false;
+  $('uploadBtn').disabled = true;
+  $('downloadJsonBtn').disabled = true;
+
+  setStatus(
+    'warn',
+    `Workbook loaded: ${file.name}. Ready to process.`
+  );
+
+  $('log').textContent =
+    'Workbook loaded. Sheets detected:\n- ' +
+    state.workbook.SheetNames.join('\n- ');
+});
+
+$('processBtn').addEventListener('click', processWorkbook);
+
+$('uploadBtn').addEventListener('click', uploadToSupabase);
+
+$('reloadPeriodsBtn').addEventListener('click', loadPeriods);
+
+$('downloadJsonBtn').addEventListener(
+  'click',
+  () =>
+    download(
+      'commission_raw_import_v2.json',
+      'application/json',
+      JSON.stringify(
+        {
+          fileName: state.fileName,
+          contract: state.contract,
+          raw: state.raw,
+          metrics: state.metrics,
+          team: state.team,
+          issues: state.issues
+        },
+        null,
+        2
+      )
+    )
+);
+
 loadPeriods();
 </script>
 </body>
