@@ -9,11 +9,51 @@
   <style>
     :root{--bg:#f6f7fb;--panel:#fff;--ink:#0b1733;--muted:#64748b;--line:#dbe3ef;--blue:#2563eb;--navy:#0f172a;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--soft:#eff6ff;--shadow:0 18px 45px rgba(15,23,42,.10);--radius:20px}
     *{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:linear-gradient(145deg,#f8fafc,#eef4ff);color:var(--ink)}
-    .wrap{max-width:1340px;margin:0 auto;padding:34px 20px 70px}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-bottom:22px}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius);padding:24px}.eyebrow{margin:0 0 8px;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:900;color:var(--blue)}h1{margin:0;font-size:38px;line-height:1.05;letter-spacing:-.04em}h2{margin:0 0 12px;font-size:22px;letter-spacing:-.02em}.muted{color:var(--muted);line-height:1.55}.small{font-size:12px}.upload{display:grid;gap:13px}input,select{width:100%;padding:13px 14px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;color:var(--ink);font-weight:650}input[type=file]{padding:16px;border:1px dashed #93a4bf;background:#f8fbff}.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}button{border:0;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer}button.primary{background:var(--navy);color:#fff}button.blue{background:var(--blue);color:#fff}button.secondary{background:#e2e8f0;color:#172033}button:disabled{opacity:.45;cursor:not-allowed}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:18px 0}.metric{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}.metric .label{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:900;letter-spacing:.08em}.metric .value{font-size:26px;font-weight:950;margin-top:6px}.status{padding:14px 16px;border-radius:16px;margin:14px 0;border:1px solid var(--line);background:#fff}.status.ok{border-color:#bbf7d0;background:#f0fdf4;color:var(--ok)}.status.warn{border-color:#fde68a;background:#fffbeb;color:var(--warn)}.status.bad{border-color:#fecaca;background:#fef2f2;color:var(--bad)}.section{margin-top:18px}.tablewrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(15,23,42,.06)}table{border-collapse:collapse;width:100%;min-width:1200px}th,td{padding:10px 12px;border-bottom:1px solid #edf2f7;text-align:left;font-size:13px;white-space:nowrap}th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#475569}tr:hover td{background:#fbfdff}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.pill.ok{background:#dcfce7;color:#166534}.pill.warn{background:#fef3c7;color:#92400e}.pill.bad{background:#fee2e2;color:#991b1b}.log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#0f172a;color:#dbeafe;padding:16px;border-radius:18px;overflow:auto;max-height:320px;white-space:pre-wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:16px;padding:14px;margin-top:14px}.checkrow{display:flex;gap:10px;align-items:center}.checkrow input{width:auto}.danger{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:16px;padding:12px}.hidden{display:none}@media(max-width:980px){.hero,.split{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}h1{font-size:31px}}
+    .wrap{max-width:1340px;margin:0 auto;padding:34px 20px 70px}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-bottom:22px}
+    .card{background:rgba(255,255,255,.92);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius);padding:24px}
+    .eyebrow{margin:0 0 8px;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:900;color:var(--blue)}
+    h1{margin:0;font-size:38px;line-height:1.05;letter-spacing:-.04em}
+    h2{margin:0 0 12px;font-size:22px;letter-spacing:-.02em}
+    .muted{color:var(--muted);line-height:1.55}.small{font-size:12px}
+    .upload{display:grid;gap:13px}
+    input,select{width:100%;padding:13px 14px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;color:var(--ink);font-weight:650}
+    input[type=file]{padding:16px;border:1px dashed #93a4bf;background:#f8fbff}
+    .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+    button{border:0;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer}
+    button.primary{background:var(--navy);color:#fff}
+    button.blue{background:var(--blue);color:#fff}
+    button.secondary{background:#e2e8f0;color:#172033}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:18px 0}
+    .metric{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
+    .metric .label{font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:900;letter-spacing:.08em}
+    .metric .value{font-size:26px;font-weight:950;margin-top:6px}
+    .status{padding:14px 16px;border-radius:16px;margin:14px 0;border:1px solid var(--line);background:#fff}
+    .status.ok{border-color:#bbf7d0;background:#f0fdf4;color:var(--ok)}
+    .status.warn{border-color:#fde68a;background:#fffbeb;color:var(--warn)}
+    .status.bad{border-color:#fecaca;background:#fef2f2;color:var(--bad)}
+    .section{margin-top:18px}
+    .tablewrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(15,23,42,.06)}
+    table{border-collapse:collapse;width:100%;min-width:1200px}
+    th,td{padding:10px 12px;border-bottom:1px solid #edf2f7;text-align:left;font-size:13px;white-space:nowrap}
+    th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#475569}
+    tr:hover td{background:#fbfdff}
+    .pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}
+    .pill.ok{background:#dcfce7;color:#166534}
+    .pill.warn{background:#fef3c7;color:#92400e}
+    .pill.bad{background:#fee2e2;color:#991b1b}
+    .log{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:#0f172a;color:#dbeafe;padding:16px;border-radius:18px;overflow:auto;max-height:500px;white-space:pre-wrap;line-height:1.65}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:16px;padding:14px;margin-top:14px}
+    .checkrow{display:flex;gap:10px;align-items:center}
+    .checkrow input{width:auto}
+    @media(max-width:980px){.hero,.split{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}h1{font-size:31px}}
   </style>
 </head>
 <body>
 <main class="wrap">
+
   <section class="hero">
     <div class="card">
       <p class="eyebrow">Infrastructure first</p>
@@ -26,57 +66,52 @@
       <h2>Upload + period</h2>
       <label class="small muted">Commission period</label>
       <select id="periodSelect"><option value="">Loading periods...</option></select>
-      <button class="secondary" id="reloadPeriodsBtn">Reload periods</button>
+      <button class="secondary" id="reloadPeriodsBtn">&#8635; Reload periods</button>
       <input id="fileInput" type="file" accept=".xlsx,.xlsm,.xls" />
-      <label class="checkrow small"><input id="replaceExisting" type="checkbox" checked /> Replace existing data for selected period before upload</label>
+      <label class="checkrow small">
+        <input id="replaceExisting" type="checkbox" checked />
+        Replace existing data for selected period before upload
+      </label>
       <div class="btnrow">
-        <button class="primary" id="processBtn" disabled>Process workbook</button>
-        <button class="blue" id="uploadBtn" disabled>Upload to Supabase</button>
+        <button class="primary"   id="processBtn"     disabled>Process workbook</button>
+        <button class="blue"      id="uploadBtn"       disabled>Upload to Supabase</button>
         <button class="secondary" id="downloadJsonBtn" disabled>Download raw JSON</button>
       </div>
-      <p class="muted small">This uses the public anon key you provided. Only commission import tables are touched.</p>
+      <p class="muted small">Uses the public anon key. Only commission import tables are touched.</p>
     </div>
   </section>
 
   <section class="grid">
-    <div class="metric"><div class="label">Canonical</div><div class="value" id="mContract">0</div></div>
-    <div class="metric"><div class="label">Signups</div><div class="value" id="mSignups">0</div></div>
-    <div class="metric"><div class="label">Deals</div><div class="value" id="mDeals">0</div></div>
-    <div class="metric"><div class="label">Accessories</div><div class="value" id="mAccessories">0</div></div>
-    <div class="metric"><div class="label">Snapshots</div><div class="value" id="mSnapshots">0</div></div>
-    <div class="metric"><div class="label">Issues</div><div class="value" id="mIssues">0</div></div>
+    <div class="metric"><div class="label">Canonical</div>   <div class="value" id="mContract">0</div></div>
+    <div class="metric"><div class="label">Signups</div>     <div class="value" id="mSignups">0</div></div>
+    <div class="metric"><div class="label">Deals</div>       <div class="value" id="mDeals">0</div></div>
+    <div class="metric"><div class="label">Accessories</div> <div class="value" id="mAccessories">0</div></div>
+    <div class="metric"><div class="label">Snapshots</div>   <div class="value" id="mSnapshots">0</div></div>
+    <div class="metric"><div class="label">Issues</div>      <div class="value" id="mIssues">0</div></div>
   </section>
 
   <section class="section split">
-    <div class="card"><h2>Validation</h2><div id="validationList" class="muted">No validation run yet.</div></div>
-    <div class="card"><h2>Processing log</h2><div id="log" class="log">Ready.</div></div>
+    <div class="card">
+      <h2>Validation</h2>
+      <div id="validationList" class="muted">No validation run yet.</div>
+    </div>
+    <div class="card">
+      <h2>Processing log</h2>
+      <div id="log" class="log">Ready — waiting for workbook.</div>
+    </div>
   </section>
 
   <section class="section card">
     <h2>Salesperson monthly metrics preview</h2>
-    <p class="muted small">These rows are what will be upserted into <b>salesperson_monthly_metrics</b>.</p>
+    <p class="muted small">Rows upserted into <b>salesperson_monthly_metrics</b>.</p>
     <div class="tablewrap">
       <table>
-        <thead>
-          <tr>
-            <th>Salesperson</th>
-            <th>Signups</th>
-            <th>Deals</th>
-            <th>True Gross</th>
-            <th>Trade %</th>
-            <th>Accessory GP</th>
-            <th>Accessory PPV</th>
-            <th>Finance %</th>
-            <th>IPRU</th>
-            <th>MVI %</th>
-            <th>Warranty %</th>
-            <th>AutoX %</th>
-            <th>Aftercare PVR</th>
-            <th>NPS</th>
-            <th>DAH</th>
-            <th>Reviews</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>Salesperson</th><th>Signups</th><th>Deals</th><th>True Gross</th>
+          <th>Trade %</th><th>Acc GP</th><th>Acc PPV</th><th>Fin %</th>
+          <th>IPRU</th><th>MVI %</th><th>WTY %</th><th>AutoX %</th>
+          <th>AC PVR</th><th>NPS</th><th>DAH</th><th>Reviews</th>
+        </tr></thead>
         <tbody id="summaryBody">
           <tr><td colspan="16" class="muted">No data processed yet.</td></tr>
         </tbody>
@@ -88,18 +123,10 @@
     <h2>Team metrics preview</h2>
     <div class="tablewrap">
       <table>
-        <thead>
-          <tr>
-            <th>Total Signups</th>
-            <th>Total Delivered</th>
-            <th>Total True Gross</th>
-            <th>Trade %</th>
-            <th>Accessory PPV</th>
-            <th>Finance %</th>
-            <th>IPRU</th>
-            <th>Aftercare PVR</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>Total Signups</th><th>Total Delivered</th><th>Total True Gross</th>
+          <th>Trade %</th><th>Acc PPV</th><th>Finance %</th><th>IPRU</th><th>AC PVR</th>
+        </tr></thead>
         <tbody id="teamBody">
           <tr><td colspan="8" class="muted">No team metrics yet.</td></tr>
         </tbody>
@@ -111,115 +138,156 @@
     <h2>Canonical contract detected</h2>
     <div class="tablewrap">
       <table>
-        <thead>
-          <tr>
-            <th>Source Tab</th>
-            <th>Source Column</th>
-            <th>Canonical Field</th>
-            <th>Type</th>
-            <th>Required</th>
-            <th>Derived</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th>Source Tab</th><th>Source Column</th><th>Canonical Field</th>
+          <th>Type</th><th>Required</th><th>Derived</th><th>Notes</th>
+        </tr></thead>
         <tbody id="contractBody">
           <tr><td colspan="7" class="muted">No contract loaded yet.</td></tr>
         </tbody>
       </table>
     </div>
   </section>
-</main>
 
+</main>
 <script>
-// ─── Supabase ────────────────────────────────────────────────────────────────
-var SUPABASE_URL = 'https://fpuuzgjxmpglklufuovx.supabase.co';
+// =============================================================================
+// CONFIG
+// =============================================================================
+var SUPABASE_URL      = 'https://fpuuzgjxmpglklufuovx.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwdXV6Z2p4bXBnbGtsdWZ1b3Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NTY3NjksImV4cCI6MjA5MzIzMjc2OX0.qLI0QjsJbKuGNTJAv5Pg6xRc9245xrBkawjvbd7RnBw';
 var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ─── State ───────────────────────────────────────────────────────────────────
+// =============================================================================
+// STATE
+// =============================================================================
 var state = {
-  workbook: null,
-  fileName: null,
-  selectedPeriod: null,
-  contract: [],
-  raw: {
-    signups: [],
-    deal_log: [],
-    accessories: [],
-    finance: [],
-    aftercare: [],
-    nps: []
-  },
-  metrics: [],
-  team: null,
-  issues: [],
+  workbook:      null,
+  fileName:      null,
+  contract:      [],
+  raw:           { signups: [], deal_log: [], accessories: [], finance: [], aftercare: [], nps: [] },
+  metrics:       [],
+  team:          null,
+  issues:        [],
   uploadBatchId: null
 };
 
-// ─── Canonical field specs ────────────────────────────────────────────────────
-// Each entry: [sourceTab, sourceColumn, canonicalField, type, required]
+// =============================================================================
+// CANONICAL SPEC  [sourceTab, sourceColumn, canonicalField, type, required]
+// =============================================================================
 var REQUIRED = {
   signups: [
-    ['Sign Ups - Bi', 'Sales Person',  'salesperson', 'text', true],
-    ['Sign Ups - Bi', 'Deal Date',     'deal_date',   'date', true]
+    ['Sign Ups - Bi',    'Sales Person',    'salesperson',      'text',    true],
+    ['Sign Ups - Bi',    'Deal Date',       'deal_date',        'date',    true]
   ],
   deal_log: [
-    ['Deal Log - Bi', 'Salesperson',  'salesperson',    'text',    true],
-    ['Deal Log - Bi', 'Posted Gross', 'posted_gross',   'decimal', true],
-    ['Deal Log - Bi', 'AM - Gross',   'am_gross',       'decimal', true],
-    ['Deal Log - Bi', 'Trade In Rego','trade_in_rego',  'text',    false]
+    ['Deal Log - Bi',    'Salesperson',     'salesperson',      'text',    true],
+    ['Deal Log - Bi',    'Posted Gross',    'posted_gross',     'decimal', true],
+    ['Deal Log - Bi',    'AM - Gross',      'am_gross',         'decimal', true],
+    ['Deal Log - Bi',    'Trade In Rego',   'trade_in_rego',    'text',    false]
   ],
   accessories: [
-    ['Accessories - Bi', 'Salesperson',  'salesperson',  'text',    true],
-    ['Accessories - Bi', 'Sale Amount',  'sale_amount',  'decimal', true],
-    ['Accessories - Bi', 'Cost Amount',  'cost_amount',  'decimal', true]
+    ['Accessories - Bi', 'Salesperson',     'salesperson',      'text',    true],
+    ['Accessories - Bi', 'Sale Amount',     'sale_amount',      'decimal', true],
+    ['Accessories - Bi', 'Cost Amount',     'cost_amount',      'decimal', true]
   ],
   finance: [
-    ['NEW FINANCE', 'Sales Person',    'salesperson',       'text',    true],
-    ['NEW FINANCE', 'Total Sales',     'total_sales',       'integer', true],
-    ['NEW FINANCE', 'Finance Sales',   'finance_sales',     'integer', true],
-    ['NEW FINANCE', 'Total IPRU',      'total_ipru',        'decimal', true],
-    ['NEW FINANCE', 'MVI%',            'mvi_percent',       'percent', true],
-    ['NEW FINANCE', 'WTY%',            'warranty_percent',  'percent', true],
-    ['NEW FINANCE', 'AutoX%',          'autox_percent',     'percent', true]
+    ['NEW FINANCE',      'Sales Person',    'salesperson',      'text',    true],
+    ['NEW FINANCE',      'Total Sales',     'total_sales',      'integer', true],
+    ['NEW FINANCE',      'Finance Sales',   'finance_sales',    'integer', true],
+    ['NEW FINANCE',      'Total IPRU',      'total_ipru',       'decimal', true],
+    ['NEW FINANCE',      'MVI%',            'mvi_percent',      'percent', true],
+    ['NEW FINANCE',      'WTY%',            'warranty_percent', 'percent', true],
+    ['NEW FINANCE',      'AutoX%',          'autox_percent',    'percent', true]
   ],
   aftercare: [
-    ['NEW AFTERCARE', 'SalespersonName', 'salesperson',    'text',    true],
-    ['NEW AFTERCARE', 'Deals',           'aftercare_deals','integer', true],
-    ['NEW AFTERCARE', 'Gross',           'aftercare_gross','decimal', true],
-    ['NEW AFTERCARE', 'PVR',             'aftercare_pvr',  'decimal', true],
-    ['NEW AFTERCARE', 'Dealership',      'dealership',     'text',    true]
+    ['NEW AFTERCARE',    'SalespersonName', 'salesperson',      'text',    true],
+    ['NEW AFTERCARE',    'Deals',           'aftercare_deals',  'integer', true],
+    ['NEW AFTERCARE',    'Gross',           'aftercare_gross',  'decimal', true],
+    ['NEW AFTERCARE',    'PVR',             'aftercare_pvr',    'decimal', true],
+    ['NEW AFTERCARE',    'Dealership',      'dealership',       'text',    true]
   ],
   nps: [
-    ['NPS GOOGLE DAH', 'Salesperson',    'salesperson',    'text',    true],
-    ['NPS GOOGLE DAH', 'NPS',            'nps',            'percent', true],
-    ['NPS GOOGLE DAH', 'DAH',            'dah',            'percent', true],
-    ['NPS GOOGLE DAH', 'Google Reviews', 'google_reviews', 'integer', true]
+    ['NPS GOOGLE DAH',   'Salesperson',     'salesperson',      'text',    true],
+    ['NPS GOOGLE DAH',   'NPS',             'nps',              'percent', true],
+    ['NPS GOOGLE DAH',   'DAH',             'dah',              'percent', true],
+    ['NPS GOOGLE DAH',   'Google Reviews',  'google_reviews',   'integer', true]
   ]
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function $(id) { return document.getElementById(id); }
-function norm(v)      { return String(v == null ? '' : v).trim().toLowerCase().replace(/\s+/g, ' '); }
-function cleanName(v) { return String(v == null ? '' : v).trim().replace(/\s+/g, ' '); }
+// =============================================================================
+// NORMALIZE — single source of truth for ALL string comparisons.
+// Strips every Unicode whitespace variant plus zero-width chars,
+// collapses spaces, trims, lowercases.
+// =============================================================================
+function norm(v) {
+  if (v == null) return '';
+  var s = String(v);
+  // Non-breaking space U+00A0, zero-width space U+200B, zero-width non-joiner U+200C,
+  // zero-width joiner U+200D, BOM U+FEFF, thin space U+2009, narrow no-break U+202F,
+  // medium mathematical space U+205F, ideographic space U+3000
+  s = s.replace(/[\u00A0\u200B\u200C\u200D\uFEFF\u2009\u202F\u205F\u3000]/g, ' ');
+  s = s.replace(/[\t\r\n]/g, ' ');
+  s = s.replace(/ {2,}/g, ' ');
+  return s.trim().toLowerCase();
+}
 
-function logMsg(msg) {
-  var el = $('log');
-  el.textContent += '\n' + new Date().toLocaleTimeString() + '  ' + msg;
+// Preserves original casing — used for display/storage values only
+function cleanStr(v) {
+  if (v == null) return '';
+  var s = String(v);
+  s = s.replace(/[\u00A0\u200B\u200C\u200D\uFEFF\u2009\u202F\u205F\u3000]/g, ' ');
+  s = s.replace(/[\t\r\n]/g, ' ');
+  s = s.replace(/ {2,}/g, ' ');
+  return s.trim();
+}
+
+// =============================================================================
+// DOM + LOGGING
+// =============================================================================
+function $(id) { return document.getElementById(id); }
+
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function logAppend(text, colour) {
+  var el   = $('log');
+  var ts   = new Date().toLocaleTimeString();
+  var line = '\n' + ts + '  ' + text;
+  if (colour) {
+    var span         = document.createElement('span');
+    span.style.color = colour;
+    span.textContent = line;
+    el.appendChild(span);
+  } else {
+    el.appendChild(document.createTextNode(line));
+  }
   el.scrollTop = el.scrollHeight;
 }
 
-function money(n) {
-  return Number(n || 0).toLocaleString('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
-}
+function logMsg(t)   { logAppend(t,              null);      }
+function logDebug(t) { logAppend('[DBG] ' + t,   '#94a3b8'); }
+function logOk(t)    { logAppend('[OK]  ' + t,   '#86efac'); }
+function logWarn(t)  { logAppend('[WRN] ' + t,   '#fde68a'); }
+function logErr(t)   { logAppend('[ERR] ' + t,   '#fca5a5'); }
+function clearLog(msg) { $('log').textContent = msg || ''; }
 
-function pct(n) {
-  return (Number(n || 0) * 100).toFixed(1) + '%';
+// =============================================================================
+// UI HELPERS
+// =============================================================================
+function money(n) {
+  return Number(n || 0).toLocaleString('en-AU', {
+    style: 'currency', currency: 'AUD', maximumFractionDigits: 0
+  });
 }
+function pct(n) { return (Number(n || 0) * 100).toFixed(1) + '%'; }
 
 function setStatus(kind, msg) {
-  var el = $('mainStatus');
-  el.className = 'status ' + kind;
+  var el         = $('mainStatus');
+  el.className   = 'status ' + kind;
   el.textContent = msg;
 }
 
@@ -233,7 +301,22 @@ function addIssue(level, text, meta) {
   state.issues.push(entry);
 }
 
-// ─── Sheet utilities ──────────────────────────────────────────────────────────
+function updateMetrics() {
+  $('mContract').textContent    = state.contract.length;
+  $('mSignups').textContent     = state.raw.signups.length;
+  $('mDeals').textContent       = state.raw.deal_log.length;
+  $('mAccessories').textContent = state.raw.accessories.length;
+  $('mSnapshots').textContent   = state.raw.finance.length +
+                                  state.raw.aftercare.length +
+                                  state.raw.nps.length;
+  $('mIssues').textContent      = state.issues.length;
+}
+
+// =============================================================================
+// SHEET UTILITIES
+// =============================================================================
+
+// Finds the actual sheet name whose norm() matches norm(wanted).
 function findSheetName(wb, wanted) {
   var target = norm(wanted);
   return wb.SheetNames.find(function(n) { return norm(n) === target; });
@@ -246,17 +329,50 @@ function sheetRows(wb, wanted) {
   return { actual: actual, rows: rows };
 }
 
+// Returns first-row headers with cleanStr applied.
 function headersFor(tab) {
   var actual = findSheetName(state.workbook, tab);
   if (!actual) return [];
-  var matrix = XLSX.utils.sheet_to_json(state.workbook.Sheets[actual], { header: 1, defval: null, raw: false });
-  return (matrix[0] || []).map(function(h) { return String(h || '').trim(); }).filter(Boolean);
+  var matrix = XLSX.utils.sheet_to_json(
+    state.workbook.Sheets[actual],
+    { header: 1, defval: null, raw: false }
+  );
+  return (matrix[0] || [])
+    .map(function(h) { return cleanStr(String(h == null ? '' : h)); })
+    .filter(Boolean);
 }
 
-// ─── Type coercion ────────────────────────────────────────────────────────────
+// Finds the actual key in a SheetJS row object whose norm() matches norm(colName).
+// This is the critical fix: SheetJS emits column names verbatim (including hidden unicode)
+// so we must match by norm() rather than direct equality.
+function findRowKey(rowObj, colName) {
+  var target = norm(colName);
+  var keys   = Object.keys(rowObj);
+  for (var i = 0; i < keys.length; i++) {
+    if (norm(keys[i]) === target) return keys[i];
+  }
+  return null;
+}
+
+// Reads a cell from a Canonical-sheet row using norm()-based key lookup,
+// then applies cleanStr to the value. Handles hidden chars in Canonical's
+// own header row.
+function getCanonicalCell(rowObj, colName) {
+  var key = findRowKey(rowObj, colName);
+  if (key === null) return '';
+  var val = rowObj[key];
+  return cleanStr(String(val == null ? '' : val));
+}
+
+// =============================================================================
+// TYPE COERCION
+// =============================================================================
 function parseNum(value) {
   if (value == null || value === '') return 0;
-  var s = String(value).replace(/[$,\s]/g, '').replace(/[()]/g, function(m) { return m === '(' ? '-' : ''; });
+  var s = String(value)
+    .replace(/[\u00A0\u202F]/g, '')
+    .replace(/[$,\s]/g, '')
+    .replace(/[()]/g, function(m) { return m === '(' ? '-' : ''; });
   var n = Number(s.replace('%', ''));
   return Number.isFinite(n) ? n : 0;
 }
@@ -265,7 +381,7 @@ function excelDateToIso(v) {
   if (v == null || v === '') return null;
   var d = new Date(v);
   if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
-  var s = String(v).trim();
+  var s     = cleanStr(String(v));
   var parts = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
   if (parts) {
     var dd = parts[1].padStart(2, '0');
@@ -281,99 +397,214 @@ function coerce(value, type) {
   if (type === 'decimal')  return parseNum(value);
   if (type === 'integer')  return Math.round(parseNum(value));
   if (type === 'percent') {
-    var s = String(value).trim();
+    var s = cleanStr(String(value));
     var n = parseNum(s);
     return s.indexOf('%') !== -1 ? n / 100 : (Math.abs(n) > 1 ? n / 100 : n);
   }
   if (type === 'date') return excelDateToIso(value);
-  return cleanName(value);
+  return cleanStr(value);
 }
 
-// ─── Canonical tab reader ─────────────────────────────────────────────────────
+// =============================================================================
+// CANONICAL TAB READER
+// Uses getCanonicalCell() for every column so hidden unicode in the Canonical
+// sheet's own header row cannot cause blank reads.
+// =============================================================================
 function readCanonical() {
   var result = sheetRows(state.workbook, 'Canonical');
   if (!result.actual) {
     addIssue('bad', 'Missing required tab: Canonical');
+    logErr('Canonical tab not found in workbook');
     return [];
   }
-  return result.rows
-    .map(function(r) {
-      return {
-        sourceTab:      r['Source Tab'],
-        sourceColumn:   r['Source Column'],
-        canonicalField: r['Canonical Field'],
-        type:           String(r['Type'] || 'text').toLowerCase(),
-        required:       String(r['Required'] || 'NO').toUpperCase(),
-        derived:        String(r['Derived?'] || 'NO').toUpperCase(),
-        notes:          r['Notes'] || ''
-      };
-    })
-    .filter(function(r) { return r.sourceTab && r.sourceColumn && r.canonicalField; });
+
+  logDebug('Canonical tab matched to sheet: "' + result.actual + '" (' + result.rows.length + ' raw rows)');
+
+  // Dump actual key names from first row so hidden chars are visible in log
+  if (result.rows.length > 0) {
+    var firstKeys = Object.keys(result.rows[0]);
+    logDebug('Canonical row keys: ' + firstKeys.map(function(k) {
+      return '"' + k + '" (norm:"' + norm(k) + '")';
+    }).join(', '));
+  }
+
+  var mapped = result.rows.map(function(r) {
+    return {
+      sourceTab:      getCanonicalCell(r, 'Source Tab'),
+      sourceColumn:   getCanonicalCell(r, 'Source Column'),
+      canonicalField: getCanonicalCell(r, 'Canonical Field'),
+      type:           norm(getCanonicalCell(r, 'Type'))     || 'text',
+      required:       getCanonicalCell(r, 'Required').toUpperCase()  || 'NO',
+      derived:        getCanonicalCell(r, 'Derived?').toUpperCase()  || 'NO',
+      notes:          getCanonicalCell(r, 'Notes')
+    };
+  }).filter(function(r) {
+    return r.sourceTab && r.sourceColumn && r.canonicalField;
+  });
+
+  logDebug('Canonical contract rows after filter: ' + mapped.length);
+  mapped.forEach(function(r) {
+    logDebug(
+      '  [contract] tab:"' + r.sourceTab + '" (norm:"' + norm(r.sourceTab) + '")' +
+      '  col:"' + r.sourceColumn + '" (norm:"' + norm(r.sourceColumn) + '")' +
+      '  -> "' + r.canonicalField + '"'
+    );
+  });
+
+  return mapped;
 }
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// =============================================================================
+// VALIDATION
+// Every string comparison uses norm(a) === norm(b) — no raw equality anywhere.
+// =============================================================================
 function validate() {
   state.issues = [];
 
-  // Check all required tabs exist
+  logDebug('=== VALIDATION START ===');
+
+  // Log all sheet names with their normalised forms
+  logDebug('Workbook sheets (' + state.workbook.SheetNames.length + '):');
+  state.workbook.SheetNames.forEach(function(n) {
+    logDebug('  sheet:"' + n + '"  norm:"' + norm(n) + '"');
+  });
+
+  // Collect all required tabs
   var allTabs = ['Canonical'];
-  Object.values(REQUIRED).forEach(function(specList) {
-    specList.forEach(function(spec) {
+  Object.keys(REQUIRED).forEach(function(key) {
+    REQUIRED[key].forEach(function(spec) {
       if (allTabs.indexOf(spec[0]) === -1) allTabs.push(spec[0]);
     });
   });
+
+  // 1. Tab presence check
   allTabs.forEach(function(tab) {
-    if (!findSheetName(state.workbook, tab)) {
+    var found = findSheetName(state.workbook, tab);
+    if (!found) {
       addIssue('bad', 'Missing required tab: ' + tab, { source_tab: tab });
+      logErr('Tab NOT found: "' + tab + '"  (searching norm:"' + norm(tab) + '")');
+    } else {
+      logDebug('Tab OK: "' + tab + '" -> matched sheet "' + found + '"');
     }
   });
 
-  // Check required columns exist in each tab
-  Object.values(REQUIRED).forEach(function(specList) {
-    specList.forEach(function(spec) {
+  // 2. Column presence + canonical contract check
+  Object.keys(REQUIRED).forEach(function(key) {
+    REQUIRED[key].forEach(function(spec) {
       var tab      = spec[0];
       var col      = spec[1];
       var field    = spec[2];
       var required = spec[4];
       if (!required) return;
-      var headers = headersFor(tab).map(norm);
-      if (headers.indexOf(norm(col)) === -1) {
-        addIssue('bad', tab + ': missing source column "' + col + '"', {
-          source_tab: tab,
-          source_column: col,
-          canonical_field: field
+
+      var rawHeaders  = headersFor(tab);
+      var normHeaders = rawHeaders.map(norm);
+      var normCol     = norm(col);
+      var normTab     = norm(tab);
+      var normField   = norm(field);
+
+      // Column presence check
+      if (normHeaders.indexOf(normCol) === -1) {
+        addIssue('bad',
+          tab + ': missing source column "' + col + '"',
+          { source_tab: tab, source_column: col, canonical_field: field }
+        );
+        logErr('Column NOT found: "' + col + '" in tab "' + tab + '"');
+        logDebug('  Normalised headers in that tab: [' + normHeaders.join(' | ') + ']');
+        // Char-code dump to expose hidden chars in every header
+        rawHeaders.forEach(function(h) {
+          var codes = [];
+          for (var ci = 0; ci < h.length; ci++) {
+            codes.push(h.charCodeAt(ci).toString(16));
+          }
+          logDebug('  header bytes: "' + h + '" [' + codes.join(',') + ']');
         });
+      } else {
+        logDebug('Col OK: "' + col + '" in "' + tab + '"');
       }
-      // Check canonical contract contains this mapping
-      var inContract = state.contract.some(function(c) {
-        return norm(c.sourceTab) === norm(tab) &&
-               norm(c.sourceColumn) === norm(col) &&
-               norm(c.canonicalField) === norm(field);
+
+      // Canonical contract check
+      // Filter to rows whose tab matches, then check col+field
+      var contractRowsForTab = state.contract.filter(function(c) {
+        return norm(c.sourceTab) === normTab;
       });
+
+      var inContract = contractRowsForTab.some(function(c) {
+        return norm(c.sourceColumn) === normCol && norm(c.canonicalField) === normField;
+      });
+
       if (!inContract) {
-        addIssue('warn', 'Canonical tab missing expected row: ' + tab + ' / ' + col + ' -> ' + field, {
-          source_tab: tab,
-          source_column: col,
-          canonical_field: field
-        });
+        // WARN only — the import continues if the column exists in the actual sheet.
+        // The Canonical tab is descriptive metadata; missing rows here do not block import.
+        addIssue('warn',
+          'Canonical contract missing row: ' + tab + ' / "' + col + '" -> "' + field + '"',
+          { source_tab: tab, source_column: col, canonical_field: field }
+        );
+        logWarn('Not in contract: tab:"' + tab + '" col:"' + col + '" field:"' + field + '"');
+
+        if (contractRowsForTab.length === 0) {
+          var allNormTabs = state.contract
+            .map(function(c) { return norm(c.sourceTab); })
+            .filter(function(v, i, a) { return a.indexOf(v) === i; });
+          logDebug('  Contract has ZERO rows for norm-tab:"' + normTab + '"');
+          logDebug('  All norm-tabs in contract: [' + allNormTabs.join(' | ') + ']');
+        } else {
+          logDebug('  Contract rows for this tab (' + contractRowsForTab.length + '):');
+          contractRowsForTab.forEach(function(c) {
+            var cColNorm   = norm(c.sourceColumn);
+            var cFieldNorm = norm(c.canonicalField);
+            var colMatch   = cColNorm   === normCol;
+            var fieldMatch = cFieldNorm === normField;
+            logDebug(
+              '    col:"' + c.sourceColumn + '" norm:"' + cColNorm +
+              '" colMatch=' + colMatch +
+              '  field:"' + c.canonicalField + '" norm:"' + cFieldNorm +
+              '" fieldMatch=' + fieldMatch
+            );
+            // Near-match detection: same visible chars but different byte sequences
+            if (!colMatch && cColNorm.replace(/ /g, '') === normCol.replace(/ /g, '')) {
+              var expCodes = [];
+              for (var ei = 0; ei < normCol.length; ei++) {
+                expCodes.push(normCol.charCodeAt(ei).toString(16));
+              }
+              var actCodes = [];
+              for (var ai = 0; ai < cColNorm.length; ai++) {
+                actCodes.push(cColNorm.charCodeAt(ai).toString(16));
+              }
+              logDebug('    NEAR-MATCH — expected:[' + expCodes.join(',') + '] actual:[' + actCodes.join(',') + ']');
+            }
+          });
+        }
+      } else {
+        logDebug('Contract OK: "' + tab + '" / "' + col + '" -> "' + field + '"');
       }
     });
   });
+
+  logDebug('=== VALIDATION END — ' + state.issues.length + ' issue(s) ===');
 }
 
-// ─── Row mapper ───────────────────────────────────────────────────────────────
+// =============================================================================
+// ROW MAPPER
+// Uses findRowKey() for every column so hidden unicode in SheetJS row keys
+// cannot prevent a cell from being read.
+// =============================================================================
 function mapRows(tab, spec) {
   var result = sheetRows(state.workbook, tab);
+  if (!result.actual) {
+    logErr('mapRows: sheet not found for "' + tab + '"');
+    return [];
+  }
   return result.rows
     .map(function(r, idx) {
-      var out = { source_row_number: idx + 2 };
+      var out = { source_row_number: idx + 2, raw_row: r };
       spec.forEach(function(s) {
         var col   = s[1];
         var field = s[2];
         var type  = s[3];
-        out[field] = coerce(r[col], type);
+        var key   = findRowKey(r, col);
+        out[field] = coerce(key !== null ? r[key] : null, type);
       });
-      out.raw_row = r;
       return out;
     })
     .filter(function(row) {
@@ -385,43 +616,90 @@ function mapRows(tab, spec) {
     });
 }
 
-// ─── Metrics builder ──────────────────────────────────────────────────────────
+// =============================================================================
+// PROCESS WORKBOOK
+// =============================================================================
+function processWorkbook() {
+  clearLog('Processing started.');
+  state.contract = readCanonical();
+  validate();
+  renderContract();
+  renderValidation();
+
+  if (state.issues.some(function(i) { return i.level === 'bad'; })) {
+    setStatus('bad', 'Import failed validation — fix issues in the validation panel first.');
+    updateMetrics();
+    return;
+  }
+
+  state.raw.signups     = mapRows('Sign Ups - Bi',   REQUIRED.signups);
+  state.raw.deal_log    = mapRows('Deal Log - Bi',   REQUIRED.deal_log);
+  state.raw.accessories = mapRows('Accessories - Bi', REQUIRED.accessories);
+  state.raw.finance     = mapRows('NEW FINANCE',      REQUIRED.finance);
+  state.raw.aftercare   = mapRows('NEW AFTERCARE',    REQUIRED.aftercare);
+  state.raw.nps         = mapRows('NPS GOOGLE DAH',   REQUIRED.nps);
+
+  Object.keys(state.raw).forEach(function(k) {
+    logOk('Loaded ' + state.raw[k].length + ' ' + k + ' rows.');
+  });
+
+  buildMetrics();
+  renderSummary();
+  renderTeam();
+  updateMetrics();
+
+  $('uploadBtn').disabled       = false;
+  $('downloadJsonBtn').disabled = false;
+
+  var hasWarn = state.issues.length > 0;
+  setStatus(
+    hasWarn ? 'warn' : 'ok',
+    hasWarn
+      ? 'Processed with ' + state.issues.length + ' warning(s) — review validation panel.'
+      : 'Processed successfully — ready for Supabase upload.'
+  );
+  logOk('Built ' + state.metrics.length + ' salesperson metric rows.');
+}
+
+// =============================================================================
+// METRICS BUILDER
+// =============================================================================
 function buildMetrics() {
   var by = {};
 
   function touch(name) {
-    var key = cleanName(name) || 'Unknown';
+    var key = cleanStr(name) || 'Unknown';
     if (!by[key]) {
       by[key] = {
-        salesperson:        key,
-        signups:            0,
-        delivered_deals:    0,
-        true_gross:         0,
-        trade_count:        0,
-        trade_percent:      0,
-        accessory_gp:       0,
-        accessory_ppv:      0,
-        finance_total_sales:0,
-        finance_sales:      0,
-        finance_penetration:0,
-        total_ipru:         0,
-        mvi_percent:        null,
-        warranty_percent:   null,
-        autox_percent:      null,
-        aftercare_deals:    0,
-        aftercare_gross:    0,
-        aftercare_pvr:      0,
-        nps:                null,
-        dah:                null,
-        google_reviews:     0,
-        _ipru_weight:       0,
-        _mvi_weight:        0,
-        _wty_weight:        0,
-        _autox_weight:      0,
-        _nps_sum:           0,
-        _nps_count:         0,
-        _dah_sum:           0,
-        _dah_count:         0
+        salesperson:         key,
+        signups:             0,
+        delivered_deals:     0,
+        true_gross:          0,
+        trade_count:         0,
+        trade_percent:       0,
+        accessory_gp:        0,
+        accessory_ppv:       0,
+        finance_total_sales: 0,
+        finance_sales:       0,
+        finance_penetration: 0,
+        total_ipru:          0,
+        mvi_percent:         null,
+        warranty_percent:    null,
+        autox_percent:       null,
+        aftercare_deals:     0,
+        aftercare_gross:     0,
+        aftercare_pvr:       0,
+        nps:                 null,
+        dah:                 null,
+        google_reviews:      0,
+        _ipru_weight:        0,
+        _mvi_weight:         0,
+        _wty_weight:         0,
+        _autox_weight:       0,
+        _nps_sum:            0,
+        _nps_count:          0,
+        _dah_sum:            0,
+        _dah_count:          0
       };
     }
     return by[key];
@@ -435,7 +713,7 @@ function buildMetrics() {
     var s = touch(r.salesperson);
     s.delivered_deals++;
     s.true_gross += Number(r.posted_gross || 0) - Number(r.am_gross || 0);
-    if (String(r.trade_in_rego || '').trim()) s.trade_count++;
+    if (cleanStr(String(r.trade_in_rego || ''))) s.trade_count++;
   });
 
   state.raw.accessories.forEach(function(r) {
@@ -447,11 +725,11 @@ function buildMetrics() {
     var s     = touch(r.salesperson);
     var units = Number(r.total_sales || 0);
     s.finance_total_sales += units;
-    s.finance_sales       += Number(r.finance_sales   || 0);
-    s._ipru_weight        += Number(r.total_ipru      || 0) * units;
-    s._mvi_weight         += Number(r.mvi_percent     || 0) * units;
-    s._wty_weight         += Number(r.warranty_percent|| 0) * units;
-    s._autox_weight       += Number(r.autox_percent   || 0) * units;
+    s.finance_sales       += Number(r.finance_sales    || 0);
+    s._ipru_weight        += Number(r.total_ipru       || 0) * units;
+    s._mvi_weight         += Number(r.mvi_percent      || 0) * units;
+    s._wty_weight         += Number(r.warranty_percent || 0) * units;
+    s._autox_weight       += Number(r.autox_percent    || 0) * units;
   });
 
   state.raw.aftercare.forEach(function(r) {
@@ -473,18 +751,17 @@ function buildMetrics() {
     s.google_reviews += Number(r.google_reviews || 0);
   });
 
-  // Finalise derived fields
-  state.metrics = Object.values(by).map(function(s) {
-    s.trade_percent       = s.delivered_deals      ? s.trade_count        / s.delivered_deals      : 0;
-    s.accessory_ppv       = s.delivered_deals      ? s.accessory_gp       / s.delivered_deals      : 0;
-    s.finance_penetration = s.finance_total_sales  ? s.finance_sales      / s.finance_total_sales  : 0;
-    s.total_ipru          = s.finance_total_sales  ? s._ipru_weight       / s.finance_total_sales  : 0;
-    s.mvi_percent         = s.finance_total_sales  ? s._mvi_weight        / s.finance_total_sales  : null;
-    s.warranty_percent    = s.finance_total_sales  ? s._wty_weight        / s.finance_total_sales  : null;
-    s.autox_percent       = s.finance_total_sales  ? s._autox_weight      / s.finance_total_sales  : null;
-    s.aftercare_pvr       = s.aftercare_deals      ? s.aftercare_gross    / s.aftercare_deals      : 0;
-    s.nps                 = s._nps_count           ? s._nps_sum           / s._nps_count           : null;
-    s.dah                 = s._dah_count           ? s._dah_sum           / s._dah_count           : null;
+  state.metrics = Object.keys(by).map(function(k) { return by[k]; }).map(function(s) {
+    s.trade_percent       = s.delivered_deals     ? s.trade_count     / s.delivered_deals     : 0;
+    s.accessory_ppv       = s.delivered_deals     ? s.accessory_gp    / s.delivered_deals     : 0;
+    s.finance_penetration = s.finance_total_sales ? s.finance_sales   / s.finance_total_sales : 0;
+    s.total_ipru          = s.finance_total_sales ? s._ipru_weight    / s.finance_total_sales : 0;
+    s.mvi_percent         = s.finance_total_sales ? s._mvi_weight     / s.finance_total_sales : null;
+    s.warranty_percent    = s.finance_total_sales ? s._wty_weight     / s.finance_total_sales : null;
+    s.autox_percent       = s.finance_total_sales ? s._autox_weight   / s.finance_total_sales : null;
+    s.aftercare_pvr       = s.aftercare_deals     ? s.aftercare_gross / s.aftercare_deals     : 0;
+    s.nps                 = s._nps_count          ? s._nps_sum        / s._nps_count          : null;
+    s.dah                 = s._dah_count          ? s._dah_sum        / s._dah_count          : null;
 
     delete s._ipru_weight;
     delete s._mvi_weight;
@@ -494,22 +771,20 @@ function buildMetrics() {
     delete s._nps_count;
     delete s._dah_sum;
     delete s._dah_count;
-
     return s;
   }).sort(function(a, b) { return a.salesperson.localeCompare(b.salesperson); });
 
-  // Team totals
   var t = state.metrics.reduce(function(acc, s) {
-    acc.total_signups          += s.signups;
-    acc.total_delivered_deals  += s.delivered_deals;
-    acc.total_true_gross       += s.true_gross;
-    acc.trade_count            += s.trade_count;
-    acc.accessory_gp           += s.accessory_gp;
-    acc.finance_total_sales    += s.finance_total_sales;
-    acc.finance_sales          += s.finance_sales;
-    acc.ipru_weight            += s.total_ipru * s.finance_total_sales;
-    acc.aftercare_deals        += s.aftercare_deals;
-    acc.aftercare_gross        += s.aftercare_gross;
+    acc.total_signups         += s.signups;
+    acc.total_delivered_deals += s.delivered_deals;
+    acc.total_true_gross      += s.true_gross;
+    acc.trade_count           += s.trade_count;
+    acc.accessory_gp          += s.accessory_gp;
+    acc.finance_total_sales   += s.finance_total_sales;
+    acc.finance_sales         += s.finance_sales;
+    acc.ipru_weight           += s.total_ipru * s.finance_total_sales;
+    acc.aftercare_deals       += s.aftercare_deals;
+    acc.aftercare_gross       += s.aftercare_gross;
     return acc;
   }, {
     total_signups: 0, total_delivered_deals: 0, total_true_gross: 0,
@@ -529,14 +804,18 @@ function buildMetrics() {
   };
 }
 
-// ─── Render helpers ───────────────────────────────────────────────────────────
+// =============================================================================
+// RENDER FUNCTIONS
+// =============================================================================
 function renderContract() {
   var html = state.contract.map(function(r) {
-    return '<tr><td>' + r.sourceTab + '</td><td>' + r.sourceColumn + '</td><td>' +
-           r.canonicalField + '</td><td>' + r.type + '</td><td>' + r.required +
-           '</td><td>' + r.derived + '</td><td>' + r.notes + '</td></tr>';
+    return '<tr><td>' + esc(r.sourceTab) + '</td><td>' + esc(r.sourceColumn) +
+           '</td><td>' + esc(r.canonicalField) + '</td><td>' + esc(r.type) +
+           '</td><td>' + esc(r.required) + '</td><td>' + esc(r.derived) +
+           '</td><td>' + esc(r.notes) + '</td></tr>';
   }).join('');
-  $('contractBody').innerHTML = html || '<tr><td colspan="7" class="muted">No contract rows found.</td></tr>';
+  $('contractBody').innerHTML = html ||
+    '<tr><td colspan="7" class="muted">No contract rows found.</td></tr>';
 }
 
 function renderValidation() {
@@ -546,7 +825,7 @@ function renderValidation() {
   }
   $('validationList').innerHTML = state.issues.map(function(i) {
     return '<div style="margin:8px 0"><span class="pill ' + i.level + '">' +
-           i.level.toUpperCase() + '</span> ' + i.text + '</div>';
+           i.level.toUpperCase() + '</span> ' + esc(i.text) + '</div>';
   }).join('');
 }
 
@@ -558,25 +837,26 @@ function renderSummary() {
     var nps_ = s.nps              != null ? pct(s.nps)              : '-';
     var dah_ = s.dah              != null ? pct(s.dah)              : '-';
     return '<tr>' +
-      '<td><b>' + s.salesperson + '</b></td>' +
-      '<td>' + s.signups            + '</td>' +
-      '<td>' + s.delivered_deals    + '</td>' +
-      '<td>' + money(s.true_gross)  + '</td>' +
-      '<td>' + pct(s.trade_percent) + '</td>' +
-      '<td>' + money(s.accessory_gp)   + '</td>' +
-      '<td>' + money(s.accessory_ppv)  + '</td>' +
-      '<td>' + pct(s.finance_penetration) + '</td>' +
-      '<td>' + money(s.total_ipru)  + '</td>' +
-      '<td>' + mvi  + '</td>' +
-      '<td>' + wty  + '</td>' +
-      '<td>' + autx + '</td>' +
-      '<td>' + money(s.aftercare_pvr) + '</td>' +
-      '<td>' + nps_ + '</td>' +
-      '<td>' + dah_ + '</td>' +
-      '<td>' + s.google_reviews    + '</td>' +
+      '<td><b>' + esc(s.salesperson)          + '</b></td>' +
+      '<td>' + s.signups                       + '</td>' +
+      '<td>' + s.delivered_deals               + '</td>' +
+      '<td>' + money(s.true_gross)             + '</td>' +
+      '<td>' + pct(s.trade_percent)            + '</td>' +
+      '<td>' + money(s.accessory_gp)           + '</td>' +
+      '<td>' + money(s.accessory_ppv)          + '</td>' +
+      '<td>' + pct(s.finance_penetration)      + '</td>' +
+      '<td>' + money(s.total_ipru)             + '</td>' +
+      '<td>' + mvi                             + '</td>' +
+      '<td>' + wty                             + '</td>' +
+      '<td>' + autx                            + '</td>' +
+      '<td>' + money(s.aftercare_pvr)          + '</td>' +
+      '<td>' + nps_                            + '</td>' +
+      '<td>' + dah_                            + '</td>' +
+      '<td>' + s.google_reviews               + '</td>' +
       '</tr>';
   }).join('');
-  $('summaryBody').innerHTML = html || '<tr><td colspan="16" class="muted">No summary rows.</td></tr>';
+  $('summaryBody').innerHTML = html ||
+    '<tr><td colspan="16" class="muted">No summary rows.</td></tr>';
 }
 
 function renderTeam() {
@@ -586,68 +866,20 @@ function renderTeam() {
     return;
   }
   $('teamBody').innerHTML = '<tr>' +
-    '<td>' + t.total_signups         + '</td>' +
-    '<td>' + t.total_delivered_deals + '</td>' +
-    '<td>' + money(t.total_true_gross)         + '</td>' +
-    '<td>' + pct(t.team_trade_percent)         + '</td>' +
-    '<td>' + money(t.team_accessory_ppv)       + '</td>' +
-    '<td>' + pct(t.team_finance_penetration)   + '</td>' +
-    '<td>' + money(t.team_ipru)                + '</td>' +
-    '<td>' + money(t.team_aftercare_pvr)       + '</td>' +
+    '<td>' + t.total_signups                 + '</td>' +
+    '<td>' + t.total_delivered_deals         + '</td>' +
+    '<td>' + money(t.total_true_gross)       + '</td>' +
+    '<td>' + pct(t.team_trade_percent)       + '</td>' +
+    '<td>' + money(t.team_accessory_ppv)     + '</td>' +
+    '<td>' + pct(t.team_finance_penetration) + '</td>' +
+    '<td>' + money(t.team_ipru)              + '</td>' +
+    '<td>' + money(t.team_aftercare_pvr)     + '</td>' +
     '</tr>';
 }
 
-function updateMetrics() {
-  $('mContract').textContent   = state.contract.length;
-  $('mSignups').textContent    = state.raw.signups.length;
-  $('mDeals').textContent      = state.raw.deal_log.length;
-  $('mAccessories').textContent= state.raw.accessories.length;
-  $('mSnapshots').textContent  = state.raw.finance.length + state.raw.aftercare.length + state.raw.nps.length;
-  $('mIssues').textContent     = state.issues.length;
-}
-
-// ─── Main processor ───────────────────────────────────────────────────────────
-function processWorkbook() {
-  $('log').textContent = 'Processing started.';
-  state.contract = readCanonical();
-  validate();
-  renderContract();
-  renderValidation();
-
-  if (state.issues.some(function(i) { return i.level === 'bad'; })) {
-    setStatus('bad', 'Import failed validation. Fix missing tabs/columns first.');
-    updateMetrics();
-    return;
-  }
-
-  state.raw.signups    = mapRows('Sign Ups - Bi',  REQUIRED.signups);
-  state.raw.deal_log   = mapRows('Deal Log - Bi',  REQUIRED.deal_log);
-  state.raw.accessories= mapRows('Accessories - Bi',REQUIRED.accessories);
-  state.raw.finance    = mapRows('NEW FINANCE',     REQUIRED.finance);
-  state.raw.aftercare  = mapRows('NEW AFTERCARE',   REQUIRED.aftercare);
-  state.raw.nps        = mapRows('NPS GOOGLE DAH',  REQUIRED.nps);
-
-  buildMetrics();
-  renderSummary();
-  renderTeam();
-  updateMetrics();
-
-  $('uploadBtn').disabled      = false;
-  $('downloadJsonBtn').disabled = false;
-
-  var hasIssues = state.issues.length > 0;
-  setStatus(
-    hasIssues ? 'warn' : 'ok',
-    hasIssues ? 'Processed with warnings. Review validation list.' : 'Processed successfully. Ready for Supabase upload.'
-  );
-
-  Object.keys(state.raw).forEach(function(k) {
-    logMsg('Loaded ' + state.raw[k].length + ' ' + k + ' rows.');
-  });
-  logMsg('Built ' + state.metrics.length + ' salesperson monthly metric rows.');
-}
-
-// ─── Supabase helpers ─────────────────────────────────────────────────────────
+// =============================================================================
+// SUPABASE HELPERS
+// =============================================================================
 function addCommon(rows, periodId, batchId) {
   return rows.map(function(r) {
     var x = Object.assign({}, r, {
@@ -662,9 +894,9 @@ function addCommon(rows, periodId, batchId) {
 
 function stripGenerated(table, rows) {
   var omit = {
-    raw_deal_log:   ['true_gross'],
-    raw_accessories:['accessory_gp'],
-    raw_finance:    ['finance_penetration']
+    raw_deal_log:    ['true_gross'],
+    raw_accessories: ['accessory_gp'],
+    raw_finance:     ['finance_penetration']
   };
   var fields = omit[table] || [];
   return rows.map(function(r) {
@@ -677,14 +909,16 @@ function stripGenerated(table, rows) {
 async function insertChunks(table, rows, size) {
   size = size || 500;
   for (var i = 0; i < rows.length; i += size) {
-    var chunk = rows.slice(i, i + size);
+    var chunk  = rows.slice(i, i + size);
     var result = await sb.from(table).insert(chunk);
     if (result.error) throw new Error(table + ': ' + result.error.message);
-    logMsg('Inserted ' + Math.min(i + size, rows.length) + ' / ' + rows.length + ' into ' + table);
+    logOk('Inserted ' + Math.min(i + size, rows.length) + '/' + rows.length + ' into ' + table);
   }
 }
 
-// ─── Supabase upload ──────────────────────────────────────────────────────────
+// =============================================================================
+// SUPABASE UPLOAD
+// =============================================================================
 async function uploadToSupabase() {
   var periodId = $('periodSelect').value;
   if (!periodId) { setStatus('bad', 'Select a commission period first.'); return; }
@@ -696,49 +930,59 @@ async function uploadToSupabase() {
 
   try {
     if ($('replaceExisting').checked) {
-      logMsg('Replacing existing data for selected period...');
+      logMsg('Clearing existing data for period ' + periodId + '...');
       await sb.from('salesperson_monthly_metrics').delete().eq('commission_period_id', periodId);
       await sb.from('team_monthly_metrics').delete().eq('commission_period_id', periodId);
       await sb.from('import_batches').delete().eq('commission_period_id', periodId);
+      logOk('Existing period data cleared.');
     }
 
     var batchPayload = {
-      commission_period_id:    periodId,
-      file_name:               state.fileName,
-      status:                  'processed',
-      canonical_rows:          state.contract.length,
-      signups_rows:            state.raw.signups.length,
-      deal_log_rows:           state.raw.deal_log.length,
-      accessories_rows:        state.raw.accessories.length,
-      finance_rows:            state.raw.finance.length,
-      aftercare_rows:          state.raw.aftercare.length,
-      nps_rows:                state.raw.nps.length,
-      validation_issue_count:  state.issues.length
+      commission_period_id:   periodId,
+      file_name:              state.fileName,
+      status:                 'processed',
+      canonical_rows:         state.contract.length,
+      signups_rows:           state.raw.signups.length,
+      deal_log_rows:          state.raw.deal_log.length,
+      accessories_rows:       state.raw.accessories.length,
+      finance_rows:           state.raw.finance.length,
+      aftercare_rows:         state.raw.aftercare.length,
+      nps_rows:               state.raw.nps.length,
+      validation_issue_count: state.issues.length
     };
 
     var batchResult = await sb.from('import_batches').insert(batchPayload).select('id').single();
     if (batchResult.error) throw new Error('import_batches: ' + batchResult.error.message);
     state.uploadBatchId = batchResult.data.id;
-    logMsg('Created import batch ' + batchResult.data.id);
+    logOk('Created import batch ' + batchResult.data.id);
 
     var validationRows = state.issues.map(function(i) {
       return {
         import_batch_id: batchResult.data.id,
         severity:        i.level,
-        source_tab:      i.source_tab    || null,
-        source_column:   i.source_column || null,
+        source_tab:      i.source_tab      || null,
+        source_column:   i.source_column   || null,
         canonical_field: i.canonical_field || null,
         message:         i.text
       };
     });
     if (validationRows.length) await insertChunks('import_validation_logs', validationRows);
 
-    await insertChunks('raw_signups',    addCommon(state.raw.signups,     periodId, batchResult.data.id));
-    await insertChunks('raw_deal_log',   stripGenerated('raw_deal_log',   addCommon(state.raw.deal_log,    periodId, batchResult.data.id)));
-    await insertChunks('raw_accessories',stripGenerated('raw_accessories', addCommon(state.raw.accessories, periodId, batchResult.data.id)));
-    await insertChunks('raw_finance',    stripGenerated('raw_finance',     addCommon(state.raw.finance,     periodId, batchResult.data.id)));
-    await insertChunks('raw_aftercare',  addCommon(state.raw.aftercare,   periodId, batchResult.data.id));
-    await insertChunks('raw_nps',        addCommon(state.raw.nps,         periodId, batchResult.data.id));
+    await insertChunks('raw_signups',
+      addCommon(state.raw.signups, periodId, batchResult.data.id));
+    await insertChunks('raw_deal_log',
+      stripGenerated('raw_deal_log',
+        addCommon(state.raw.deal_log, periodId, batchResult.data.id)));
+    await insertChunks('raw_accessories',
+      stripGenerated('raw_accessories',
+        addCommon(state.raw.accessories, periodId, batchResult.data.id)));
+    await insertChunks('raw_finance',
+      stripGenerated('raw_finance',
+        addCommon(state.raw.finance, periodId, batchResult.data.id)));
+    await insertChunks('raw_aftercare',
+      addCommon(state.raw.aftercare, periodId, batchResult.data.id));
+    await insertChunks('raw_nps',
+      addCommon(state.raw.nps, periodId, batchResult.data.id));
 
     var metricRows = state.metrics.map(function(s) {
       return {
@@ -767,45 +1011,131 @@ async function uploadToSupabase() {
       };
     });
 
-    var mResult = await sb.from('salesperson_monthly_metrics')
+    var mResult = await sb
+      .from('salesperson_monthly_metrics')
       .upsert(metricRows, { onConflict: 'commission_period_id,salesperson' });
     if (mResult.error) throw new Error('salesperson_monthly_metrics: ' + mResult.error.message);
-    logMsg('Upserted ' + metricRows.length + ' salesperson metric rows.');
+    logOk('Upserted ' + metricRows.length + ' salesperson metric rows.');
 
     var teamRow = Object.assign({ commission_period_id: periodId }, state.team);
-    var tResult = await sb.from('team_monthly_metrics')
+    var tResult = await sb
+      .from('team_monthly_metrics')
       .upsert([teamRow], { onConflict: 'commission_period_id' });
     if (tResult.error) throw new Error('team_monthly_metrics: ' + tResult.error.message);
-    logMsg('Upserted team monthly metrics.');
+    logOk('Upserted team monthly metrics.');
 
-    setStatus('ok', 'Upload complete. Raw data and monthly metrics are now in Supabase.');
+    setStatus('ok', 'Upload complete. Data written to Supabase.');
+
   } catch (err) {
     console.error(err);
     setStatus('bad', 'Upload failed: ' + err.message);
-    logMsg('ERROR: ' + err.message);
+    logErr(err.message);
     $('uploadBtn').disabled = false;
   }
 }
 
-// ─── Load periods ─────────────────────────────────────────────────────────────
+// =============================================================================
+// LOAD PERIODS
+// Full response is dumped to the log so any Supabase / RLS issue is immediately visible.
+// =============================================================================
 async function loadPeriods() {
-  var result = await sb.from('commission_periods')
-    .select('id,period_name,start_date,end_date,status')
-    .order('start_date', { ascending: false });
   var sel = $('periodSelect');
-  if (result.error) {
-    sel.innerHTML = '<option value="">Could not load periods</option>';
-    setStatus('bad', 'Could not load periods: ' + result.error.message);
+  sel.innerHTML = '<option value="">Loading periods...</option>';
+  logDebug('Querying commission_periods from Supabase...');
+
+  var result;
+  try {
+    result = await sb
+      .from('commission_periods')
+      .select('id, period_name, start_date, end_date, status')
+      .order('start_date', { ascending: false });
+  } catch (ex) {
+    var exMsg = ex && ex.message ? ex.message : String(ex);
+    logErr('loadPeriods network exception: ' + exMsg);
+    sel.innerHTML = '<option value="">Network error — see log</option>';
+    setStatus('bad', 'Network error loading periods.');
     return;
   }
-  var options = (result.data || []).map(function(p) {
-    return '<option value="' + p.id + '">' + p.period_name +
-           ' (' + p.start_date + ' to ' + p.end_date + ')</option>';
+
+  // Full response dump — always visible in the log
+  logDebug('commission_periods response:');
+  logDebug('  http status  : ' + (result.status     != null ? result.status     : 'n/a'));
+  logDebug('  statusText   : ' + (result.statusText != null ? result.statusText : 'n/a'));
+  logDebug('  error        : ' + (result.error      ? JSON.stringify(result.error) : 'null'));
+  logDebug('  data type    : ' + (
+    result.data === null      ? 'null'      :
+    result.data === undefined ? 'undefined' :
+    Array.isArray(result.data)? 'Array(' + result.data.length + ')' :
+    typeof result.data
+  ));
+
+  if (result.error) {
+    var errCode = result.error.code    || '';
+    var errMsg  = result.error.message || JSON.stringify(result.error);
+    logErr('commission_periods error [' + errCode + ']: ' + errMsg);
+
+    var isRls = errCode === 'PGRST301' || errCode === '42501' ||
+                (errMsg.toLowerCase().indexOf('permission') !== -1) ||
+                (errMsg.toLowerCase().indexOf('policy')     !== -1) ||
+                (errMsg.toLowerCase().indexOf('rls')        !== -1);
+    var noTable = errCode === '42P01' ||
+                  (errMsg.toLowerCase().indexOf('does not exist') !== -1);
+
+    if (isRls) {
+      logWarn('ROOT CAUSE: Row Level Security is blocking anon SELECT on commission_periods.');
+      logWarn('FIX: Supabase Dashboard -> Authentication -> Policies -> commission_periods');
+      logWarn('     Add policy: "Enable read access for all users" (SELECT, using: true)');
+    } else if (noTable) {
+      logWarn('ROOT CAUSE: Table "commission_periods" does not exist in this project.');
+      logWarn('FIX: Run your schema migration to create the table.');
+    } else {
+      logWarn('Check: correct project URL and anon key, RLS policies, and table existence.');
+    }
+
+    sel.innerHTML = '<option value="">Error — see log</option>';
+    setStatus('bad', 'Supabase error loading periods.');
+    return;
+  }
+
+  var rows = Array.isArray(result.data) ? result.data : [];
+  logDebug('Rows returned: ' + rows.length);
+
+  if (rows.length === 0) {
+    logWarn('commission_periods: 0 rows returned.');
+    logWarn('Possible causes:');
+    logWarn('  1. RLS is silently filtering rows for the anon role (add a SELECT policy).');
+    logWarn('  2. The table exists but contains no data yet — insert a period row first.');
+    logWarn('  3. Wrong Supabase URL or anon key — check CONFIG at top of script.');
+    sel.innerHTML = '<option value="">No periods found — see log</option>';
+    return;
+  }
+
+  logDebug('First row: ' + JSON.stringify(rows[0]));
+
+  // Warn if expected fields are absent
+  var expectedFields = ['id', 'period_name', 'start_date', 'end_date'];
+  expectedFields.forEach(function(f) {
+    if (rows[0][f] === undefined) {
+      logWarn('Expected field "' + f + '" not present in commission_periods rows — check column names in Supabase.');
+    }
   });
-  sel.innerHTML = options.length ? options.join('') : '<option value="">No periods found</option>';
+
+  var options = rows.map(function(p) {
+    var id    = p.id          != null ? String(p.id)          : '';
+    var name  = p.period_name != null ? String(p.period_name) : 'Unnamed';
+    var start = p.start_date  != null ? String(p.start_date)  : '?';
+    var end   = p.end_date    != null ? String(p.end_date)    : '?';
+    return '<option value="' + esc(id) + '">' +
+           esc(name + ' (' + start + ' to ' + end + ')') + '</option>';
+  });
+
+  sel.innerHTML = options.join('');
+  logOk('Loaded ' + rows.length + ' commission period(s).');
 }
 
-// ─── Download helper ──────────────────────────────────────────────────────────
+// =============================================================================
+// DOWNLOAD
+// =============================================================================
 function download(filename, mime, content) {
   var blob = new Blob([content], { type: mime });
   var url  = URL.createObjectURL(blob);
@@ -816,29 +1146,46 @@ function download(filename, mime, content) {
   URL.revokeObjectURL(url);
 }
 
-// ─── Event listeners ──────────────────────────────────────────────────────────
+// =============================================================================
+// EVENT LISTENERS
+// =============================================================================
 $('fileInput').addEventListener('change', function(e) {
   var file = e.target.files[0];
   if (!file) return;
   state.fileName = file.name;
+
   var reader = new FileReader();
   reader.onload = function(ev) {
-    var data = new Uint8Array(ev.target.result);
-    state.workbook = XLSX.read(data, { type: 'array', cellDates: true });
-    $('processBtn').disabled      = false;
-    $('uploadBtn').disabled       = true;
-    $('downloadJsonBtn').disabled = true;
-    setStatus('warn', 'Workbook loaded: ' + file.name + '. Ready to process.');
-    $('log').textContent = 'Workbook loaded. Sheets detected:\n- ' +
-                           state.workbook.SheetNames.join('\n- ');
+    try {
+      var data       = new Uint8Array(ev.target.result);
+      state.workbook = XLSX.read(data, { type: 'array', cellDates: true });
+
+      $('processBtn').disabled      = false;
+      $('uploadBtn').disabled       = true;
+      $('downloadJsonBtn').disabled = true;
+
+      setStatus('warn', 'Workbook loaded: ' + file.name + ' — ready to process.');
+      clearLog('Workbook loaded: ' + file.name);
+
+      logDebug('Sheet names (' + state.workbook.SheetNames.length + '):');
+      state.workbook.SheetNames.forEach(function(n) {
+        logDebug('  "' + n + '"  norm:"' + norm(n) + '"');
+      });
+    } catch (ex) {
+      var msg = ex && ex.message ? ex.message : String(ex);
+      setStatus('bad', 'Failed to parse workbook: ' + msg);
+      logErr('XLSX parse error: ' + msg);
+    }
+  };
+  reader.onerror = function() {
+    setStatus('bad', 'Could not read the selected file.');
+    logErr('FileReader error reading: ' + (file ? file.name : 'unknown'));
   };
   reader.readAsArrayBuffer(file);
 });
 
-$('processBtn').addEventListener('click', processWorkbook);
-
-$('uploadBtn').addEventListener('click', uploadToSupabase);
-
+$('processBtn').addEventListener('click',     processWorkbook);
+$('uploadBtn').addEventListener('click',      uploadToSupabase);
 $('reloadPeriodsBtn').addEventListener('click', loadPeriods);
 
 $('downloadJsonBtn').addEventListener('click', function() {
@@ -856,7 +1203,9 @@ $('downloadJsonBtn').addEventListener('click', function() {
   );
 });
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+// =============================================================================
+// INIT
+// =============================================================================
 loadPeriods();
 </script>
 </body>
