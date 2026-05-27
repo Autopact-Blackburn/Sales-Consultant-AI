@@ -172,9 +172,9 @@ label{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-
   <div class="loginbox">
     <div class="logo">AI</div>
     <h2>Blackburn Performance OS</h2>
-    <p class="small">Email + 4 digit PIN. </p>
-    <label>Email</label><input id="loginEmail" value="" />
-    <label>PIN</label><input id="loginPin" value="" maxlength="4" />
+    <p class="small">Email + 4 digit PIN. Admin settings persist in Supabase once the SQL has been run.</p>
+    <label>Email</label><input id="loginEmail" value="adam@blackburn.local" />
+    <label>PIN</label><input id="loginPin" value="1234" maxlength="4" />
     <button onclick="login()">Access dashboard</button>
     <p id="loginMsg" class="small"></p>
   </div>
@@ -198,7 +198,7 @@ label{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-
   <section class="hero">
     <div class="kicker">Mission Control</div>
     <h1>Salesperson AI Dashboard</h1>
-    <p>Built from the SUMMARY tab. Admin can upload the workbook, persist staff users, filter active team members, and generate deeper AI coaching around KPI gaps, conversion pressure, lead-source mix, and target pace.</p>
+    <p>Built from the SUMMARY tab. Admin can upload the workbook, persist staff users, filter active team members, and generate deeper AI coaching around KPI gaps, conversion pressure, lead-source mix, target pace, MVI penetration, warranty penetration and AutoX performance.</p>
   </section>
 
   <div class="tabs">
@@ -347,6 +347,7 @@ async function login(){
   currentUser = user;
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("adminTab").style.display = user.role === "admin" || user.role === "manager" ? "" : "none";
+  if(user.role === "manager"){document.getElementById("admin").innerHTML = `<div class="panel"><div class="kicker">Manager Mode</div><h2>Performance Visibility Enabled</h2><p class="small">Managers can view all reporting and AI insights, but cannot edit users or upload files.</p></div>`;}
   renderAll();
 }
 function msg(t){ document.getElementById("loginMsg").textContent = t; }
@@ -361,9 +362,6 @@ function showTab(id,btn){
 
 function visibleRows(){
   let rows = performanceRows.filter(r=>r.active !== false);
-  if(currentUser && currentUser.role === "sales"){
-    rows = rows.filter(r => r.salesperson_name === currentUser.salesperson_name || r.salesperson_name === currentUser.name);
-  }
   return rows.sort((a,b)=>n(b.score)-n(a.score));
 }
 
@@ -461,19 +459,23 @@ function renderLeaderboard(){
   const rows = visibleRows();
   document.getElementById("leaderboard").innerHTML = `
     <thead><tr>
-      <th>Rank</th><th>Salesperson</th><th>AI Score</th><th>Deals</th><th>Leads</th><th>Sign Ups</th><th>Lead→Deal</th><th>Fin Pen</th><th>IPUR</th><th>Aftercare</th><th>Accessories</th><th>Trade</th><th>NPS</th><th>DAH</th><th>Sources</th>
+      <th>Rank</th><th>Salesperson</th><th>AI Score</th><th>Comms</th><th>Deals</th><th>Leads</th><th>Sign Ups</th><th>Lead→Deal</th><th>Fin Pen</th><th>IPUR</th><th>MVI</th><th>WTY</th><th>AutoX</th><th>Aftercare</th><th>Accessories</th><th>Trade</th><th>NPS</th><th>DAH</th><th>Sources</th>
     </tr></thead><tbody>
     ${rows.map((r,i)=>{
       const leadDeal = metric(r,"Leads") ? metric(r,"Deals")/metric(r,"Leads") : 0;
       return `<tr>
       <td class="rank">${i+1}</td><td><strong>${r.salesperson_name}</strong><br><span class="small">${r.email||""}</span></td>
       <td><span class="score-badge">${n(r.score).toFixed(1)}</span></td>
+      <td class="num" style="color:#44ffbd;font-weight:950">${money(metric(r,"Actual Comms"))}</td>
       <td class="num">${metric(r,"Deals")}</td><td class="num">${metric(r,"Leads")}</td><td class="num">${metric(r,"Sign Ups")}</td>
       <td class="num">${(leadDeal*100).toFixed(1)}%</td><td class="num">${pct(metric(r,"Finance Pen%"))}</td><td class="num">${money(metric(r,"Finance IPUR"))}</td>
+      <td class="num">${pct(metric(r,"MVI%"))}</td>
+      <td class="num">${pct(metric(r,"WTY%"))}</td>
+      <td class="num">${pct(metric(r,"AutoX%"))}</td>
       <td class="num">${money(metric(r,"Aftercare PPV"))}</td><td class="num">${money(metric(r,"Accessory PVR"))}</td><td class="num">${pct(metric(r,"Trade %"))}</td>
       <td class="num">${pct(metric(r,"NPS"))}</td><td class="num">${pct(metric(r,"DAH"))}</td>
       <td><button class="secondary" onclick="toggleDrill('drill${i}')">Lead detail</button></td>
-      </tr><tr id="drill${i}" class="drillrow hidden"><td colspan="15"><div class="source-grid">${renderSources(r)}</div></td></tr>`
+      </tr><tr id="drill${i}" class="drillrow hidden"><td colspan="19"><div class="source-grid">${renderSources(r)}</div></td></tr>`
     }).join("")}</tbody>`;
 }
 function renderSources(r){
@@ -489,7 +491,7 @@ function renderRace(){
     const pos=Math.max(5,Math.min(92,(n(r.score)/max)*88));
     return `<div class="race-row">
       <div class="race-label"><strong>${i+1}. ${r.salesperson_name}</strong><span>${n(r.score).toFixed(1)} AI score · ${metric(r,"Deals")} deliveries</span></div>
-      <div class="track"><span class="car" style="left:${pos}%">🏎️</span><span class="finish">🏁</span></div>
+      <div class="track"><span class="car" style="left:${pos}%">🏎️➡️</span><span class="finish">🏁</span></div>
       <div class="score-badge">${n(r.score).toFixed(1)}</div>
     </div>`
   }).join("");
