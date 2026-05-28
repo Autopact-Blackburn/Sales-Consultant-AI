@@ -347,7 +347,14 @@ async function login(){
   currentUser = user;
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("adminTab").style.display = user.role === "admin" || user.role === "manager" ? "" : "none";
-  if(user.role === "manager"){document.getElementById("admin").innerHTML = `<div class="panel"><div class="kicker">Manager Mode</div><h2>Performance Visibility Enabled</h2><p class="small">Managers can view all reporting and AI insights, but cannot edit users or upload files.</p></div>`;}
+
+  if(user.role === "admin"){
+    renderAll();
+  }
+
+  if(user.role === "manager"){
+    document.getElementById("admin").innerHTML = `<div class="panel"><div class="kicker">Manager Mode</div><h2>Performance Visibility Enabled</h2><p class="small">Managers can view all reporting and AI insights, but cannot edit users or upload files.</p></div>`;
+  }
   renderAll();
 }
 function msg(t){ document.getElementById("loginMsg").textContent = t; }
