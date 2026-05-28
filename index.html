@@ -172,9 +172,9 @@ label{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-
   <div class="loginbox">
     <div class="logo">AI</div>
     <h2>Blackburn Performance OS</h2>
-    <p class="small">Email + 4 digit PIN. </p>
-    <label>Email</label><input id="loginEmail" value="" />
-    <label>PIN</label><input id="loginPin" value="" maxlength="4" />
+    <p class="small">Email + 4 digit PIN. Admin settings persist in Supabase once the SQL has been run.</p>
+    <label>Email</label><input id="loginEmail" value="adam@blackburn.local" />
+    <label>PIN</label><input id="loginPin" value="1234" maxlength="4" />
     <button onclick="login()">Access dashboard</button>
     <p id="loginMsg" class="small"></p>
   </div>
@@ -362,6 +362,14 @@ function showTab(id,btn){
 
 function visibleRows(){
   let rows = performanceRows.filter(r=>r.active !== false);
+
+  if(currentUser && currentUser.role === "sales"){
+    rows = rows.filter(r =>
+      r.salesperson_name === currentUser.salesperson_name ||
+      r.salesperson_name === currentUser.name
+    );
+  }
+
   return rows.sort((a,b)=>n(b.score)-n(a.score));
 }
 
@@ -449,7 +457,7 @@ function renderPodium(){
   document.getElementById("podium").innerHTML = rows.map((r,i)=>`
     <div class="podium-card ${classes[i]||""}">
       <div class="medal">${medals[i]||"🏁"}</div>
-      <div class="pod-sub">Rank ${i+1}</div>
+      <div class="pod-sub">Rank ${currentUser && currentUser.role === "sales" ? (allRows.findIndex(x => x.salesperson_name === r.salesperson_name)+1) : (i+1)}</div>
       <div class="pod-name">${r.salesperson_name}</div>
       <div class="pod-score">${n(r.score).toFixed(1)}</div>
       <div class="pod-sub">${metric(r,"Deals")} deals · ${metric(r,"Leads")} leads</div>
@@ -491,13 +499,21 @@ function renderRace(){
     const pos=Math.max(5,Math.min(92,(n(r.score)/max)*88));
     return `<div class="race-row">
       <div class="race-label"><strong>${i+1}. ${r.salesperson_name}</strong><span>${n(r.score).toFixed(1)} AI score · ${metric(r,"Deals")} deliveries</span></div>
-      <div class="track"><span class="car" style="left:${pos}%">🏎️➡️</span><span class="finish">🏁</span></div>
+      <div class="track"><span class="car" style="left:${pos}%">🏎️</span><span class="finish">🏁</span></div>
       <div class="score-badge">${n(r.score).toFixed(1)}</div>
     </div>`
   }).join("");
 }
 function renderAI(){
-  const rows=visibleRows();
+  let rows=visibleRows();
+
+  if(currentUser && currentUser.role === "sales"){
+    rows = rows.filter(r =>
+      r.salesperson_name === currentUser.salesperson_name ||
+      r.salesperson_name === currentUser.name
+    );
+  }
+
   document.getElementById("aiCards").innerHTML = rows.map(r=>{
     const ai=buildInsights(r);
     return `<div class="ai-card">
