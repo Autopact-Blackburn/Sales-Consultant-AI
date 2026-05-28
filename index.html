@@ -123,7 +123,7 @@ td.num{text-align:right;font-weight:900}
 .race-label span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
 .track{height:40px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border-radius:999px;position:relative;overflow:hidden}
 .track:before{content:"";position:absolute;left:14px;right:48px;top:50%;border-top:1px dashed rgba(255,255,255,.24)}
-.car{position:absolute;top:4px;transform:translateX(-50%) scaleX(-1);font-size:25px;filter:drop-shadow(0 0 10px rgba(0,194,255,.45))}
+.car{position:absolute;top:4px;transform:translateX(-50%) rotateY(180deg);font-size:25px;filter:drop-shadow(0 0 10px rgba(0,194,255,.45))}
 .finish{position:absolute;right:12px;top:8px}
 .ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
 .ai-card{padding:18px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px}
@@ -513,16 +513,27 @@ function toggleDrill(id){ document.getElementById(id).classList.toggle("hidden")
 
 function renderRace(){
   const rows = performanceRows
-    .filter(r=>r.active !== false)
+    .filter(r => r.active !== false)
     .sort((a,b)=>n(b.score)-n(a.score));
-  const max=Math.max(...rows.map(r=>n(r.score)),100);
+
+  const max = Math.max(...rows.map(r=>n(r.score)),100);
+
   document.getElementById("raceRows").innerHTML = rows.map((r,i)=>{
-    const pos=Math.max(5,Math.min(92,(n(r.score)/max)*88));
+    const pos = Math.max(5,Math.min(92,(n(r.score)/max)*88));
+
     return `<div class="race-row">
-      <div class="race-label"><strong>${i+1}. ${r.salesperson_name}</strong><span>${n(r.score).toFixed(1)} AI score · ${metric(r,"Deals")} deliveries</span></div>
-      <div class="track"><span class="car" style="left:${pos}%">🏎️</span><span class="finish">🏁</span></div>
+      <div class="race-label">
+        <strong>${i+1}. ${r.salesperson_name}</strong>
+        <span>${n(r.score).toFixed(1)} AI score · ${metric(r,"Deals")} deliveries</span>
+      </div>
+
+      <div class="track">
+        <span class="car" style="left:${pos}%">🏎️</span>
+        <span class="finish">🏁</span>
+      </div>
+
       <div class="score-badge">${n(r.score).toFixed(1)}</div>
-    </div>`
+    </div>`;
   }).join("");
 }
 function renderAI(){
